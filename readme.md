@@ -70,16 +70,29 @@ Detrav Recipe Calculator is designed to simplify and elevate the process of craf
 
 Thank you to these resources for providing high-quality icons that enhance the usability and aesthetics of Detrav Recipe Calculator!
 
+## ToDo
+
+1. Paste icon from clipboard (not ctrl+v add button)
+2. Icon background preview (just background)
+3. Icon foreground in preview (screen? or mask?)
+4. Connection color preview (border brush?)
+5. Node preview in ceter tab
+6. Graph editor
 
 ## Changelog
 
-Simple changelog, you need to read from top to bottom.
+Simple changelog, read from top to bottom.
 
-### Version 0.1
+```
+Version 0.1
+-----------
 
-+ Init;
++ Initial release.
 
-### Current Version
+Current Version
+---------------
 
-* Removed icon pack from repository;
-+ Added icon pack downloading prompt on open select icon window;
+* Removed icon pack from the repository.
++ Added prompt to download the icon pack when opening the icon selection window.
++ Added download prompt localization.
+```

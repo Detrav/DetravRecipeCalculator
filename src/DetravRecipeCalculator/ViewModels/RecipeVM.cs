@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,6 +50,7 @@ namespace DetravRecipeCalculator.ViewModels
         public XLocItem SelectIcon { get; } = new XLocItem("__Recipe_SelectIcon");
         public XLocItem OpenIcon { get; } = new XLocItem("__Recipe_OpenIcon");
         public XLocItem DeleteIcon { get; } = new XLocItem("__Recipe_DeleteIcon");
+        public XLocItem PasteIcon { get; } = new XLocItem("__Recipe_PasteIcon");
 
 
     }
@@ -75,7 +77,7 @@ namespace DetravRecipeCalculator.ViewModels
 
         public RecipeModelLocalization Loc { get; } = RecipeModelLocalization.Instance;
         [ObservableProperty]
-        public byte[]? icon;
+        private byte[]? icon;
 
         public RecipeVM()
         {

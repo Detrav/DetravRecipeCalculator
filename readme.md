@@ -72,7 +72,6 @@ Thank you to these resources for providing high-quality icons that enhance the u
 
 ## ToDo
 
-1. Paste icon from clipboard (not ctrl+v add button)
 2. Icon background preview (just background)
 3. Icon foreground in preview (screen? or mask?)
 4. Connection color preview (border brush?)
@@ -96,4 +95,5 @@ Current Version
 + Added prompt to download the icon pack when opening the icon selection window.
 + Added download prompt localization.
 + Added format description to color tooltip: #rgb, #argb, #rrggbb, #aarrggbb.
++ Added ability to paste icon from clipboard.
 ```

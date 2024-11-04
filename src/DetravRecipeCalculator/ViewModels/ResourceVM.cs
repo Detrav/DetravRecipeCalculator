@@ -24,6 +24,7 @@ namespace DetravRecipeCalculator.ViewModels
         public XLocItem SelectIcon { get; } = new XLocItem("__Resource_SelectIcon");
         public XLocItem OpenIcon { get; } = new XLocItem("__Resource_OpenIcon");
         public XLocItem DeleteIcon { get; } = new XLocItem("__Resource_DeleteIcon");
+        public XLocItem PasteIcon { get; } = new XLocItem("__Resource_PasteIcon");
 
         public XLocItem BackgroundColor { get; } = new XLocItem("__Resource_BackgroundColor");
         public XLocItem BackgroundColorTip { get; } = new XLocItem("__Resource_BackgroundColorTip");

@@ -84,6 +84,9 @@
 							<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.OpenIcon.Text}" Click="Button_IconOpen_Click">
 								<Image Source="/Assets/icons/icons8-upload-32.png"/>
 							</Button>
+							<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.PasteIcon.Text}" Click="Button_PasteIcon_Click" >
+								<Image Source="/Assets/icons/icons8-paste-32.png"/>
+							</Button>
 							<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.DeleteIcon.Text}" Click="Button_IconDelete_Click" >
 								<Image Source="/Assets/icons/icons8-delete-32.png"/>
 							</Button>

@@ -55,6 +55,7 @@ __Recipe_BackgroundColorTip=Цвет, используемый для отобр
 __Recipe_SelectIcon=Выбрать значок из набора значков
 __Recipe_OpenIcon=Открыть значок с диска
 __Recipe_DeleteIcon=Удалить значок
+__Recipe_PasteIcon=Воставить значок из буфера обмена
 
 __Recipe_Note=Заметка:
 __Recipe_NoteTip=Заметки, которые будут отображаться на узле.
@@ -75,6 +76,7 @@ __Resource_Icon=Иконка
 __Resource_SelectIcon=Выбрать значок из набора значков
 __Resource_OpenIcon=Открыть значок с диска
 __Resource_DeleteIcon=Удалить значок
+__Resource_PasteIcon=Воставить значок из буфера обмена
 
 __Resource_Name=Имя:
 __Resource_NameTip=Отображаемое имя: имя, которое будет показано пользователям. Оно должно быть понятным и легко узнаваемым, а также уникальным. Рекомендуется использовать название из игры.

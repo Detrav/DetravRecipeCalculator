@@ -55,6 +55,7 @@ __Recipe_BackgroundColorTip=Color used for node border and icon background displ
 __Recipe_SelectIcon=Select icon from icon packs
 __Recipe_OpenIcon=Open icon from drive
 __Recipe_DeleteIcon=Delete icon
+__Recipe_PasteIcon=Paste icon from clipboard
 
 __Recipe_Note=Note:
 __Recipe_NoteTip=Notes to be displayed on the node.
@@ -75,6 +76,7 @@ __Resource_SelectIcon=Select icon from icon packs
 __Resource_OpenIcon=Open icon from drive
 __Resource_DeleteIcon=Delete icon
 __Resource_Icon=Icon
+__Resource_PasteIcon=Paste icon from clipboard
 
 __Resource_Name=Name:
 __Resource_NameTip=Display Name: the name that will be shown to users.\nIt should be clear, easily recognizable, and unique.\nIt is recommended to use the in-game name.

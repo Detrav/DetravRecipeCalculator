@@ -201,4 +201,16 @@ public partial class ResourceEditorWindow : Window
             }
         }
     }
+
+    private async void Button_PasteIcon_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is RecipeVM vm)
+        {
+            var newIcon = await ClipboardHelper.GetImageAsync(Clipboard);
+            if(newIcon != null)
+            {
+                vm.Icon = newIcon;
+            }
+        }
+    }
 }

@@ -98,5 +98,17 @@ public partial class Resource2EditorWindow : Window
                 }
             }
         }
+    } 
+    
+    private async void Button_IconPaste_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is ResourceVM vm)
+        {
+            var newIcon = await ClipboardHelper.GetImageAsync(Clipboard);
+            if (newIcon != null)
+            {
+                vm.Icon = newIcon;
+            }
+        }
     }
 }

@@ -49,9 +49,9 @@ __Recipe_IsDisabled=Is disabled
 __Recipe_EnabledTip=Specifies whether the item is enabled. Disabled items are excluded from automatic generation but can still be added manually.
 __Recipe_Icon=Icon
 __Recipe_ForegroundColor=Foreground color:
-__Recipe_ForegroundColorTip=Color used for node icon display.
+__Recipe_ForegroundColorTip=Color used for node icon display.\nFormats: #rgb #argb #rrggbb #aarrggbb
 __Recipe_BackgroundColor=Background color:
-__Recipe_BackgroundColorTip=Color used for node border and icon background display.
+__Recipe_BackgroundColorTip=Color used for node border and icon background display.\nFormats: #rgb #argb #rrggbb #aarrggbb
 __Recipe_SelectIcon=Select icon from icon packs
 __Recipe_OpenIcon=Open icon from drive
 __Recipe_DeleteIcon=Delete icon
@@ -79,11 +79,11 @@ __Resource_Icon=Icon
 __Resource_Name=Name:
 __Resource_NameTip=Display Name: the name that will be shown to users.\nIt should be clear, easily recognizable, and unique.\nIt is recommended to use the in-game name.
 __Resource_ForegroundColor=Foreground color:
-__Resource_ForegroundColorTip=Color used for node icon display.
+__Resource_ForegroundColorTip=Color used for node icon display.\nFormats: #rgb #argb #rrggbb #aarrggbb
 __Resource_BackgroundColor=Background color:
-__Resource_BackgroundColorTip=Color used for node border and icon background display.
+__Resource_BackgroundColorTip=Color used for node border and icon background display.\nFormats: #rgb #argb #rrggbb #aarrggbb
 __Resource_ConnectorColor=Connector color:
-__Resource_ConnectorColorTip=Color used for drawing the connection line and pins on the node.
+__Resource_ConnectorColorTip=Color used for drawing the connection line and pins on the node.\nFormats: #rgb #argb #rrggbb #aarrggbb
 
 
 __SelectIcon_WindowTitle=Select an icon

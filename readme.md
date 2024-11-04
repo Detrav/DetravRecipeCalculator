@@ -95,4 +95,5 @@ Current Version
 * Removed icon pack from the repository.
 + Added prompt to download the icon pack when opening the icon selection window.
 + Added download prompt localization.
++ Added format description to color tooltip: #rgb, #argb, #rrggbb, #aarrggbb.
 ```

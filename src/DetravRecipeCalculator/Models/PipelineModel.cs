@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.Models
 {
+    
     public class PipelineModel
     {
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]

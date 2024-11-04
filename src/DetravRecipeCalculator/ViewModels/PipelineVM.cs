@@ -64,7 +64,7 @@ namespace DetravRecipeCalculator.ViewModels
         public static PipelineVM Load(string path)
         {
             var result = new PipelineVM();
-            var mdl = System.Text.Json.JsonSerializer.Deserialize<PipelineModel>(File.ReadAllText(path), Config.SERIALIZER_OPTIONS);
+            var mdl = System.Text.Json.JsonSerializer.Deserialize<PipelineModel>(File.ReadAllText(path), SourceGenerationContext.Default.PipelineModel);
             if (mdl == null)
                 throw new Exception(Xloc.Get("__Errors_CantLoadFile"));
             result.RestoreState(mdl);
@@ -149,7 +149,7 @@ namespace DetravRecipeCalculator.ViewModels
                     var model = SaveState() as PipelineModel;
                     if (model == null)
                         throw new NotSupportedException();
-                    File.WriteAllText(FilePath, JsonSerializer.Serialize(model, Config.SERIALIZER_OPTIONS));
+                    File.WriteAllText(FilePath, JsonSerializer.Serialize(model, SourceGenerationContext.Default.PipelineModel));
                     Saved = true;
                 }
                 catch

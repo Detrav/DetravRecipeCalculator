@@ -5,16 +5,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.Utils
 {
+   
     public partial class Config
     {
-        public static readonly JsonSerializerOptions SERIALIZER_OPTIONS = new JsonSerializerOptions()
-        {
-            WriteIndented = true,
-        };
+       
         public static Config Instance { get; set; } = Load();
 
         public Config()
@@ -26,7 +25,7 @@ namespace DetravRecipeCalculator.Utils
         {
             if (File.Exists("config.json"))
             {
-                var result = JsonSerializer.Deserialize<Config>(File.ReadAllText("config.json"), SERIALIZER_OPTIONS);
+                var result = JsonSerializer.Deserialize<Config>(File.ReadAllText("config.json"), SourceGenerationContext.Default.Config);
                 if (result != null)
                 {
                     return result;
@@ -38,7 +37,7 @@ namespace DetravRecipeCalculator.Utils
 
         public void Save()
         {
-            var text = JsonSerializer.Serialize(this, SERIALIZER_OPTIONS);
+            var text = JsonSerializer.Serialize(this, SourceGenerationContext.Default.Config);
             File.WriteAllText("config.json", text);
         }
 

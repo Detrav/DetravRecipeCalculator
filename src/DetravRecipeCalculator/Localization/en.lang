@@ -1,0 +1,89 @@
+﻿__LanguageName=English
+__Main_Menu_File=File
+__Main_Menu_File_New=New
+__Main_Menu_File_Open=Open
+__Main_Menu_File_Save=Save
+__Main_Menu_File_SaveAs=Save as
+__Main_Menu_File_Exit=Exit
+__Main_Menu_Edit=Edit
+__Main_Menu_Edit_Undo=Undo
+__Main_Menu_Edit_Redo=Redo
+__Main_Menu_Tools=Tools
+__Main_Menu_Tools_Language=Language
+__Main_Menu_Help=Help
+__Main_Menu_Help_About=About
+__Window_About=About
+__Window_About_Author=Author
+__Window_About_Version=Version
+__Window_ClosingSave_Title=Closing
+__Window_ClosingSave_Text=Do you want to save changes before exit?
+__Window_Saving_Title=Warning
+__Window_Saving_Text=Do you want to save the current file? All unsaved data will be permanently lost!
+__Window_File_SaveAsTitle=Select file to save
+__Window_File_OpenTitle=Select file to open
+__Errors_Title=Exception
+__Errors_CantLoadFile=Can't load the file!
+__Errors_DuplicateResourceName=The resource name is already in use. Please use a different name, as resource names must be unique.
+
+__MainView_Step1=Step 1\nCreate a new recipe
+__MainView_Step2=Step 2\nRecheck the recipe
+__MainView_Step3=Step 3\nConfigure resources
+__MainView_Step4=Step 4 — Visualize
+__MainView_Filter=Filter
+__MainView_Create=Create
+__MainView_Edit=Edit
+__MainView_Delete=Delete
+__MainView_EnableDisable=Enable/Disable
+
+__Dialog_BtnOk=OK
+__Dialog_BtnCancel=Cancel
+
+__Recipe_WindowTitle=Recipe editor
+__Recipe_Name=Name:
+__Recipe_NameTip=Display Name: the name that will be shown to users.\nIt should be clear and easily recognizable.
+__Recipe_TimeToCraft=Time in seconds:
+__Recipe_TimeToCraftTip=Time required for crafting.\nIf left empty, a default of 1 second will be used.\nThis is an expression field.
+__Recipe_Enabled=Enabled
+__Recipe_IsEnabled=Is enabled
+__Recipe_IsDisabled=Is disabled
+__Recipe_EnabledTip=Specifies whether the item is enabled. Disabled items are excluded from automatic generation but can still be added manually.
+__Recipe_Icon=Icon
+__Recipe_ForegroundColor=Foreground color:
+__Recipe_ForegroundColorTip=Color used for node icon display.
+__Recipe_BackgroundColor=Background color:
+__Recipe_BackgroundColorTip=Color used for node border and icon background display.
+__Recipe_SelectIcon=Select icon from icon packs
+__Recipe_OpenIcon=Open icon from drive
+__Recipe_DeleteIcon=Delete icon
+
+__Recipe_Note=Note:
+__Recipe_NoteTip=Notes to be displayed on the node.
+__Recipe_TimeToCraftHelpTip=Show help on expressions.
+__Recipe_AddResourceTip=Add a new resource.
+__Recipe_InputTitle=Input Resources
+__Recipe_OutputTitle=Output Resources
+
+__ResourceValue_NameTip=Resource name.
+__ResourceValue_ValueTip=Resource value. This is an expression field.
+__ResourceValue_MoveUpTip=Moves the resource up in the list.
+__ResourceValue_MoveDownTip=Moves the resource down in the list.
+__ResourceValue_DeleteTip=Removes the resource from the list.
+__ResourceValue_HelpTip=Show help on expressions.
+
+__Resource_WindowTitle=Resource editor
+__Resource_SelectIcon=Select icon from icon packs
+__Resource_OpenIcon=Open icon from drive
+__Resource_DeleteIcon=Delete icon
+__Resource_Icon=Icon
+
+__Resource_Name=Name:
+__Resource_NameTip=Display Name: the name that will be shown to users.\nIt should be clear, easily recognizable, and unique.\nIt is recommended to use the in-game name.
+__Resource_ForegroundColor=Foreground color:
+__Resource_ForegroundColorTip=Color used for node icon display.
+__Resource_BackgroundColor=Background color:
+__Resource_BackgroundColorTip=Color used for node border and icon background display.
+__Resource_ConnectorColor=Connector color:
+__Resource_ConnectorColorTip=Color used for drawing the connection line and pins on the node.
+
+
+__SelectIcon_WindowTitle=Select an icon

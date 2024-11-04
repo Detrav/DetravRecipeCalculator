@@ -1,0 +1,88 @@
+﻿__LanguageName=Русский язык
+__Main_Menu_File=Файл
+__Main_Menu_File_New=Создать
+__Main_Menu_File_Open=Открыть
+__Main_Menu_File_Save=Сохранить
+__Main_Menu_File_SaveAs=Сохранить как
+__Main_Menu_File_Exit=Выход
+__Main_Menu_Edit=Правка
+__Main_Menu_Edit_Undo=Отменить
+__Main_Menu_Edit_Redo=Повторить
+__Main_Menu_Tools=Инструменты
+__Main_Menu_Tools_Language=Язык
+__Main_Menu_Help=Помощь
+__Main_Menu_Help_About=О программме
+__Window_About=О программе
+__Window_About_Author=Автор
+__Window_About_Version=Версия
+__Window_ClosingSave_Title=Закрытие
+__Window_ClosingSave_Text=Вы хотите сохранить изменения перед выходом?
+__Window_Saving_Title=Предупреждение
+__Window_Saving_Text=Вы хотите сохранить текущий файл? Все несохранённые данные будут безвозвратно утрачены!
+__Window_File_SaveAsTitle=Выберите файл для сохранения
+__Window_File_OpenTitle=Выберите файл для открытия
+__Errors_Title=Ошибка
+__Errors_CantLoadFile=Не могу загрузить файл!
+__Errors_DuplicateResourceName=Имя ресурса уже используется. Пожалуйста, выберите другое имя, так как имена ресурсов должны быть уникальными.
+
+__MainView_Step1=Шаг 1\nСоздать новый рецепт
+__MainView_Step2=Шаг 2\nПерепроверить рецепт
+__MainView_Step3=Шаг 3\nНастроить ресурсы
+__MainView_Step4=Шаг 4 — Визуализировать
+__MainView_Filter=Фильтр
+__MainView_Create=Создать
+__MainView_Edit=Редактировать
+__MainView_Delete=Удалить
+__MainView_EnableDisable=Включить/Отключить
+
+__Dialog_BtnOk=ОК
+__Dialog_BtnCancel=Отмена	
+
+__Recipe_WindowTitle=Редактор рецепта
+__Recipe_Name=Название:
+__Recipe_NameTip=Отображаемое имя: имя, которое будет показано пользователям. Оно должно быть понятным и легко узнаваемым.
+__Recipe_TimeToCraft=Время в секундах:
+__Recipe_TimeToCraftTip=Время на создание.\nЕсли не указано, по умолчанию будет использовано 1 секунда.\nЭто поле выражения.
+__Recipe_Enabled=Включено
+__Recipe_IsEnabled=Включено
+__Recipe_IsDisabled=Отключено
+__Recipe_EnabledTip=Определяет, включен ли элемент. Выключенные элементы не участвуют в автоматической генерации, но их можно добавлять вручную.
+__Recipe_Icon=Иконка
+__Recipe_ForegroundColor=Цвет переднего плана:
+__Recipe_ForegroundColorTip=Цвет, используемый для отображения значка узла.
+__Recipe_BackgroundColor=Цвет фона:
+__Recipe_BackgroundColorTip=Цвет, используемый для отображения границы узла и фона значка.
+__Recipe_SelectIcon=Выбрать значок из набора значков
+__Recipe_OpenIcon=Открыть значок с диска
+__Recipe_DeleteIcon=Удалить значок
+
+__Recipe_Note=Заметка:
+__Recipe_NoteTip=Заметки, которые будут отображаться на узле.
+__Recipe_TimeToCraftHelpTip=Показать справку по выражениям.
+__Recipe_AddResourceTip=Добавить новый ресурс.
+__Recipe_InputTitle=Входящие ресурсы
+__Recipe_OutputTitle=Выходящие ресурсы
+
+__ResourceValue_NameTip=Название ресурса.
+__ResourceValue_ValueTip=Значение ресурса. Это поле выражения.
+__ResourceValue_MoveUpTip=Перемещает ресурс выше в списке.
+__ResourceValue_MoveDownTip=Перемещает ресурс ниже в списке.
+__ResourceValue_DeleteTip=Удаляет ресурс из списка.
+__ResourceValue_HelpTip=Показать справку по выражениям.
+
+__Resource_WindowTitle=Редактор ресурса
+__Resource_Icon=Иконка
+__Resource_SelectIcon=Выбрать значок из набора значков
+__Resource_OpenIcon=Открыть значок с диска
+__Resource_DeleteIcon=Удалить значок
+
+__Resource_Name=Имя:
+__Resource_NameTip=Отображаемое имя: имя, которое будет показано пользователям. Оно должно быть понятным и легко узнаваемым, а также уникальным. Рекомендуется использовать название из игры.
+__Resource_ForegroundColor=Цвет переднего плана:
+__Resource_ForegroundColorTip=Цвет, используемый для отображения значка узла.
+__Resource_BackgroundColor=Цвет фона:
+__Resource_BackgroundColorTip=Цвет, используемый для отображения границы узла и фона значка.
+__Resource_ConnectorColor=Цвет линии подключения:
+__Resource_ConnectorColorTip=Цвет, используемый для отрисовки линии подключения и контактов на узле.
+
+__SelectIcon_WindowTitle=Выберите иконку

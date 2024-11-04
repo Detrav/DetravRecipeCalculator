@@ -1,0 +1,70 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="800" Height="450"
+        x:Class="DetravRecipeCalculator.Views.SelectIconWindow"
+        Title="{Binding WindowTitle.Text}"
+		xmlns:utils="using:DetravRecipeCalculator.Utils"
+        xmlns:vm="using:DetravRecipeCalculator.ViewModels"
+        xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+		
+        x:DataType="vm:SelectIconVM">
+	<Window.Styles>
+		<Style Selector="Grid.icon-item">
+			<Setter Property="Background" Value="Transparent"/>
+		</Style>
+
+
+		<Style Selector="Grid.icon-item:pointerover">
+			<Setter Property="Background" Value="#20000000"/>
+		</Style>
+		<Style Selector="Grid.icon-item.selected">
+			<Setter Property="Background" Value="#20000060"/>
+		</Style>
+		<Style Selector="Grid.icon-item.selected:pointerover">
+			<Setter Property="Background" Value="#40000060"/>
+		</Style>
+	</Window.Styles>
+
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:SelectIconVM />
+	</Design.DataContext>
+	<DockPanel>
+		<UniformGrid DockPanel.Dock="Bottom" Columns="2">
+			<Button HorizontalAlignment="Stretch" Margin="3" Background="LightGreen" Click="Button_Ok_Click" >
+				<TextBlock Text="{Binding WindowOk.Text}" HorizontalAlignment="Center"/>
+			</Button>
+			<Button HorizontalAlignment="Stretch" Margin="3" Background="LightCoral" Click="Button_Cancel_Click" >
+				<TextBlock Text="{Binding WindowCancel.Text}" HorizontalAlignment="Center"/>
+			</Button>
+		</UniformGrid>
+		<TextBox DockPanel.Dock="Top" Margin="3" Watermark="filter file name" Text="{Binding FilterForName}"/>
+		<ScrollViewer>
+			<ItemsRepeater ItemsSource="{Binding FilteredIcons}" Margin="10" HorizontalAlignment="Center">
+				<ItemsRepeater.Layout>
+					<UniformGridLayout MinColumnSpacing="10" MinRowSpacing="10" Orientation="Horizontal" />
+				</ItemsRepeater.Layout>
+				<ItemsRepeater.ItemTemplate>
+					<DataTemplate DataType="vm:SelectIconItemVM">
+						<Grid Classes="icon-item" Width="80" Height="120" RowDefinitions="auto,*"
+							  ToolTip.ShowDelay="100"
+							  ToolTip.Tip="{Binding Name}"
+							  Classes.selected="{Binding IsSelected}"
+							  PointerPressed="Grid_PointerPressed"
+							  >
+							<Border Background="DarkGray" HorizontalAlignment="Center">
+								<Image Width="64" Height="64" Source="{Binding, Converter={x:Static utils:SelectIconItemToBitmapConverter.Instance}}"/>
+							</Border>
+							<TextBlock Text="{Binding Name}" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Grid.Row="1"/>
+						</Grid>
+					</DataTemplate>
+				</ItemsRepeater.ItemTemplate>
+			</ItemsRepeater>
+		</ScrollViewer>
+	</DockPanel>
+
+
+</Window>

@@ -1,0 +1,168 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" Width="800" Height="550"
+		WindowStartupLocation="CenterOwner"
+		Title="{Binding Loc.WindowTitle.Text}"
+        x:Class="DetravRecipeCalculator.Views.ResourceEditorWindow"
+        xmlns:utils="using:DetravRecipeCalculator.Utils"
+        xmlns:vm="using:DetravRecipeCalculator.ViewModels"
+        xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+		x:Name="theWnd"
+        x:DataType="vm:RecipeVM">
+	<Window.Styles>
+		<Style Selector="Button.btn-hi">
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="Height" Value="32"/>
+			<Setter Property="Width" Value="32"/>
+			<Setter Property="Background" Value="Transparent"/>
+		</Style>
+		<Style Selector="Button.btn-hi Image">
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Height" Value="32"/>
+			<Setter Property="Width" Value="32"/>
+		</Style>
+
+		<Style Selector="Button.btn-hism">
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="Height" Value="16"/>
+			<Setter Property="Width" Value="16"/>
+			<Setter Property="Background" Value="Transparent"/>
+		</Style>
+		<Style Selector="Button.btn-hism Image">
+			<Setter Property="Margin" Value="0"/>
+			<Setter Property="Height" Value="16"/>
+			<Setter Property="Width" Value="16"/>
+		</Style>
+	</Window.Styles>
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:RecipeVM />
+	</Design.DataContext>
+	<DockPanel>
+		<UniformGrid DockPanel.Dock="Bottom" Columns="2">
+			<Button HorizontalAlignment="Stretch" Margin="3" Background="LightGreen" Click="Button_Ok_Click" >
+				<TextBlock Text="{Binding Loc.WindowOk.Text}" HorizontalAlignment="Center"/>
+			</Button>
+			<Button HorizontalAlignment="Stretch" Margin="3" Background="LightCoral" Click="Button_Cancel_Click" >
+				<TextBlock Text="{Binding Loc.WindowCancel.Text}" HorizontalAlignment="Center"/>
+			</Button>
+		</UniformGrid>
+		<Grid ColumnDefinitions="*,auto,*,auto,*">
+			<GridSplitter Grid.Column="1"/>
+			<GridSplitter Grid.Column="3"/>
+			<ScrollViewer Grid.Column="0">
+				<StackPanel Orientation="Vertical">
+					<TextBlock Text="{Binding Loc.Name.Text}" Margin="3"/>
+					<TextBox Watermark="Electrolizer for coal" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.NameTip.Text}" Text="{Binding Name}" />
+					<TextBlock Text="{Binding Loc.TimeToCraft.Text}" Margin="3"  />
+					<DockPanel  Margin="3">
+						<Button Margin="3 0 0 0" DockPanel.Dock="Right" Classes="btn-hi" Click="Button_ExpressionHelp_Click" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.TimeToCraftHelpTip.Text}" >
+							<Image Source="/Assets/icons/icons8-question-mark-32.png"/>
+						</Button>
+						<TextBox Watermark="3.14" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.TimeToCraftTip.Text}" Text="{Binding TimeToCraft}" />
+					</DockPanel>
+					<CheckBox Content="{Binding Loc.Enabled.Text}" HorizontalAlignment="Stretch" Margin="3" IsChecked="{Binding IsEnabled}"
+							  ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.EnabledTip.Text}"/>
+					<TextBlock Text="{Binding Loc.BackgroundColor.Text}" Margin="3"/>
+					<TextBox Watermark="#101010" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.BackgroundColorTip.Text}" Text="{Binding BackgroundColor}" />
+					<TextBlock Text="{Binding Loc.ForegroundColor.Text}" Margin="3"/>
+					<TextBox Watermark="#101010" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ForegroundColorTip.Text}" Text="{Binding ForegroundColor}" />
+					<TextBlock Text="{Binding Loc.Icon.Text}" Margin="3"/>
+					<Grid ColumnDefinitions="Auto,*">
+						<Border Background="DarkGray" Margin="3">
+							<Image Width="64" Height="64" Source="{Binding Icon, Converter={x:Static utils:ByteToBitmapConverter.Instance}}"/>
+						</Border>
+						<WrapPanel Grid.Column="1" Margin="3">
+							<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.SelectIcon.Text}" Click="Button_SelectIcon_Click" >
+								<Image Source="/Assets/icons/icons8-table-32.png"/>
+							</Button>
+							<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.OpenIcon.Text}" Click="Button_IconOpen_Click">
+								<Image Source="/Assets/icons/icons8-upload-32.png"/>
+							</Button>
+							<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.DeleteIcon.Text}" Click="Button_IconDelete_Click" >
+								<Image Source="/Assets/icons/icons8-delete-32.png"/>
+							</Button>
+						</WrapPanel>
+					</Grid>
+					<TextBlock Text="{Binding Loc.Note.Text}" Margin="3"/>
+					<TextBox Watermark="..." Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.NoteTip.Text}" AcceptsReturn="True" AcceptsTab="True" MinHeight="70" Text="{Binding Note}" />
+
+				</StackPanel>
+
+			</ScrollViewer>
+			<ScrollViewer Grid.Column="2">
+				<StackPanel>
+					<TextBlock Text="{Binding Loc.InputTitle.Text}" Margin="3"/>
+					<ItemsControl ItemsSource="{Binding Input}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate DataType="vm:ResourceValueVM">
+								<StackPanel Orientation="Vertical">
+									<Grid ColumnDefinitions="*,*,auto" Margin="3">
+										<AutoCompleteBox TextFilter="{Binding #theWnd.TextFilter}" ItemsSource="{Binding #theWnd.ResourceNames}" Grid.Column="0" Watermark="Coal" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.NameTip.Text}" Text="{Binding Name}" />
+										<TextBox Grid.Column="1" Margin="3 0 0 0" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ValueTip.Text}" Watermark="150" Text="{Binding Value}"/>
+										<UniformGrid Margin="3 0 0 0" Grid.Column="3" Columns="2">
+											<Button Classes="btn-hism" Click="Button_InputMoveUp_Click"  ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.MoveUpTip.Text}" >
+												<Image Source="/Assets/icons/icons8-up-32.png"/>
+											</Button>
+											<Button Classes="btn-hism" Click="Button_ExpressionHelp_Click" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.MoveDownTip.Text}" >
+												<Image Source="/Assets/icons/icons8-question-mark-32.png"/>
+											</Button>
+											<Button  Classes="btn-hism" Click="Button_InputMoveDown_Click" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.HelpTip.Text}">
+												<Image Source="/Assets/icons/icons8-down-32.png"/>
+											</Button>
+											<Button Classes="btn-hism" Click="Button_InputDeleteResource_Click" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.DeleteTip.Text}" >
+												<Image Source="/Assets/icons/icons8-delete-32.png" />
+											</Button>
+										</UniformGrid>
+									</Grid>
+								</StackPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+					<Button HorizontalAlignment="Stretch" Margin="3" Background="LightBlue" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.AddResourceTip.Text}" Click="Button_AddInput_Click">
+						<TextBlock Text="Add" HorizontalAlignment="Center"  />
+					</Button>
+				</StackPanel>
+			</ScrollViewer>
+			<ScrollViewer Grid.Column="4">
+				<StackPanel>
+					<TextBlock Text="{Binding Loc.OutputTitle.Text}" Margin="3"/>
+					<ItemsControl ItemsSource="{Binding Output}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate DataType="vm:ResourceValueVM">
+								<StackPanel Orientation="Vertical">
+									<Grid ColumnDefinitions="*,*,auto" Margin="3">
+										<AutoCompleteBox TextFilter="{Binding #theWnd.TextFilter}" ItemsSource="{Binding #theWnd.ResourceNames}" Grid.Column="0" Watermark="Coal" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.NameTip.Text}" Text="{Binding Name}"/>
+										<TextBox Grid.Column="1" Margin="3 0 0 0" Watermark="150"  ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ValueTip.Text}" Text="{Binding Value}"/>
+										<UniformGrid Margin="3 0 0 0" Grid.Column="3" Columns="2">
+											<Button Classes="btn-hism" Click="Button_OutputMoveUp_Click" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.MoveUpTip.Text}" >
+												<Image Source="/Assets/icons/icons8-up-32.png"/>
+											</Button>
+											<Button Classes="btn-hism" Click="Button_ExpressionHelp_Click" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.HelpTip.Text}" >
+												<Image Source="/Assets/icons/icons8-question-mark-32.png"/>
+											</Button>
+											<Button  Classes="btn-hism" Click="Button_OutputMoveDown_Click" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.MoveDownTip.Text}" >
+												<Image Source="/Assets/icons/icons8-down-32.png"/>
+											</Button>
+											<Button Classes="btn-hism" Click="Button_OutputDeleteResource_Click"  ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.DeleteTip.Text}" >
+												<Image Source="/Assets/icons/icons8-delete-32.png"/>
+											</Button>
+										</UniformGrid>
+									</Grid>
+								</StackPanel>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+					<Button HorizontalAlignment="Stretch" Margin="3" Background="LightBlue" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.AddResourceTip.Text}" Click="Button_AddOutput_Click">
+						<TextBlock Text="Add" HorizontalAlignment="Center"/>
+					</Button>
+				</StackPanel>
+			</ScrollViewer>
+		</Grid>
+	</DockPanel>
+</Window>

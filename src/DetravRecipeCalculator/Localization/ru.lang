@@ -86,3 +86,5 @@ __Resource_ConnectorColor=Цвет линии подключения:
 __Resource_ConnectorColorTip=Цвет, используемый для отрисовки линии подключения и контактов на узле.
 
 __SelectIcon_WindowTitle=Выберите иконку
+__SelectIcon_DownloadPrompt=Загрузить иконки
+__SelectIcon_DownloadText=Набор иконок не найден. Хотите скачать набор иконок?

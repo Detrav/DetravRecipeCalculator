@@ -10,11 +10,23 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.Utils
 {
-   
+
     public partial class Config
     {
-       
+
         public static Config Instance { get; set; } = Load();
+        public string AppDataDirectory { get; set; } =
+#if DEBUG
+            Environment.CurrentDirectory;
+#else
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DetravRecipeCalculator");
+#endif
+
+        public void CreateAppDataDirectoryIfNotExists()
+        {
+            if (!Directory.Exists(AppDataDirectory))
+                Directory.CreateDirectory(AppDataDirectory);
+        }
 
         public Config()
         {
@@ -23,7 +35,9 @@ namespace DetravRecipeCalculator.Utils
 
         public static Config Load()
         {
-            if (File.Exists("config.json"))
+
+
+            if (!Design.IsDesignMode && File.Exists("config.json"))
             {
                 var result = JsonSerializer.Deserialize<Config>(File.ReadAllText("config.json"), SourceGenerationContext.Default.Config);
                 if (result != null)
@@ -38,7 +52,8 @@ namespace DetravRecipeCalculator.Utils
         public void Save()
         {
             var text = JsonSerializer.Serialize(this, SourceGenerationContext.Default.Config);
-            File.WriteAllText("config.json", text);
+            CreateAppDataDirectoryIfNotExists();
+            File.WriteAllText(Path.Combine(AppDataDirectory, "config.json"), text);
         }
 
         public void SaveSate(Window window, string? customName = null)

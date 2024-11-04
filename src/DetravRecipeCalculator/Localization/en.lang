@@ -87,3 +87,5 @@ __Resource_ConnectorColorTip=Color used for drawing the connection line and pins
 
 
 __SelectIcon_WindowTitle=Select an icon
+__SelectIcon_DownloadPrompt=Download icons
+__SelectIcon_DownloadText=Icon pack not found. Do you want to download the icon pack?

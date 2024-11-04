@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DetravRecipeCalculator.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,6 +25,7 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private string? filterForName;
 
+
         partial void OnFilterForNameChanged(string? value)
         {
             RefreshFilters();
@@ -43,30 +45,46 @@ namespace DetravRecipeCalculator.ViewModels
 
         public SelectIconVM()
         {
-            var path = Path.GetFullPath("game-icons");
-            var len = path.Length + 1;
-
-            foreach (var file in Directory.GetFiles(path, "*.png", SearchOption.AllDirectories))
-            {
-                var filename = file.Substring(len);
-
-                filename = filename.Substring(0, filename.Length - 4);
-                filename = filename.Replace("/", " ").Replace("\\", " ");
-
-                var icon = new SelectIconItemVM();
-                icon.Path = file;
-                icon.Name = filename;
-
-                Icons.Add(icon);
-            }
 
             Icons.CollectionChanged += Icons_CollectionChanged;
-            RefreshFilters();
+            ReloadIcons();
+
         }
 
         private void Icons_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             RefreshFilters();
+        }
+
+        internal void ReloadIcons()
+        {
+
+            Icons.CollectionChanged -= Icons_CollectionChanged;
+            Icons.Clear();
+            try
+            {
+
+                Utils.Config.Instance.CreateAppDataDirectoryIfNotExists(); ;
+                var path = Path.GetFullPath(Utils.Config.Instance.AppDataDirectory);
+                var len = path.Length + 1;
+
+                foreach (var file in Directory.GetFiles(path, "*.png", SearchOption.AllDirectories))
+                {
+                    var filename = Path.GetFileNameWithoutExtension(file);
+                    var category = Path.GetFileName(Path.GetDirectoryName(file));
+
+                    var icon = new SelectIconItemVM();
+                    icon.Path = file;
+                    icon.Name = category + " " + filename;
+
+                    Icons.Add(icon);
+                }
+            }
+            finally
+            {
+                Icons.CollectionChanged += Icons_CollectionChanged;
+                RefreshFilters();
+            }
         }
     }
 

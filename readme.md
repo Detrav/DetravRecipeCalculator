@@ -70,3 +70,16 @@ Detrav Recipe Calculator is designed to simplify and elevate the process of craf
 
 Thank you to these resources for providing high-quality icons that enhance the usability and aesthetics of Detrav Recipe Calculator!
 
+
+## Changelog
+
+Simple changelog, you need to read from top to bottom.
+
+### Version 0.1
+
++ Init;
+
+### Current Version
+
+* Removed icon pack from repository;
++ Added icon pack downloading prompt on open select icon window;

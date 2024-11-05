@@ -85,7 +85,7 @@ Version 0.1
 
 + Initial release.
 
-Current Version
+Version 0.2
 ---------------
 
 * Removed icon pack from the repository.
@@ -97,4 +97,9 @@ Current Version
 + Added color filter for icons.
 + Added 3px corner radius for icons.
 + Added icon preview to listbox.
+
+Current Version
+---------------
+ 
++ Added prototype of node graph editor.
 ```

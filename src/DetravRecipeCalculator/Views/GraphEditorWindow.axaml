@@ -1,0 +1,23 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="DetravRecipeCalculator.Views.GraphEditorWindow"
+        Title="GraphEditorWindow"
+		xmlns:editor="clr-namespace:NodeEditor.Controls;assembly=NodeEditorAvalonia"
+		xmlns:utils="using:DetravRecipeCalculator.Utils"
+        xmlns:vm="using:DetravRecipeCalculator.ViewModels"
+        xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+		x:Name="theWnd"
+		x:DataType="vm:GraphEditorVM"
+		>
+	<Design.DataContext>
+		<vm:GraphEditorVM />
+	</Design.DataContext>
+	<Grid ColumnDefinitions="200,auto,*">
+		<GridSplitter Grid.Column="1"/>
+		<editor:Toolbox Template="{Binding Editor.Templates}" Grid.Column="0"/>
+		<editor:Editor DrawingSource="{Binding Editor.Drawing, FallbackValue={x:Null}}" Grid.Column="2" />
+	</Grid>
+</Window>

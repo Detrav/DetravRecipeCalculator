@@ -422,4 +422,23 @@ Detrav Recipe Calculator
             }
         }
     }
+
+    private async void Button_Step4_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var owner = TopLevel.GetTopLevel(this) as Window;
+
+        if (owner == null) 
+            return;
+
+        var vm = new GraphEditorVM();
+        var wnd = new GraphEditorWindow()
+        {
+            DataContext = vm,
+        };
+        
+        if (await wnd.ShowDialog<bool>(owner))
+        {
+
+        }
+    }
 }

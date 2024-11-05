@@ -7,5 +7,8 @@
     <Application.Styles>
         <FluentTheme />
 		<!--<StyleInclude Source="avares://MsBox.Avalonia.Markdown/Controls/MarkdownView.axaml" />-->
+
+		<StyleInclude Source="avares://NodeEditorAvalonia/Themes/NodeEditorTheme.axaml" />
+		
     </Application.Styles>
 </Application>

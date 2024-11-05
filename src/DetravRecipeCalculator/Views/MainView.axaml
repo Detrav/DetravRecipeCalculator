@@ -51,7 +51,7 @@
 		<StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Background="#10000000">
 			<TextBlock Text="{Binding Pipeline.DisplayName}" Margin="10 3" />
 		</StackPanel>
-		<Button Grid.Column="0" Margin="3" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" Background="LightGreen" >
+		<Button Grid.Column="0" Margin="3" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" Background="LightGreen" Click="Button_Step4_Click" >
 			<TextBlock Text="{Binding Loc.Step4.Text}" FontSize="16" HorizontalAlignment="Center"/>
 		</Button>
 

@@ -72,9 +72,6 @@ Thank you to these resources for providing high-quality icons that enhance the u
 
 ## ToDo
 
-2. Icon background preview (just background)
-3. Icon foreground in preview (screen? or mask?)
-4. Connection color preview (border brush?)
 5. Node preview in ceter tab
 6. Graph editor
 
@@ -96,4 +93,8 @@ Current Version
 + Added download prompt localization.
 + Added format description to color tooltip: #rgb, #argb, #rrggbb, #aarrggbb.
 + Added ability to paste icon from clipboard.
++ Added color preview for background image, foreground image, and connection color.
++ Added color filter for icons.
++ Added 3px corner radius for icons.
++ Added icon preview to listbox.
 ```

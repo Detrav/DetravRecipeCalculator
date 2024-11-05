@@ -1,8 +1,10 @@
 ﻿using Avalonia.Controls.Primitives;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
 using MsBox.Avalonia.Enums;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,76 +15,126 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.ViewModels
 {
-
     public class RecipeModelLocalization
     {
         public static RecipeModelLocalization Instance { get; } = new RecipeModelLocalization();
 
-        public XLocItem WindowTitle { get; } = new XLocItem("__Recipe_WindowTitle");
-        public XLocItem WindowOk { get; } = new XLocItem("__Dialog_BtnOk");
-        public XLocItem WindowCancel { get; } = new XLocItem("__Dialog_BtnCancel");
-
-        public XLocItem Name { get; } = new XLocItem("__Recipe_Name");
-        public XLocItem NameTip { get; } = new XLocItem("__Recipe_NameTip");
-        public XLocItem TimeToCraft { get; } = new XLocItem("__Recipe_TimeToCraft");
-        public XLocItem TimeToCraftTip { get; } = new XLocItem("__Recipe_TimeToCraftTip");
-
-        public XLocItem Enabled { get; } = new XLocItem("__Recipe_Enabled");
-        public XLocItem EnabledTip { get; } = new XLocItem("__Recipe_EnabledTip");
+        public XLocItem AddResourceTip { get; } = new XLocItem("__Recipe_AddResourceTip");
         public XLocItem BackgroundColor { get; } = new XLocItem("__Recipe_BackgroundColor");
         public XLocItem BackgroundColorTip { get; } = new XLocItem("__Recipe_BackgroundColorTip");
+        public XLocItem DeleteIcon { get; } = new XLocItem("__Recipe_DeleteIcon");
+        public XLocItem Enabled { get; } = new XLocItem("__Recipe_Enabled");
+        public XLocItem EnabledTip { get; } = new XLocItem("__Recipe_EnabledTip");
         public XLocItem ForegroundColor { get; } = new XLocItem("__Recipe_ForegroundColor");
         public XLocItem ForegroundColorTip { get; } = new XLocItem("__Recipe_ForegroundColorTip");
+        public XLocItem Icon { get; } = new XLocItem("__Recipe_Icon");
+        public XLocItem InputTitle { get; } = new XLocItem("__Recipe_InputTitle");
+        public XLocItem IsDesabled { get; } = new XLocItem("__Recipe_IsDisabled");
+        public XLocItem IsEnabled { get; } = new XLocItem("__Recipe_IsEnabled");
+        public XLocItem Name { get; } = new XLocItem("__Recipe_Name");
+        public XLocItem NameTip { get; } = new XLocItem("__Recipe_NameTip");
         public XLocItem Note { get; } = new XLocItem("__Recipe_Note");
         public XLocItem NoteTip { get; } = new XLocItem("__Recipe_NoteTip");
-
-        public XLocItem TimeToCraftHelpTip { get; } = new XLocItem("__Recipe_TimeToCraftHelpTip");
-        public XLocItem AddResourceTip { get; } = new XLocItem("__Recipe_AddResourceTip");
-
-
-        public XLocItem InputTitle { get; } = new XLocItem("__Recipe_InputTitle");
-        public XLocItem OutputTitle { get; } = new XLocItem("__Recipe_OutputTitle");
-
-        public XLocItem IsEnabled { get; } = new XLocItem("__Recipe_IsEnabled");
-        public XLocItem IsDesabled { get; } = new XLocItem("__Recipe_IsDisabled");
-        public XLocItem Icon { get; } = new XLocItem("__Recipe_Icon");
-
-        public XLocItem SelectIcon { get; } = new XLocItem("__Recipe_SelectIcon");
         public XLocItem OpenIcon { get; } = new XLocItem("__Recipe_OpenIcon");
-        public XLocItem DeleteIcon { get; } = new XLocItem("__Recipe_DeleteIcon");
+        public XLocItem OutputTitle { get; } = new XLocItem("__Recipe_OutputTitle");
         public XLocItem PasteIcon { get; } = new XLocItem("__Recipe_PasteIcon");
-
-
+        public XLocItem SelectIcon { get; } = new XLocItem("__Recipe_SelectIcon");
+        public XLocItem TimeToCraft { get; } = new XLocItem("__Recipe_TimeToCraft");
+        public XLocItem TimeToCraftHelpTip { get; } = new XLocItem("__Recipe_TimeToCraftHelpTip");
+        public XLocItem TimeToCraftTip { get; } = new XLocItem("__Recipe_TimeToCraftTip");
+        public XLocItem WindowCancel { get; } = new XLocItem("__Dialog_BtnCancel");
+        public XLocItem WindowOk { get; } = new XLocItem("__Dialog_BtnOk");
+        public XLocItem WindowTitle { get; } = new XLocItem("__Recipe_WindowTitle");
     }
 
     public partial class RecipeVM : ViewModelBase, IUndoRedoObject
     {
         [ObservableProperty]
-        private string? name;
-        [ObservableProperty]
-        private bool isEnabled;
-        [ObservableProperty]
-        private string? timeToCraft;
-        [ObservableProperty]
         private string? backgroundColor;
+
+        [ObservableProperty]
+        private Color? backgroundColorValue = Colors.DarkGray;
+
         [ObservableProperty]
         private string? foregroundColor;
-        [ObservableProperty]
-        private string? note;
-        [ObservableProperty]
-        private bool saved;
 
-        public ObservableCollection<ResourceValueVM> Input { get; } = new ObservableCollection<ResourceValueVM>();
-        public ObservableCollection<ResourceValueVM> Output { get; } = new ObservableCollection<ResourceValueVM>();
+        [ObservableProperty]
+        private Color? foregroundColorValue = Colors.White;
 
-        public RecipeModelLocalization Loc { get; } = RecipeModelLocalization.Instance;
         [ObservableProperty]
         private byte[]? icon;
 
+        [ObservableProperty]
+        private bool isEnabled;
+
+        [ObservableProperty]
+        private string? name;
+
+        [ObservableProperty]
+        private string? note;
+
+        [ObservableProperty]
+        private bool saved;
+
+        [ObservableProperty]
+        private string? timeToCraft;
+
+        [ObservableProperty]
+        private byte[]? iconFiltered;
+
+        partial void OnBackgroundColorChanged(string? value)
+        {
+            BackgroundColorValue = DetravColorHelper.GetColorFormString(BackgroundColor, Colors.DarkGray);
+        }
+
+        partial void OnForegroundColorChanged(string? value)
+        {
+            ForegroundColorValue = DetravColorHelper.GetColorFormString(ForegroundColor, Colors.White);
+        }
+
+        partial void OnForegroundColorValueChanged(Color? value)
+        {
+            UpdateBitmap();
+        }
+
+        partial void OnIconChanged(byte[]? value)
+        {
+            UpdateBitmap();
+        }
+
         public RecipeVM()
         {
-
         }
+
+        private void UpdateBitmap()
+        {
+            if (Icon == null || Icon.Length < 4 || ForegroundColorValue == Colors.White)
+            {
+                IconFiltered = Icon;
+            }
+            else
+            {
+                try
+                {
+                    var c = ForegroundColorValue.GetValueOrDefault();
+                    using var filter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(new SKColor(c.R, c.G, c.B, c.A), SKBlendMode.Modulate));
+                    using var bmp = SKBitmap.Decode(Icon);
+                    using var img = SKImage.FromBitmap(bmp);
+                    using var img2 = img.ApplyImageFilter(filter, new SKRectI(0, 0, img.Width, img.Height), new SKRectI(0, 0, img.Width, img.Height), out SKRectI subSet, out SKPoint point);
+                    using var data = img2.Encode(SKEncodedImageFormat.Png, 90);
+                    IconFiltered = data.ToArray();
+                }
+                catch
+                {
+                    IconFiltered = null;
+                }
+            }
+        }
+
+        public ObservableCollection<ResourceValueVM> Input { get; } = new ObservableCollection<ResourceValueVM>();
+        public RecipeModelLocalization Loc { get; } = RecipeModelLocalization.Instance;
+        public ObservableCollection<ResourceValueVM> Output { get; } = new ObservableCollection<ResourceValueVM>();
+
         public void RestoreState(object state)
         {
             if (state is RecipeModel model)
@@ -142,8 +194,6 @@ namespace DetravRecipeCalculator.ViewModels
                 }
             }
 
-
-
             return model;
         }
 
@@ -174,6 +224,5 @@ namespace DetravRecipeCalculator.ViewModels
 
         //    return sb.ToString();
         //}
-
     }
 }

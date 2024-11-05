@@ -34,4 +34,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Update="Views\RecipeEditorWindow.axaml.cs">
+      <DependentUpon>RecipeEditorWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

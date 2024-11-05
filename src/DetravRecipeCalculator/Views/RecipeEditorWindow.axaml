@@ -5,7 +5,7 @@
         mc:Ignorable="d" Width="800" Height="550"
 		WindowStartupLocation="CenterOwner"
 		Title="{Binding Loc.WindowTitle.Text}"
-        x:Class="DetravRecipeCalculator.Views.ResourceEditorWindow"
+        x:Class="DetravRecipeCalculator.Views.RecipeEditorWindow"
         xmlns:utils="using:DetravRecipeCalculator.Utils"
         xmlns:vm="using:DetravRecipeCalculator.ViewModels"
         xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
@@ -69,13 +69,30 @@
 					<CheckBox Content="{Binding Loc.Enabled.Text}" HorizontalAlignment="Stretch" Margin="3" IsChecked="{Binding IsEnabled}"
 							  ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.EnabledTip.Text}"/>
 					<TextBlock Text="{Binding Loc.BackgroundColor.Text}" Margin="3"/>
-					<TextBox Watermark="#101010" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.BackgroundColorTip.Text}" Text="{Binding BackgroundColor}" />
+					<DockPanel Margin="3">
+						<Border Height="32" Width="32" Margin="3 0 0 0" DockPanel.Dock="Right" CornerRadius="3" BorderThickness="1" BorderBrush="#20000000" >
+							<Border.Background>
+								<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
+							</Border.Background>
+						</Border>
+						<TextBox Watermark="#101010" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.BackgroundColorTip.Text}" Text="{Binding BackgroundColor}" />
+					</DockPanel>
 					<TextBlock Text="{Binding Loc.ForegroundColor.Text}" Margin="3"/>
-					<TextBox Watermark="#101010" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ForegroundColorTip.Text}" Text="{Binding ForegroundColor}" />
+					<DockPanel Margin="3">
+						<Border Height="32" Width="32" Margin="3 0 0 0" DockPanel.Dock="Right" CornerRadius="3" BorderThickness="1" BorderBrush="#20000000" >
+							<Border.Background>
+								<SolidColorBrush Color="{Binding ForegroundColorValue}"/>
+							</Border.Background>
+						</Border>
+						<TextBox Watermark="#101010" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ForegroundColorTip.Text}" Text="{Binding ForegroundColor}" />
+					</DockPanel>
 					<TextBlock Text="{Binding Loc.Icon.Text}" Margin="3"/>
 					<Grid ColumnDefinitions="Auto,*">
-						<Border Background="DarkGray" Margin="3">
-							<Image Width="64" Height="64" Source="{Binding Icon, Converter={x:Static utils:ByteToBitmapConverter.Instance}}"/>
+						<Border Margin="3" CornerRadius="3">
+							<Border.Background>
+								<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
+							</Border.Background>
+							<Image Width="64" Height="64" Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance}}"/>
 						</Border>
 						<WrapPanel Grid.Column="1" Margin="3">
 							<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.SelectIcon.Text}" Click="Button_SelectIcon_Click" >

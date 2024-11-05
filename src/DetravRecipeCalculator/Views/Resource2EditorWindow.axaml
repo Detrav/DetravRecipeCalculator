@@ -56,8 +56,11 @@
 			<StackPanel Orientation="Vertical">
 				<TextBlock Text="{Binding Loc.Icon.Text}" Margin="3"/>
 				<Grid ColumnDefinitions="Auto,*">
-					<Border Background="DarkGray" Margin="3">
-						<Image Width="64" Height="64" Source="{Binding Icon, Converter={x:Static utils:ByteToBitmapConverter.Instance}}"/>
+					<Border Margin="3" CornerRadius="3">
+						<Border.Background>
+							<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
+						</Border.Background>
+						<Image Width="64" Height="64" Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance}}"/>
 					</Border>
 					<WrapPanel Grid.Column="1" Margin="3">
 						<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.SelectIcon.Text}" Click="Button_SelectIcon_Click"  >
@@ -77,11 +80,32 @@
 				<TextBlock Text="{Binding Loc.Name.Text}" Margin="3"/>
 				<TextBox Watermark="Coal" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.NameTip.Text}" Text="{Binding Name}" />
 				<TextBlock Text="{Binding Loc.BackgroundColor.Text}" Margin="3"/>
-				<TextBox Watermark="#101010" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.BackgroundColorTip.Text}" Text="{Binding BackgroundColor}" />
+				<DockPanel Margin="3">
+					<Border Height="32" Width="32" Margin="3 0 0 0" DockPanel.Dock="Right" CornerRadius="3" BorderThickness="1" BorderBrush="#20000000" >
+						<Border.Background>
+							<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
+						</Border.Background>
+					</Border>
+					<TextBox Watermark="#101010" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.BackgroundColorTip.Text}" Text="{Binding BackgroundColor}" />
+				</DockPanel>
 				<TextBlock Text="{Binding Loc.ForegroundColor.Text}" Margin="3"/>
-				<TextBox Watermark="#101010" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ForegroundColorTip.Text}" Text="{Binding ForegroundColor}" />
-				<TextBlock Text="{Binding Loc.ConnectorColor.Text}" Margin="3"/>
-				<TextBox Watermark="#101010" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ConnectorColorTip.Text}" Text="{Binding ConnectorColor}" />
+				<DockPanel Margin="3">
+					<Border Height="32" Width="32"  Margin="3 0 0 0" DockPanel.Dock="Right" CornerRadius="3" BorderThickness="1" BorderBrush="#20000000" >
+						<Border.Background>
+							<SolidColorBrush Color="{Binding ForegroundColorValue}"/>
+						</Border.Background>
+					</Border>
+					<TextBox Watermark="#101010" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ForegroundColorTip.Text}" Text="{Binding ForegroundColor}" />
+				</DockPanel>
+				<TextBlock Text="{Binding Loc.ConnectorColor.Text}"/>
+				<DockPanel Margin="3">
+					<Border Height="32" Width="32" Margin="3 0 0 0" DockPanel.Dock="Right" CornerRadius="3" BorderThickness="1" BorderBrush="#20000000" >
+						<Border.Background>
+							<SolidColorBrush Color="{Binding ConnectorColorValue}"/>
+						</Border.Background>
+					</Border>
+					<TextBox Watermark="#101010" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ConnectorColorTip.Text}" Text="{Binding ConnectorColor}" />
+				</DockPanel>
 			</StackPanel>
 		</ScrollViewer>
 

@@ -15,12 +15,12 @@ using System.Linq;
 
 namespace DetravRecipeCalculator.Views;
 
-public partial class ResourceEditorWindow : Window
+public partial class RecipeEditorWindow : Window
 {
 
     public IEnumerable<string>? ResourceNames { get; set; }
 
-    public ResourceEditorWindow()
+    public RecipeEditorWindow()
     {
         InitializeComponent();
     }

@@ -225,7 +225,7 @@ Detrav Recipe Calculator
             var item = new RecipeVM();
             item.IsEnabled = true;
 
-            ResourceEditorWindow wnd = new ResourceEditorWindow();
+            RecipeEditorWindow wnd = new RecipeEditorWindow();
             wnd.ResourceNames = vm.GetAllResourceNames();
             wnd.DataContext = item;
 
@@ -250,7 +250,7 @@ Detrav Recipe Calculator
             var item = new RecipeVM();
             item.RestoreState(vm.Pipeline.SelectedRecipe.SaveState());
 
-            ResourceEditorWindow wnd = new ResourceEditorWindow();
+            RecipeEditorWindow wnd = new RecipeEditorWindow();
             wnd.ResourceNames = vm.GetAllResourceNames();
             wnd.DataContext = item;
 

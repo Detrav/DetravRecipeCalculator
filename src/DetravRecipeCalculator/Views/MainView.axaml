@@ -64,7 +64,15 @@
 			<ListBox  Grid.Column="0" Grid.Row="3" Margin="3" ItemsSource="{Binding Pipeline.RecipesFiltered}" SelectedItem="{Binding Pipeline.SelectedRecipe}" SelectionMode="AlwaysSelected">
 				<ListBox.ItemTemplate>
 					<DataTemplate DataType="vm:RecipeVM">
-						<TextBlock Text="{Binding Name}" Foreground="{Binding IsEnabled, Converter={x:Static utils:EnabledToColorConverter.Instance}}"/>
+						<DockPanel>
+							<Border DockPanel.Dock="Left" Margin="0 0 3 0" VerticalAlignment="Center" CornerRadius="3">
+								<Border.Background>
+									<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
+								</Border.Background>
+								<Image Width="16" Height="16" Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance} }"/>
+							</Border>
+							<TextBlock Text="{Binding Name}" Foreground="{Binding IsEnabled, Converter={x:Static utils:EnabledToColorConverter.Instance}}" VerticalAlignment="Center" LineHeight="16"/>
+						</DockPanel>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>
@@ -92,8 +100,14 @@
 			<ScrollViewer Grid.Column="2" Grid.Row="2" Grid.RowSpan="3" IsVisible="{Binding Pipeline.SelectedRecipe, FallbackValue=false, Converter={x:Static ObjectConverters.IsNotNull}}">
 				<StackPanel Orientation="Vertical" >
 
-					<Border Background="DarkGray" Margin="3" HorizontalAlignment="Left">
-						<Image Width="64" Height="64" Source="{Binding  Pipeline.SelectedRecipe.Icon, Converter={x:Static utils:ByteToBitmapConverter.Instance}}"/>
+
+
+					<Border Margin="3" HorizontalAlignment="Left" CornerRadius="3" >
+						<Border.Background>
+							<SolidColorBrush Color="{Binding Pipeline.SelectedRecipe.BackgroundColorValue}"/>
+						</Border.Background>
+
+						<Image Width="64" Height="64" Source="{Binding  Pipeline.SelectedRecipe.IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance}}"/>
 					</Border>
 
 					<TextBlock Margin="3">
@@ -149,7 +163,15 @@
 			<ListBox Grid.Column="4" Grid.Row="3"  Margin="3" ItemsSource="{Binding Pipeline.ResourcesFiltered}" SelectedItem="{Binding Pipeline.SelectedResource}" SelectionMode="AlwaysSelected">
 				<ListBox.ItemTemplate>
 					<DataTemplate DataType="vm:ResourceVM">
-						<TextBlock Text="{Binding Name}" Foreground="{Binding IsEnabled, Converter={x:Static utils:EnabledToColorConverter.Instance}}"/>
+						<DockPanel>
+							<Border DockPanel.Dock="Left" Margin="0 0 3 0" VerticalAlignment="Center" CornerRadius="3">
+								<Border.Background>
+									<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
+								</Border.Background>
+								<Image Width="16" Height="16" Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance} }"/>
+							</Border>
+							<TextBlock Text="{Binding Name}" Foreground="{Binding IsEnabled, Converter={x:Static utils:EnabledToColorConverter.Instance}}" LineHeight="16"/>
+						</DockPanel>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>

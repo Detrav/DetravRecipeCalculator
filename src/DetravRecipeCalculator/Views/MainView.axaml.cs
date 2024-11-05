@@ -430,15 +430,19 @@ Detrav Recipe Calculator
         if (owner == null) 
             return;
 
-        var vm = new GraphEditorVM();
-        var wnd = new GraphEditorWindow()
-        {
-            DataContext = vm,
-        };
-        
-        if (await wnd.ShowDialog<bool>(owner))
+        if (DataContext is MainViewModel mvm && mvm.Pipeline != null)
         {
 
+            var vm = new GraphEditorVM(mvm.Pipeline);
+            var wnd = new GraphEditorWindow()
+            {
+                DataContext = vm,
+            };
+
+            if (await wnd.ShowDialog<bool>(owner))
+            {
+
+            }
         }
     }
 }

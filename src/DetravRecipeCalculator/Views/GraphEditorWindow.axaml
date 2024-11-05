@@ -17,7 +17,7 @@
 	</Design.DataContext>
 	<Grid ColumnDefinitions="200,auto,*">
 		<GridSplitter Grid.Column="1"/>
-		<editor:Toolbox Template="{Binding Editor.Templates}" Grid.Column="0"/>
-		<editor:Editor DrawingSource="{Binding Editor.Drawing, FallbackValue={x:Null}}" Grid.Column="2" />
+		<editor:Toolbox TemplatesSource="{Binding Editor.Templates}" Grid.Column="0"/>
+		<editor:Editor DataContext="{Binding Editor.Drawing}" DrawingSource="{Binding}" Grid.Column="2" />
 	</Grid>
 </Window>

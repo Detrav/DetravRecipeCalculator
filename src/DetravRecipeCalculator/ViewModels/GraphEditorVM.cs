@@ -1,5 +1,6 @@
 ﻿using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DetravRecipeCalculator.ViewModels.NodeEditorVMs;
 using NodeEditor.Model;
 using NodeEditor.Mvvm;
 using System;
@@ -18,25 +19,47 @@ namespace DetravRecipeCalculator.ViewModels
 
         public GraphEditorVM()
         {
-            var drawing = Editor.Drawing = new DrawingNodeViewModel();
-            var settings = Editor.Drawing.Settings = new DrawingNodeSettingsViewModel();
-            settings.SnapX = 15;
-            settings.SnapY = 15;
-            settings.EnableSnap = true;
-            settings.EnableGrid = true;
-            settings.EnableMultiplePinConnections = true;
-            settings.EnableGrid = true;
-            settings.GridCellHeight = 15;
-            settings.GridCellWidth = 15;
+            Editor.Factory = new GraphEditorFactoryVM();
+            Editor.Drawing = Editor.Factory.CreateDrawing();
+            Editor.Templates = Editor.Factory.CreateTemplates();
+        }
 
-            drawing.Name = "test";
-            drawing.X = 0;
-            drawing.Y = 0;
-            drawing.Width = 9000;
-            drawing.Height = 6000;
-            drawing.Nodes = new ObservableCollection<INode>();
-            drawing.Connectors = new ObservableCollection<IConnector>();
+        public GraphEditorVM(PipelineVM pipeline)
+            : this()
+        {
+            foreach (var item in pipeline.Recipes)
+            {
+                if (item.IsEnabled)
+                {
+                    var template = new NodeTemplateViewModel();
+                    Editor.Templates!.Add(template);
 
+                    template.Title = item.Name;
+                    var node = new NodeViewModel();
+
+                    //node.Name = item.Name;
+                    node.Width = 60;
+                    node.Height = 60;
+
+                    node.Content = item.Name;
+
+                    int i = 0;
+
+                    foreach (var inputResource in item.Input)
+                    {
+                        node.AddPin(0, 15 * i, 15, 15, PinAlignment.Left, inputResource.Name);
+                        i++;
+                    }
+
+                    foreach (var outputResource in item.Output)
+                    {
+                        node.AddPin(10, 15 * i, 15, 15, PinAlignment.Right, outputResource.Name);
+                        i++;
+                    }
+
+                    template.Preview = template.Template = node;
+                }
+            }
         }
 
     }

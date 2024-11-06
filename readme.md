@@ -72,8 +72,18 @@ Thank you to these resources for providing high-quality icons that enhance the u
 
 ## ToDo
 
-5. Node preview in ceter tab
+
 6. Graph editor
+7. Node serialization
+8. Resource icons
+9. Connections
+10. Connections color
+11. Calculation
+12. tier switch with icon
+13. node switch with icon
+14. hide show additional info button
+15. shortcut
+16. localization
 
 ## Changelog
 
@@ -102,4 +112,5 @@ Current Version
 ---------------
  
 + Added prototype of node graph editor.
++ Added node preview in the middle column with clickable functionality, allowing future calculation previews.
 ```

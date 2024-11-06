@@ -14,10 +14,13 @@ namespace DetravRecipeCalculator.Models
         public string? TimeToCraft { get;  set; }
         public bool IsEnabled { get;  set; }
         public string? Name { get;  set; }
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public List<ResourceValueModel> Input { get; } = new List<ResourceValueModel>();
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public List<ResourceValueModel> Output { get; } = new List<ResourceValueModel>();
         public string? BackgroundColor { get;  set; }
         public string? ForegroundColor { get;  set; }
         public byte[]? Icon { get; set; }
+        public string? Id { get; set; }
     }
 }

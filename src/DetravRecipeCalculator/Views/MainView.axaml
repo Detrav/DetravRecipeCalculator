@@ -1,196 +1,285 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:DetravRecipeCalculator.ViewModels"
-			 xmlns:utils="using:DetravRecipeCalculator.Utils"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="DetravRecipeCalculator.Views.MainView"
-			 Focusable="True"
-             x:DataType="vm:MainViewModel">
-	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-		<vm:MainViewModel />
-	</Design.DataContext>
+<UserControl
+    x:Class="DetravRecipeCalculator.Views.MainView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="using:DetravRecipeCalculator.Utils"
+    xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+    xmlns:vm="clr-namespace:DetravRecipeCalculator.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:MainViewModel"
+    Focusable="True"
+    mc:Ignorable="d">
+    <Design.DataContext>
+        <!--
+            This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+        -->
+        <vm:MainViewModel />
+    </Design.DataContext>
 
-	<UserControl.Styles>
-		<Style Selector="Button.btn-icon">
-			<Setter Property="Margin" Value="3"/>
-			<Setter Property="Padding" Value="0"/>
-		</Style>
-		<Style Selector="Button.btn-icon Image">
-			<Setter Property="Width" Value="32"/>
-			<Setter Property="Height" Value="32"/>
-		</Style>
-	</UserControl.Styles>
+    <UserControl.Styles>
+        <Style Selector="Button.btn-icon">
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style Selector="Button.btn-icon Image">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+        </Style>
+    </UserControl.Styles>
 
-	<DockPanel>
-		<Menu DockPanel.Dock="Top">
-			<MenuItem Header="{Binding Menu.File.Text}" >
-				<MenuItem Header="{Binding Menu.File_New.Text}" Click="MenuItem_New_Click" />
-				<Separator/>
-				<MenuItem Header="{Binding Menu.File_Open.Text}" Click="MenuItem_Open_Click" />
-				<MenuItem Header="{Binding Menu.File_Save.Text}" Click="MenuItem_Save_Click" IsEnabled="{Binding !Pipeline.Saved, FallbackValue=false}" />
-				<MenuItem Header="{Binding Menu.File_SaveAs.Text}" Click="MenuItem_SaveAs_Click" IsEnabled="{Binding Pipeline, Converter={x:Static ObjectConverters.IsNotNull}}" />
-				<Separator/>
-				<MenuItem Header="{Binding Menu.File_Exit.Text}" Click="MenuItem_Exit_Click" />
-			</MenuItem>
-			<MenuItem Header="{Binding Menu.Edit.Text}">
-				<MenuItem Header="{Binding Menu.Edit_Undo.Text}" IsEnabled="{Binding Pipeline.UndoRedo.CanUndo, FallbackValue=false}" Click="MenuItem_Undo_Click" />
-				<MenuItem Header="{Binding Menu.Edit_Redo.Text}" IsEnabled="{Binding Pipeline.UndoRedo.CanRedo, FallbackValue=false}" Click="MenuItem_Redo_Click" />
-			</MenuItem>
-			<MenuItem Header="{Binding Menu.Tools.Text}" >
-				<MenuItem x:Name="miLanguages" Header="{Binding Menu.Tools_Language.Text}" />
-			</MenuItem>
-			<MenuItem Header="{Binding Menu.Help.Text}" >
-				<MenuItem Header="{Binding Menu.Help_About.Text}" Click="MenuItem_About_Click" />
-			</MenuItem>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="{Binding Menu.File.Text}">
+                <MenuItem Click="MenuItem_New_Click" Header="{Binding Menu.File_New.Text}" />
+                <Separator />
+                <MenuItem Click="MenuItem_Open_Click" Header="{Binding Menu.File_Open.Text}" />
+                <MenuItem
+                    Click="MenuItem_Save_Click"
+                    Header="{Binding Menu.File_Save.Text}"
+                    IsEnabled="{Binding !Pipeline.Saved, FallbackValue=false}" />
+                <MenuItem
+                    Click="MenuItem_SaveAs_Click"
+                    Header="{Binding Menu.File_SaveAs.Text}"
+                    IsEnabled="{Binding Pipeline, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                <Separator />
+                <MenuItem Click="MenuItem_Exit_Click" Header="{Binding Menu.File_Exit.Text}" />
+            </MenuItem>
+            <MenuItem Header="{Binding Menu.Edit.Text}">
+                <MenuItem
+                    Click="MenuItem_Undo_Click"
+                    Header="{Binding Menu.Edit_Undo.Text}"
+                    IsEnabled="{Binding Pipeline.UndoRedo.CanUndo, FallbackValue=false}" />
+                <MenuItem
+                    Click="MenuItem_Redo_Click"
+                    Header="{Binding Menu.Edit_Redo.Text}"
+                    IsEnabled="{Binding Pipeline.UndoRedo.CanRedo, FallbackValue=false}" />
+            </MenuItem>
+            <MenuItem Header="{Binding Menu.Tools.Text}">
+                <MenuItem x:Name="miLanguages" Header="{Binding Menu.Tools_Language.Text}" />
+            </MenuItem>
+            <MenuItem Header="{Binding Menu.Help.Text}">
+                <MenuItem Click="MenuItem_About_Click" Header="{Binding Menu.Help_About.Text}" />
+            </MenuItem>
 
-		</Menu>
-		<StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" Background="#10000000">
-			<TextBlock Text="{Binding Pipeline.DisplayName}" Margin="10 3" />
-		</StackPanel>
-		<Button Grid.Column="0" Margin="3" DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" Background="LightGreen" Click="Button_Step4_Click" >
-			<TextBlock Text="{Binding Loc.Step4.Text}" FontSize="16" HorizontalAlignment="Center"/>
-		</Button>
+        </Menu>
+        <StackPanel
+            Background="#10000000"
+            DockPanel.Dock="Bottom"
+            Orientation="Horizontal">
+            <TextBlock Margin="10,3" Text="{Binding Pipeline.DisplayName}" />
+        </StackPanel>
+        <Button
+            Grid.Column="0"
+            Margin="3"
+            HorizontalAlignment="Stretch"
+            Background="LightGreen"
+            Click="Button_Step4_Click"
+            DockPanel.Dock="Bottom">
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="16"
+                Text="{Binding Loc.Step4.Text}" />
+        </Button>
 
-		<Grid ColumnDefinitions="*,auto,*,auto,*" RowDefinitions="auto,auto,auto,*, auto" IsEnabled="{Binding Pipeline, Converter={x:Static ObjectConverters.IsNotNull}}">
-			<GridSplitter Grid.Column="1" Grid.RowSpan="5"/>
-			<GridSplitter Grid.Column="3" Grid.RowSpan="5"/>
-			<TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Loc.Step1.Text}" TextWrapping="Wrap"  FontSize="16" Margin="3"/>
+        <Grid
+            ColumnDefinitions="*,auto,*,auto,*"
+            IsEnabled="{Binding Pipeline, Converter={x:Static ObjectConverters.IsNotNull}}"
+            RowDefinitions="auto,auto,auto,*, auto">
+            <GridSplitter Grid.RowSpan="5" Grid.Column="1" />
+            <GridSplitter Grid.RowSpan="5" Grid.Column="3" />
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="3"
+                FontSize="16"
+                Text="{Binding Loc.Step1.Text}"
+                TextWrapping="Wrap" />
 
-			<TextBox Grid.Column="0" Grid.Row="2" Margin="3" Watermark="Filter" Text="{Binding Pipeline.FilterForRecipes}" />
-			<ListBox  Grid.Column="0" Grid.Row="3" Margin="3" ItemsSource="{Binding Pipeline.RecipesFiltered}" SelectedItem="{Binding Pipeline.SelectedRecipe}" SelectionMode="AlwaysSelected">
-				<ListBox.ItemTemplate>
-					<DataTemplate DataType="vm:RecipeVM">
-						<DockPanel>
-							<Border DockPanel.Dock="Left" Margin="0 0 3 0" VerticalAlignment="Center" CornerRadius="3">
-								<Border.Background>
-									<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
-								</Border.Background>
-								<Image Width="16" Height="16" Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance} }"/>
-							</Border>
-							<TextBlock Text="{Binding Name}" Foreground="{Binding IsEnabled, Converter={x:Static utils:EnabledToColorConverter.Instance}}" VerticalAlignment="Center" LineHeight="16"/>
-						</DockPanel>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
-			<WrapPanel Grid.Column="0" Grid.Row="4" >
-				<Button Classes="btn-icon" ToolTip.Tip="{Binding Loc.Create.Text}" ToolTip.ShowDelay="100" Click="Button_AddRecipe_Click" >
-					<Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-add-32.png"/>
-				</Button>
-				<Button Classes="btn-icon" ToolTip.Tip="{Binding Loc.Edit.Text}" ToolTip.ShowDelay="100" Click="Button_EditRecipe_Click"  IsEnabled="{Binding Pipeline.SelectedRecipe, Converter={x:Static ObjectConverters.IsNotNull}}" >
-					<Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-edit-32.png"/>
-				</Button>
-				<Button Classes="btn-icon" ToolTip.Tip="{Binding Loc.Delete.Text}" ToolTip.ShowDelay="100" Click="Button_DeleteRecipe_Click"   IsEnabled="{Binding Pipeline.SelectedRecipe, Converter={x:Static ObjectConverters.IsNotNull}}" >
-					<Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-delete-32.png"/>
-				</Button>
-				<Button Classes="btn-icon" ToolTip.Tip="{Binding Loc.EnableDisable.Text}" ToolTip.ShowDelay="100" Click="Button_EnableDisableRecipe_Click"   IsEnabled="{Binding Pipeline.SelectedRecipe, Converter={x:Static ObjectConverters.IsNotNull}}" >
-					<Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-ok-32.png"/>
-				</Button>
-			</WrapPanel>
+            <TextBox
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="3"
+                Text="{Binding Pipeline.FilterForRecipes}"
+                Watermark="Filter" />
+            <ListBox
+                Grid.Row="3"
+                Grid.Column="0"
+                Margin="3"
+                x:DataType="vm:PipelineVM"
+                DataContext="{Binding Pipeline}"
+                ItemsSource="{Binding RecipesFiltered}"
+                SelectedItem="{Binding SelectedRecipe, FallbackValue={x:Null}}"
+                SelectionMode="AlwaysSelected">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="vm:RecipeVM">
+                        <DockPanel>
+                            <Border
+                                Margin="0,0,3,0"
+                                VerticalAlignment="Center"
+                                CornerRadius="3"
+                                DockPanel.Dock="Left">
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding BackgroundColorValue}" />
+                                </Border.Background>
+                                <Image
+                                    Width="16"
+                                    Height="16"
+                                    Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance}}" />
+                            </Border>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Foreground="{Binding IsEnabled, Converter={x:Static utils:EnabledToColorConverter.Instance}}"
+                                LineHeight="16"
+                                Text="{Binding Name}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <WrapPanel Grid.Row="4" Grid.Column="0">
+                <Button
+                    Classes="btn-icon"
+                    Click="Button_AddRecipe_Click"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding Loc.Create.Text}">
+                    <Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-add-32.png" />
+                </Button>
+                <Button
+                    Classes="btn-icon"
+                    Click="Button_EditRecipe_Click"
+                    IsEnabled="{Binding Pipeline.SelectedRecipe, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding Loc.Edit.Text}">
+                    <Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-edit-32.png" />
+                </Button>
+                <Button
+                    Classes="btn-icon"
+                    Click="Button_DeleteRecipe_Click"
+                    IsEnabled="{Binding Pipeline.SelectedRecipe, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding Loc.Delete.Text}">
+                    <Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-delete-32.png" />
+                </Button>
+                <Button
+                    Classes="btn-icon"
+                    Click="Button_EnableDisableRecipe_Click"
+                    IsEnabled="{Binding Pipeline.SelectedRecipe, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding Loc.EnableDisable.Text}">
+                    <Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-ok-32.png" />
+                </Button>
+            </WrapPanel>
 
 
-			<TextBlock Grid.Column="2" Grid.Row="0" Text="{Binding Loc.Step2.Text}" TextWrapping="Wrap" FontSize="16" Margin="3"/>
-
-
-
-			<!--<TextBox   IsReadOnly="True" BorderBrush="#10000000" Margin="3"/>-->
-			<ScrollViewer Grid.Column="2" Grid.Row="2" Grid.RowSpan="3" IsVisible="{Binding Pipeline.SelectedRecipe, FallbackValue=false, Converter={x:Static ObjectConverters.IsNotNull}}">
-				<StackPanel Orientation="Vertical" >
-
-
-
-					<Border Margin="3" HorizontalAlignment="Left" CornerRadius="3" >
-						<Border.Background>
-							<SolidColorBrush Color="{Binding Pipeline.SelectedRecipe.BackgroundColorValue}"/>
-						</Border.Background>
-
-						<Image Width="64" Height="64" Source="{Binding  Pipeline.SelectedRecipe.IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance}}"/>
-					</Border>
-
-					<TextBlock Margin="3">
-						<Run Text="{Binding Pipeline.SelectedRecipe.Loc.Name.Text}"/>
-						<Run Text="{Binding Pipeline.SelectedRecipe.Name}"/>
-					</TextBlock>
-					<TextBlock Margin="3">
-						<Run Text="{Binding Pipeline.SelectedRecipe.Loc.TimeToCraft.Text}"/>
-						<Run Text="{Binding Pipeline.SelectedRecipe.TimeToCraft}"/>
-					</TextBlock>
-					<CheckBox Margin="3" IsChecked="{Binding Pipeline.SelectedRecipe.IsEnabled, Mode=OneWay}" IsEnabled="False" Content="{Binding Pipeline.SelectedRecipe.Loc.Enabled.Text}"/>
-					<TextBlock Margin="3">
-						<Run Text="{Binding Pipeline.SelectedRecipe.Loc.ForegroundColor.Text}"/>
-						<Run Text="{Binding Pipeline.SelectedRecipe.ForegroundColor}"/>
-					</TextBlock>
-					<TextBlock Margin="3">
-						<Run Text="{Binding Pipeline.SelectedRecipe.Loc.BackgroundColor.Text}"/>
-						<Run Text="{Binding Pipeline.SelectedRecipe.BackgroundColor}"/>
-					</TextBlock>
-					<TextBlock Margin="3" Text="{Binding Pipeline.SelectedRecipe.Loc.Note.Text}"/>
-					<TextBlock Margin="3" Text="{Binding Pipeline.SelectedRecipe.Note}"/>
-
-					<TextBlock Margin="3" Text="{Binding Pipeline.SelectedRecipe.Loc.InputTitle.Text}"/>
-					<ItemsControl ItemsSource="{Binding Pipeline.SelectedRecipe.Input}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate DataType="vm:ResourceValueVM">
-								<TextBlock Margin="3">
-									<Run Text="{Binding Name}"/>
-									<Run Text=":"/>
-									<Run Text="{Binding Value}"/>
-								</TextBlock>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-					<TextBlock Margin="3" Text="{Binding Pipeline.SelectedRecipe.Loc.OutputTitle.Text}"/>
-					<ItemsControl ItemsSource="{Binding Pipeline.SelectedRecipe.Output}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate DataType="vm:ResourceValueVM">
-								<TextBlock Margin="3">
-									<Run Text="{Binding Name}"/>
-									<Run Text=":"/>
-									<Run Text="{Binding Value}"/>
-								</TextBlock>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-				</StackPanel>
-			</ScrollViewer>
-
-			<TextBlock Grid.Column="4" Grid.Row="0" Text="{Binding Loc.Step3.Text}" TextWrapping="Wrap"  FontSize="16" Margin="3"/>
-
-			<TextBox Grid.Column="4" Grid.Row="2" Margin="3" Watermark="Filter" Text="{Binding Pipeline.FilterForResources}"/>
-			<ListBox Grid.Column="4" Grid.Row="3"  Margin="3" ItemsSource="{Binding Pipeline.ResourcesFiltered}" SelectedItem="{Binding Pipeline.SelectedResource}" SelectionMode="AlwaysSelected">
-				<ListBox.ItemTemplate>
-					<DataTemplate DataType="vm:ResourceVM">
-						<DockPanel>
-							<Border DockPanel.Dock="Left" Margin="0 0 3 0" VerticalAlignment="Center" CornerRadius="3">
-								<Border.Background>
-									<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
-								</Border.Background>
-								<Image Width="16" Height="16" Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance} }"/>
-							</Border>
-							<TextBlock Text="{Binding Name}" Foreground="{Binding IsEnabled, Converter={x:Static utils:EnabledToColorConverter.Instance}}" LineHeight="16"/>
-						</DockPanel>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
-			<WrapPanel Grid.Column="4" Grid.Row="4">
-				<Button Classes="btn-icon" ToolTip.Tip="{Binding Loc.Create.Text}" ToolTip.ShowDelay="100" Click="Button_CreateSelectedResource_Click" >
-					<Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-add-32.png"/>
-				</Button>
-				<Button Classes="btn-icon" ToolTip.Tip="{Binding Loc.Edit.Text}" ToolTip.ShowDelay="100" IsEnabled="{Binding Pipeline.SelectedResource, Converter={x:Static ObjectConverters.IsNotNull}}" Click="Button_EditSelectedResource_Click" >
-					<Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-edit-32.png"/>
-				</Button>
-				<Button Classes="btn-icon" ToolTip.Tip="{Binding Loc.Delete.Text}" ToolTip.ShowDelay="100" IsEnabled="{Binding Pipeline.SelectedResource.IsEnabled, Converter={x:Static BoolConverters.Not}, FallbackValue=False}" Click="Button_DeleteSelectedResource_Click" >
-					<Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-delete-32.png"/>
-				</Button>
-			</WrapPanel>
-
-		</Grid>
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="2"
+                Margin="3"
+                FontSize="16"
+                Text="{Binding Loc.Step2.Text}"
+                TextWrapping="Wrap" />
 
 
 
-	</DockPanel>
+            <!--<TextBox   IsReadOnly="True" BorderBrush="#10000000" Margin="3"/>-->
+            <ScrollViewer Grid.Row="3" Grid.Column="2">
+                <StackPanel Orientation="Vertical">
+                    <views:RecipeNodeView DataContext="{Binding Pipeline.RecipeNodePreview}" />
+                </StackPanel>
+            </ScrollViewer>
+            <Button
+                Grid.Row="4"
+                Grid.Column="2"
+                Margin="3"
+                Padding="0"
+                HorizontalAlignment="Stretch"
+                Click="Button_RefreshNode_Click">
+                <TextBlock
+                    Height="32"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    LineHeight="32"
+                    Text="Refresh" />
+            </Button>
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="4"
+                Margin="3"
+                FontSize="16"
+                Text="{Binding Loc.Step3.Text}"
+                TextWrapping="Wrap" />
+
+            <TextBox
+                Grid.Row="2"
+                Grid.Column="4"
+                Margin="3"
+                Text="{Binding Pipeline.FilterForResources}"
+                Watermark="Filter" />
+            <ListBox
+                Grid.Row="3"
+                Grid.Column="4"
+                Margin="3"
+                ItemsSource="{Binding Pipeline.ResourcesFiltered}"
+                SelectedItem="{Binding Pipeline.SelectedResource}"
+                SelectionMode="AlwaysSelected">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="vm:ResourceVM">
+                        <DockPanel>
+                            <Border
+                                Margin="0,0,3,0"
+                                VerticalAlignment="Center"
+                                CornerRadius="3"
+                                DockPanel.Dock="Left">
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding BackgroundColorValue}" />
+                                </Border.Background>
+                                <Image
+                                    Width="16"
+                                    Height="16"
+                                    Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance}}" />
+                            </Border>
+                            <TextBlock
+                                Foreground="{Binding IsEnabled, Converter={x:Static utils:EnabledToColorConverter.Instance}}"
+                                LineHeight="16"
+                                Text="{Binding Name}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <WrapPanel Grid.Row="4" Grid.Column="4">
+                <Button
+                    Classes="btn-icon"
+                    Click="Button_CreateSelectedResource_Click"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding Loc.Create.Text}">
+                    <Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-add-32.png" />
+                </Button>
+                <Button
+                    Classes="btn-icon"
+                    Click="Button_EditSelectedResource_Click"
+                    IsEnabled="{Binding Pipeline.SelectedResource, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding Loc.Edit.Text}">
+                    <Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-edit-32.png" />
+                </Button>
+                <Button
+                    Classes="btn-icon"
+                    Click="Button_DeleteSelectedResource_Click"
+                    IsEnabled="{Binding Pipeline.SelectedResource.IsEnabled, Converter={x:Static BoolConverters.Not}, FallbackValue=False}"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding Loc.Delete.Text}">
+                    <Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-delete-32.png" />
+                </Button>
+            </WrapPanel>
+
+        </Grid>
+
+
+
+    </DockPanel>
 
 </UserControl>

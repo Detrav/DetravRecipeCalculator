@@ -1,113 +1,183 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		mc:Ignorable="d" Width="500" Height="550"
-        x:Class="DetravRecipeCalculator.Views.Resource2EditorWindow"
-        Title="{Binding Loc.WindowTitle.Text}"
-		xmlns:utils="using:DetravRecipeCalculator.Utils"
-        xmlns:vm="using:DetravRecipeCalculator.ViewModels"
-        xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
-		x:Name="theWnd"
-        x:DataType="vm:ResourceVM">
-	<Window.Styles>
-		<Style Selector="Button.btn-hi">
-			<Setter Property="Margin" Value="0"/>
-			<Setter Property="Padding" Value="0"/>
-			<Setter Property="Height" Value="32"/>
-			<Setter Property="Width" Value="32"/>
-			<Setter Property="Background" Value="Transparent"/>
-		</Style>
-		<Style Selector="Button.btn-hi Image">
-			<Setter Property="Margin" Value="0"/>
-			<Setter Property="Height" Value="32"/>
-			<Setter Property="Width" Value="32"/>
-		</Style>
+<Window
+    x:Class="DetravRecipeCalculator.Views.Resource2EditorWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="using:DetravRecipeCalculator.Utils"
+    xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+    xmlns:vm="using:DetravRecipeCalculator.ViewModels"
+    x:Name="theWnd"
+    Title="{Binding Loc.WindowTitle.Text}"
+    Width="500"
+    Height="550"
+    x:DataType="vm:ResourceVM"
+    mc:Ignorable="d">
+    <Window.Styles>
+        <Style Selector="Button.btn-hi">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.btn-hi Image">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Width" Value="32" />
+        </Style>
 
-		<Style Selector="Button.btn-hism">
-			<Setter Property="Margin" Value="0"/>
-			<Setter Property="Padding" Value="0"/>
-			<Setter Property="Height" Value="16"/>
-			<Setter Property="Width" Value="16"/>
-			<Setter Property="Background" Value="Transparent"/>
-		</Style>
-		<Style Selector="Button.btn-hism Image">
-			<Setter Property="Margin" Value="0"/>
-			<Setter Property="Height" Value="16"/>
-			<Setter Property="Width" Value="16"/>
-		</Style>
-	</Window.Styles>
-	<Design.DataContext>
-		<!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-		<vm:ResourceVM />
-	</Design.DataContext>
-	<DockPanel>
-		<UniformGrid DockPanel.Dock="Bottom" Columns="2">
-			<Button HorizontalAlignment="Stretch" Margin="3" Background="LightGreen" Click="Button_Ok_Click" >
-				<TextBlock Text="{Binding Loc.WindowOk.Text}" HorizontalAlignment="Center"/>
-			</Button>
-			<Button HorizontalAlignment="Stretch" Margin="3" Background="LightCoral" Click="Button_Cancel_Click" >
-				<TextBlock Text="{Binding Loc.WindowCancel.Text}" HorizontalAlignment="Center"/>
-			</Button>
-		</UniformGrid>
+        <Style Selector="Button.btn-hism">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Height" Value="16" />
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.btn-hism Image">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Height" Value="16" />
+            <Setter Property="Width" Value="16" />
+        </Style>
+    </Window.Styles>
+    <Design.DataContext>
+        <!--
+            This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+        -->
+        <vm:ResourceVM />
+    </Design.DataContext>
+    <DockPanel>
+        <UniformGrid Columns="2" DockPanel.Dock="Bottom">
+            <Button
+                Margin="3"
+                HorizontalAlignment="Stretch"
+                Background="LightGreen"
+                Click="Button_Ok_Click">
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Loc.WindowOk.Text}" />
+            </Button>
+            <Button
+                Margin="3"
+                HorizontalAlignment="Stretch"
+                Background="LightCoral"
+                Click="Button_Cancel_Click">
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Loc.WindowCancel.Text}" />
+            </Button>
+        </UniformGrid>
 
-		<ScrollViewer >
-			<StackPanel Orientation="Vertical">
-				<TextBlock Text="{Binding Loc.Icon.Text}" Margin="3"/>
-				<Grid ColumnDefinitions="Auto,*">
-					<Border Margin="3" CornerRadius="3">
-						<Border.Background>
-							<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
-						</Border.Background>
-						<Image Width="64" Height="64" Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance}}"/>
-					</Border>
-					<WrapPanel Grid.Column="1" Margin="3">
-						<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.SelectIcon.Text}" Click="Button_SelectIcon_Click"  >
-							<Image Source="/Assets/icons/icons8-table-32.png"/>
-						</Button>
-						<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.OpenIcon.Text}" Click="Button_IconOpen_Click">
-							<Image Source="/Assets/icons/icons8-upload-32.png"/>
-						</Button>
-						<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.PasteIcon.Text}" Click="Button_IconPaste_Click" >
-							<Image Source="/Assets/icons/icons8-paste-32.png"/>
-						</Button>
-						<Button Classes="btn-hi" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.DeleteIcon.Text}" Click="Button_IconDelete_Click" >
-							<Image Source="/Assets/icons/icons8-delete-32.png"/>
-						</Button>
-					</WrapPanel>
-				</Grid>
-				<TextBlock Text="{Binding Loc.Name.Text}" Margin="3"/>
-				<TextBox Watermark="Coal" Margin="3" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.NameTip.Text}" Text="{Binding Name}" />
-				<TextBlock Text="{Binding Loc.BackgroundColor.Text}" Margin="3"/>
-				<DockPanel Margin="3">
-					<Border Height="32" Width="32" Margin="3 0 0 0" DockPanel.Dock="Right" CornerRadius="3" BorderThickness="1" BorderBrush="#20000000" >
-						<Border.Background>
-							<SolidColorBrush Color="{Binding BackgroundColorValue}"/>
-						</Border.Background>
-					</Border>
-					<TextBox Watermark="#101010" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.BackgroundColorTip.Text}" Text="{Binding BackgroundColor}" />
-				</DockPanel>
-				<TextBlock Text="{Binding Loc.ForegroundColor.Text}" Margin="3"/>
-				<DockPanel Margin="3">
-					<Border Height="32" Width="32"  Margin="3 0 0 0" DockPanel.Dock="Right" CornerRadius="3" BorderThickness="1" BorderBrush="#20000000" >
-						<Border.Background>
-							<SolidColorBrush Color="{Binding ForegroundColorValue}"/>
-						</Border.Background>
-					</Border>
-					<TextBox Watermark="#101010" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ForegroundColorTip.Text}" Text="{Binding ForegroundColor}" />
-				</DockPanel>
-				<TextBlock Text="{Binding Loc.ConnectorColor.Text}"/>
-				<DockPanel Margin="3">
-					<Border Height="32" Width="32" Margin="3 0 0 0" DockPanel.Dock="Right" CornerRadius="3" BorderThickness="1" BorderBrush="#20000000" >
-						<Border.Background>
-							<SolidColorBrush Color="{Binding ConnectorColorValue}"/>
-						</Border.Background>
-					</Border>
-					<TextBox Watermark="#101010" ToolTip.ShowDelay="100" ToolTip.Tip="{Binding Loc.ConnectorColorTip.Text}" Text="{Binding ConnectorColor}" />
-				</DockPanel>
-			</StackPanel>
-		</ScrollViewer>
+        <ScrollViewer>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Margin="3" Text="{Binding Loc.Icon.Text}" />
+                <Grid ColumnDefinitions="Auto,*">
+                    <Border Margin="3" CornerRadius="3">
+                        <Border.Background>
+                            <SolidColorBrush Color="{Binding BackgroundColorValue}" />
+                        </Border.Background>
+                        <Image
+                            Width="64"
+                            Height="64"
+                            Source="{Binding IconFiltered, Converter={x:Static utils:ByteToBitmapConverter.Instance}}" />
+                    </Border>
+                    <WrapPanel Grid.Column="1" Margin="3">
+                        <Button
+                            Classes="btn-hi"
+                            Click="Button_SelectIcon_Click"
+                            ToolTip.ShowDelay="100"
+                            ToolTip.Tip="{Binding Loc.SelectIcon.Text}">
+                            <Image Source="/Assets/icons/icons8-table-32.png" />
+                        </Button>
+                        <Button
+                            Classes="btn-hi"
+                            Click="Button_IconOpen_Click"
+                            ToolTip.ShowDelay="100"
+                            ToolTip.Tip="{Binding Loc.OpenIcon.Text}">
+                            <Image Source="/Assets/icons/icons8-upload-32.png" />
+                        </Button>
+                        <Button
+                            Classes="btn-hi"
+                            Click="Button_IconPaste_Click"
+                            ToolTip.ShowDelay="100"
+                            ToolTip.Tip="{Binding Loc.PasteIcon.Text}">
+                            <Image Source="/Assets/icons/icons8-paste-32.png" />
+                        </Button>
+                        <Button
+                            Classes="btn-hi"
+                            Click="Button_IconDelete_Click"
+                            ToolTip.ShowDelay="100"
+                            ToolTip.Tip="{Binding Loc.DeleteIcon.Text}">
+                            <Image Source="/Assets/icons/icons8-delete-32.png" />
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+                <TextBlock Margin="3" Text="{Binding Loc.Name.Text}" />
+                <TextBox
+                    Margin="3"
+                    Text="{Binding Name}"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding Loc.NameTip.Text}"
+                    Watermark="Coal" />
+                <TextBlock Margin="3" Text="{Binding Loc.BackgroundColor.Text}" />
+                <DockPanel Margin="3">
+                    <Border
+                        Width="32"
+                        Height="32"
+                        Margin="3,0,0,0"
+                        BorderBrush="#20000000"
+                        BorderThickness="1"
+                        CornerRadius="3"
+                        DockPanel.Dock="Right">
+                        <Border.Background>
+                            <SolidColorBrush Color="{Binding BackgroundColorValue}" />
+                        </Border.Background>
+                    </Border>
+                    <TextBox
+                        Text="{Binding BackgroundColor}"
+                        ToolTip.ShowDelay="100"
+                        ToolTip.Tip="{Binding Loc.BackgroundColorTip.Text}"
+                        Watermark="#101010" />
+                </DockPanel>
+                <TextBlock Margin="3" Text="{Binding Loc.ForegroundColor.Text}" />
+                <DockPanel Margin="3">
+                    <Border
+                        Width="32"
+                        Height="32"
+                        Margin="3,0,0,0"
+                        BorderBrush="#20000000"
+                        BorderThickness="1"
+                        CornerRadius="3"
+                        DockPanel.Dock="Right">
+                        <Border.Background>
+                            <SolidColorBrush Color="{Binding ForegroundColorValue}" />
+                        </Border.Background>
+                    </Border>
+                    <TextBox
+                        Text="{Binding ForegroundColor}"
+                        ToolTip.ShowDelay="100"
+                        ToolTip.Tip="{Binding Loc.ForegroundColorTip.Text}"
+                        Watermark="#101010" />
+                </DockPanel>
+                <TextBlock Text="{Binding Loc.ConnectorColor.Text}" />
+                <DockPanel Margin="3">
+                    <Border
+                        Width="32"
+                        Height="32"
+                        Margin="3,0,0,0"
+                        BorderBrush="#20000000"
+                        BorderThickness="1"
+                        CornerRadius="3"
+                        DockPanel.Dock="Right">
+                        <Border.Background>
+                            <SolidColorBrush Color="{Binding ConnectorColorValue}" />
+                        </Border.Background>
+                    </Border>
+                    <TextBox
+                        Text="{Binding ConnectorColor}"
+                        ToolTip.ShowDelay="100"
+                        ToolTip.Tip="{Binding Loc.ConnectorColorTip.Text}"
+                        Watermark="#101010" />
+                </DockPanel>
+            </StackPanel>
+        </ScrollViewer>
 
-	</DockPanel>
+    </DockPanel>
 </Window>

@@ -1,8 +1,6 @@
-﻿using Avalonia.Platform;
+﻿using Avalonia;
+using Avalonia.Platform;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DetravRecipeCalculator.ViewModels.NodeEditorVMs;
-using NodeEditor.Model;
-using NodeEditor.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,54 +11,50 @@ using System.Windows.Markup;
 
 namespace DetravRecipeCalculator.ViewModels
 {
-    public partial class GraphEditorVM : ViewModelBase
+    public partial class GraphEditorVM : ViewModelBase, IUndoRedoObject
     {
-        public EditorViewModel Editor { get; } = new EditorViewModel();
+        public ObservableCollection<NodeViewModel> Nodes { get; } = new ObservableCollection<NodeViewModel>();
+
+        [ObservableProperty]
+        private bool saved;
+
+        [ObservableProperty]
+        private ObservableCollection<NodeViewModel>? selectedNodes = new ObservableCollection<NodeViewModel>();
+
+        public UndoRedoManager UndoRedo { get; }
+        public PipelineVM Pipeline { get; }
 
         public GraphEditorVM()
         {
-            Editor.Factory = new GraphEditorFactoryVM();
-            Editor.Drawing = Editor.Factory.CreateDrawing();
-            Editor.Templates = Editor.Factory.CreateTemplates();
+            Pipeline = new PipelineVM();
+            UndoRedo = new UndoRedoManager(this);
         }
 
         public GraphEditorVM(PipelineVM pipeline)
             : this()
         {
-            foreach (var item in pipeline.Recipes)
-            {
-                if (item.IsEnabled)
-                {
-                    var template = new NodeTemplateViewModel();
-                    Editor.Templates!.Add(template);
-
-                    template.Title = item.Name;
-                    var node = new NodeViewModel();
-
-                    //node.Name = item.Name;
-                    node.Width = 60;
-                    node.Height = 60;
-
-                    node.Content = item.Name;
-
-                    int i = 0;
-
-                    foreach (var inputResource in item.Input)
-                    {
-                        node.AddPin(0, 15 * i, 15, 15, PinAlignment.Left, inputResource.Name);
-                        i++;
-                    }
-
-                    foreach (var outputResource in item.Output)
-                    {
-                        node.AddPin(10, 15 * i, 15, 15, PinAlignment.Right, outputResource.Name);
-                        i++;
-                    }
-
-                    template.Preview = template.Template = node;
-                }
-            }
+            Pipeline = pipeline;
+            Nodes.Add(new CommentNodeViewModel());
         }
 
+        public object SaveState()
+        {
+            return new object();
+        }
+
+        public void RestoreState(object state)
+        {
+
+        }
+
+        public byte[]? Copy()
+        {
+            return new byte[] { 12 };
+        }
+
+        public void Paste(byte[] data, Point point)
+        {
+
+        }
     }
 }

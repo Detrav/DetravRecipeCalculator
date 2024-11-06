@@ -1,23 +1,117 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="DetravRecipeCalculator.Views.GraphEditorWindow"
-        Title="GraphEditorWindow"
-		xmlns:editor="clr-namespace:NodeEditor.Controls;assembly=NodeEditorAvalonia"
-		xmlns:utils="using:DetravRecipeCalculator.Utils"
-        xmlns:vm="using:DetravRecipeCalculator.ViewModels"
-        xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
-		x:Name="theWnd"
-		x:DataType="vm:GraphEditorVM"
-		>
-	<Design.DataContext>
-		<vm:GraphEditorVM />
-	</Design.DataContext>
-	<Grid ColumnDefinitions="200,auto,*">
-		<GridSplitter Grid.Column="1"/>
-		<editor:Toolbox TemplatesSource="{Binding Editor.Templates}" Grid.Column="0"/>
-		<editor:Editor DataContext="{Binding Editor.Drawing}" DrawingSource="{Binding}" Grid.Column="2" />
-	</Grid>
+<Window
+    x:Class="DetravRecipeCalculator.Views.GraphEditorWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:nodify="clr-namespace:Nodify;assembly=Nodify"
+    xmlns:utils="using:DetravRecipeCalculator.Utils"
+    xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+    xmlns:vm="using:DetravRecipeCalculator.ViewModels"
+    x:Name="theWnd"
+    Title="GraphEditorWindow"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:GraphEditorVM"
+    mc:Ignorable="d">
+    <Design.DataContext>
+        <vm:GraphEditorVM />
+    </Design.DataContext>
+    <Window.Resources>
+        <VisualBrush
+            x:Key="SmallGridLinesDrawingBrush"
+            DestinationRect="0 0 20 20"
+            SourceRect="0 0 20 20"
+            TileMode="Tile"
+            Transform="{Binding DpiScaledViewportTransform, ElementName=Editor}">
+            <VisualBrush.Visual>
+                <Rectangle
+                    Width="20"
+                    Height="20"
+                    Stroke="#10000000"
+                    StrokeThickness="0.5" />
+            </VisualBrush.Visual>
+        </VisualBrush>
+
+        <VisualBrush
+            x:Key="LargeGridLinesDrawingBrush"
+            DestinationRect="0 0 100 100"
+            Opacity="0.5"
+            SourceRect="0 0 100 100"
+            TileMode="Tile"
+            Transform="{Binding DpiScaledViewportTransform, ElementName=Editor}">
+            <VisualBrush.Visual>
+                <Rectangle
+                    Width="100"
+                    Height="100"
+                    Stroke="#10000000"
+                    StrokeThickness="1" />
+            </VisualBrush.Visual>
+        </VisualBrush>
+
+    </Window.Resources>
+
+    <Window.ContextFlyout>
+        <MenuFlyout>
+            <MenuItem x:Name="miAddNode" Header="Add Node" />
+            <MenuItem x:Name="miAddComment" Header="Add Comment" />
+            <Separator />
+            <MenuItem x:Name="miCopy" Header="Copy" />
+            <MenuItem x:Name="miCut" Header="Cut" />
+            <MenuItem x:Name="miPaste" Header="Paste" />
+            <MenuItem x:Name="miDelete" Header="Delete" />
+            <Separator />
+            <MenuItem x:Name="miUndo" Header="Undo" />
+            <MenuItem x:Name="miRedo" Header="Redo" />
+        </MenuFlyout>
+    </Window.ContextFlyout>
+
+    <Grid Background="{StaticResource NodifyEditor.BackgroundBrush}">
+        <nodify:NodifyEditor
+            x:Name="Editor"
+            Background="{StaticResource SmallGridLinesDrawingBrush}"
+            GridCellSize="15"
+            ItemsSource="{Binding Nodes}"
+            SelectedItems="{Binding SelectedNodes}">
+            <!--<nodify:NodifyEditor.Styles>
+                <Style Selector="Item">
+
+                </Style>
+            </nodify:NodifyEditor.Styles>-->
+            <nodify:NodifyEditor.DataTemplates>
+                <DataTemplate DataType="vm:DebugNodeVM">
+                    <nodify:Node Header="{Binding Title}" />
+                </DataTemplate>
+                <DataTemplate DataType="vm:CommentNodeViewModel">
+                    <nodify:GroupingNode
+                        ActualSize="{Binding Size}"
+                        Header="{Binding Title}"
+                        MovementMode="Group">
+                        <TextBox
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            AcceptsReturn="True"
+                            AcceptsTab="True"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            IsUndoEnabled="False"
+                            Watermark="Click this to edit" />
+                    </nodify:GroupingNode>
+                </DataTemplate>
+                <DataTemplate DataType="vm:RecipeNodeVM">
+                    <views:RecipeNodeView />
+                </DataTemplate>
+            </nodify:NodifyEditor.DataTemplates>
+            <nodify:NodifyEditor.ItemContainerTheme>
+                <ControlTheme
+                    x:DataType="vm:NodeViewModel"
+                    BasedOn="{StaticResource {x:Type nodify:ItemContainer}}"
+                    TargetType="{x:Type nodify:ItemContainer}">
+                    <Setter Property="Location" Value="{Binding Location}" />
+                </ControlTheme>
+            </nodify:NodifyEditor.ItemContainerTheme>
+        </nodify:NodifyEditor>
+        <Grid Panel.ZIndex="-2" Background="{StaticResource LargeGridLinesDrawingBrush}" />
+    </Grid>
 </Window>

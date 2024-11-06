@@ -50,6 +50,9 @@ namespace DetravRecipeCalculator.ViewModels
     public partial class RecipeVM : ViewModelBase, IUndoRedoObject
     {
         [ObservableProperty]
+        private string? id;
+
+        [ObservableProperty]
         private string? backgroundColor;
 
         [ObservableProperty]
@@ -139,6 +142,7 @@ namespace DetravRecipeCalculator.ViewModels
         {
             if (state is RecipeModel model)
             {
+                Id = model.Id;
                 Name = model.Name;
                 IsEnabled = model.IsEnabled;
                 TimeToCraft = model.TimeToCraft;
@@ -168,8 +172,10 @@ namespace DetravRecipeCalculator.ViewModels
 
         public object SaveState()
         {
+
             var model = new RecipeModel();
 
+            model.Id = Id;
             model.Name = Name;
             model.IsEnabled = IsEnabled;
             model.TimeToCraft = TimeToCraft;

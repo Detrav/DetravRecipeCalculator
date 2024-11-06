@@ -17,27 +17,34 @@ namespace DetravRecipeCalculator.ViewModels
     public partial class PipelineVM : ViewModelBase, IUndoRedoObject
     {
         [ObservableProperty]
-        private string? filePath;
-        [ObservableProperty]
-        private bool saved;
-        [ObservableProperty]
         private string? displayName;
+
         [ObservableProperty]
-        private IEnumerable<RecipeVM>? recipesFiltered;
-        [ObservableProperty]
-        private IEnumerable<ResourceVM>? resourcesFiltered;
+        private string? filePath;
+
         [ObservableProperty]
         private string? filterForRecipes;
+
         [ObservableProperty]
         private string? filterForResources;
+
+        [ObservableProperty]
+        private RecipeNodeVM? recipeNodePreview;
+
+        [ObservableProperty]
+        private IEnumerable<RecipeVM>? recipesFiltered;
+
+        [ObservableProperty]
+        private IEnumerable<ResourceVM>? resourcesFiltered;
+
+        [ObservableProperty]
+        private bool saved;
+
         [ObservableProperty]
         private RecipeVM? selectedRecipe;
+
         [ObservableProperty]
         private ResourceVM? selectedResource;
-
-        public ObservableCollection<RecipeVM> Recipes { get; } = new ObservableCollection<RecipeVM>();
-        public ObservableCollection<ResourceVM> Resources { get; } = new ObservableCollection<ResourceVM>();
-        public UndoRedoManager UndoRedo { get; }
 
         public PipelineVM()
         {
@@ -49,17 +56,9 @@ namespace DetravRecipeCalculator.ViewModels
             UndoRedo = new UndoRedoManager(this);
         }
 
-        private void Resources_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RefreshResourcesFilters();
-        }
-
-        private void Recipes_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RefreshRecipesFilters();
-        }
-
-
+        public ObservableCollection<RecipeVM> Recipes { get; } = new ObservableCollection<RecipeVM>();
+        public ObservableCollection<ResourceVM> Resources { get; } = new ObservableCollection<ResourceVM>();
+        public UndoRedoManager UndoRedo { get; }
 
         public static PipelineVM Load(string path)
         {
@@ -76,68 +75,31 @@ namespace DetravRecipeCalculator.ViewModels
             return result;
         }
 
-        private void RefreshRecipesFilters()
+        public void RestoreState(object state)
         {
-            if (string.IsNullOrEmpty(FilterForRecipes))
+            if (state is PipelineModel model)
             {
-                RecipesFiltered = Recipes.OrderBy(m => m.Name).ToArray();
+                Recipes.Clear();
+                foreach (var recipeModel in model.Recipes)
+                {
+                    var recipe = new RecipeVM();
+                    recipe.RestoreState(recipeModel);
+                    Recipes.Add(recipe);
+                }
+
+                Resources.Clear();
+
+                foreach (var resourceModel in model.Resources)
+                {
+                    var resource = new ResourceVM();
+                    resource.RestoreState(resourceModel);
+                    Resources.Add(resource);
+                }
+
+
+
+                RefreshResources();
             }
-            else
-            {
-                RecipesFiltered = Recipes.Where(m => m.Name == null || m.Name.Contains(FilterForRecipes, StringComparison.OrdinalIgnoreCase)).OrderBy(m => m.Name).ToArray();
-            }
-        }
-
-        partial void OnFilterForResourcesChanged(string? value)
-        {
-            RefreshResourcesFilters();
-        }
-
-        partial void OnFilterForRecipesChanged(string? value)
-        {
-            RefreshResourcesFilters();
-        }
-
-        private void RefreshResourcesFilters()
-        {
-            if (string.IsNullOrEmpty(FilterForResources))
-            {
-                ResourcesFiltered = Resources.OrderBy(m => m.Name).ToArray();
-            }
-            else
-            {
-                ResourcesFiltered = Resources.Where(m => m.Name == null || m.Name.Contains(FilterForResources, StringComparison.OrdinalIgnoreCase)).OrderBy(m => m.Name).ToArray();
-            }
-        }
-
-        partial void OnSavedChanged(bool value)
-        {
-            UpdateDisplayName();
-        }
-
-        partial void OnFilePathChanged(string? value)
-        {
-            UpdateDisplayName();
-        }
-
-        private void UpdateDisplayName()
-        {
-            var fileName = FilePath;
-            if (File.Exists(fileName))
-            {
-                fileName = Path.GetFileName(fileName);
-            }
-            else
-            {
-                fileName = "unknown.json";
-            }
-
-            if (!Saved)
-            {
-                fileName += "*";
-            }
-
-            DisplayName = fileName;
         }
 
         public bool Save()
@@ -154,7 +116,6 @@ namespace DetravRecipeCalculator.ViewModels
                 }
                 catch
                 {
-
                 }
             }
             return Saved;
@@ -185,6 +146,60 @@ namespace DetravRecipeCalculator.ViewModels
             }
 
             return model;
+        }
+
+        public void RefreshPreview()
+        {
+            if (SelectedRecipe == null)
+            {
+                RecipeNodePreview = null;
+                return;
+            }
+
+            RecipeNodePreview = new RecipeNodeVM();
+            RecipeNodePreview.RefreshValues(this, SelectedRecipe);
+        }
+
+        partial void OnFilePathChanged(string? value)
+        {
+            UpdateDisplayName();
+        }
+
+        partial void OnFilterForRecipesChanged(string? value)
+        {
+            RefreshResourcesFilters();
+        }
+
+        partial void OnFilterForResourcesChanged(string? value)
+        {
+            RefreshResourcesFilters();
+        }
+
+        partial void OnSavedChanged(bool value)
+        {
+            UpdateDisplayName();
+        }
+
+        partial void OnSelectedRecipeChanged(RecipeVM? value)
+        {
+            RefreshPreview();
+        }
+
+        private void Recipes_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RefreshRecipesFilters();
+        }
+
+        private void RefreshRecipesFilters()
+        {
+            if (string.IsNullOrEmpty(FilterForRecipes))
+            {
+                RecipesFiltered = Recipes.OrderBy(m => m.Name).ToArray();
+            }
+            else
+            {
+                RecipesFiltered = Recipes.Where(m => m.Name == null || m.Name.Contains(FilterForRecipes, StringComparison.OrdinalIgnoreCase)).OrderBy(m => m.Name).ToArray();
+            }
         }
 
         private void RefreshResources()
@@ -220,34 +235,44 @@ namespace DetravRecipeCalculator.ViewModels
                 }
             }
 
+
         }
 
-        public void RestoreState(object state)
+        private void RefreshResourcesFilters()
         {
-            if (state is PipelineModel model)
+            if (string.IsNullOrEmpty(FilterForResources))
             {
-                Recipes.Clear();
-                foreach (var recipeModel in model.Recipes)
-                {
-                    var recipe = new RecipeVM();
-                    recipe.RestoreState(recipeModel);
-                    Recipes.Add(recipe);
-                }
+                ResourcesFiltered = Resources.OrderBy(m => m.Name).ToArray();
+            }
+            else
+            {
+                ResourcesFiltered = Resources.Where(m => m.Name == null || m.Name.Contains(FilterForResources, StringComparison.OrdinalIgnoreCase)).OrderBy(m => m.Name).ToArray();
+            }
+        }
 
-                Resources.Clear();
+        private void Resources_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RefreshResourcesFilters();
+        }
 
-                foreach (var resourceModel in model.Resources)
-                {
-                    var resource = new ResourceVM();
-                    resource.RestoreState(resourceModel);
-                    Resources.Add(resource);
-                }
-
-                RefreshResources();
+        private void UpdateDisplayName()
+        {
+            var fileName = FilePath;
+            if (File.Exists(fileName))
+            {
+                fileName = Path.GetFileName(fileName);
+            }
+            else
+            {
+                fileName = "unknown.json";
             }
 
+            if (!Saved)
+            {
+                fileName += "*";
+            }
+
+            DisplayName = fileName;
         }
-
-
     }
 }

@@ -124,6 +124,7 @@ Detrav Recipe Calculator
                             try
                             {
                                 vm.Pipeline = PipelineVM.Load(path);
+                                vm.Pipeline.RefreshPreview();
                             }
                             catch (Exception ex)
                             {
@@ -239,6 +240,8 @@ Detrav Recipe Calculator
 
                 }
             }
+
+
         }
     }
 
@@ -427,7 +430,7 @@ Detrav Recipe Calculator
     {
         var owner = TopLevel.GetTopLevel(this) as Window;
 
-        if (owner == null) 
+        if (owner == null)
             return;
 
         if (DataContext is MainViewModel mvm && mvm.Pipeline != null)
@@ -443,6 +446,14 @@ Detrav Recipe Calculator
             {
 
             }
+        }
+    }
+
+    private void Button_RefreshNode_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel mvm && mvm.Pipeline != null)
+        {
+            mvm.Pipeline.RefreshPreview();
         }
     }
 }

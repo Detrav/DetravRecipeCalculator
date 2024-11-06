@@ -1,0 +1,80 @@
+<UserControl
+    x:Class="DetravRecipeCalculator.Views.RecipeNodeView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:nodify="clr-namespace:Nodify;assembly=Nodify"
+    xmlns:utils="using:DetravRecipeCalculator.Utils"
+    xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+    xmlns:vm="using:DetravRecipeCalculator.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:RecipeNodeVM"
+    mc:Ignorable="d">
+    <nodify:Node
+        Header="{Binding Title}"
+        Input="{Binding Input}"
+        Output="{Binding Output}">
+        <nodify:Node.InputConnectorTemplate>
+            <DataTemplate DataType="{x:Type vm:ConnectorViewModel}">
+                <nodify:NodeInput Header="{Binding Name}" />
+            </DataTemplate>
+        </nodify:Node.InputConnectorTemplate>
+        <nodify:Node.OutputConnectorTemplate>
+            <DataTemplate DataType="{x:Type vm:ConnectorViewModel}">
+                <nodify:NodeOutput Header="{Binding Name}" />
+            </DataTemplate>
+        </nodify:Node.OutputConnectorTemplate>
+        <Grid ColumnDefinitions="auto,*" RowDefinitions="auto,*">
+            <Border
+                Margin="3"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                CornerRadius="3"
+                DockPanel.Dock="Left">
+                <Border.Background>
+                    <SolidColorBrush Color="{Binding BackgroundColor}" />
+                </Border.Background>
+
+                <Image
+                    Width="64"
+                    Height="64"
+                    Source="{Binding Icon, Converter={x:Static utils:ByteToBitmapConverter.Instance}}" />
+            </Border>
+            <StackPanel
+                Grid.Row="0"
+                Grid.Column="1"
+                Orientation="Vertical">
+                <UniformGrid Columns="2">
+                    <Button
+                        Margin="3"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding DownTierCommand}">
+                        <TextBlock HorizontalAlignment="Center" Text="Down" />
+                    </Button>
+                    <Button
+                        Margin="3"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding UpTierCommand}">
+                        <TextBlock HorizontalAlignment="Center" Text="Up" />
+                    </Button>
+                </UniformGrid>
+                <TextBlock Margin="3">
+                    <Run Text="Tier:" />
+                    <Run Text="{Binding Tier}" />
+                </TextBlock>
+                <TextBlock Margin="3">
+                    <Run Text="Time to craft:" />
+                    <Run Text="{Binding TimeToCraft}" />
+                </TextBlock>
+            </StackPanel>
+            <TextBlock
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Margin="3"
+                Text="{Binding Note}" />
+        </Grid>
+
+    </nodify:Node>
+</UserControl>

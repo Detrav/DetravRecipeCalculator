@@ -80,6 +80,12 @@ Thank you to these resources for providing high-quality icons that enhance the u
 19. undo redo for graph editor
 20. save load graph editor model
 21. done expression editor
+22. add short resource name
+23. project templates for new (create)
+24. Save render of graph
+25. show error if node has deleted resource
+26. resource renaming for graph models (after adding save load graph)
+27. added warning sing in node view for resource warnings (mb errors?)
 
 ## Changelog
 

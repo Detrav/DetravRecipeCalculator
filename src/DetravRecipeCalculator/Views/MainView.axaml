@@ -121,7 +121,8 @@
                                 Margin="0,0,3,0"
                                 VerticalAlignment="Center"
                                 CornerRadius="3"
-                                DockPanel.Dock="Left">
+                                DockPanel.Dock="Left"
+                                IsVisible="{Binding IconFiltered, Converter={x:Static ObjectConverters.IsNotNull}}">
                                 <Border.Background>
                                     <SolidColorBrush Color="{Binding BackgroundColorValue}" />
                                 </Border.Background>
@@ -185,10 +186,11 @@
 
 
             <!--<TextBox   IsReadOnly="True" BorderBrush="#10000000" Margin="3"/>-->
-            <ScrollViewer Grid.Row="3" Grid.Column="2">
-                <StackPanel Orientation="Vertical">
-                    <views:RecipeNodeView DataContext="{Binding Pipeline.RecipeNodePreview}" />
-                </StackPanel>
+            <ScrollViewer
+                Grid.Row="3"
+                Grid.Column="2"
+                IsVisible="{Binding Pipeline.RecipeNodePreview, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=false}">
+                <views:RecipeNodeView DataContext="{Binding Pipeline.RecipeNodePreview}" />
             </ScrollViewer>
             <Button
                 Grid.Row="4"
@@ -233,7 +235,8 @@
                                 Margin="0,0,3,0"
                                 VerticalAlignment="Center"
                                 CornerRadius="3"
-                                DockPanel.Dock="Left">
+                                DockPanel.Dock="Left"
+                                IsVisible="{Binding IconFiltered, Converter={x:Static ObjectConverters.IsNotNull}}">
                                 <Border.Background>
                                     <SolidColorBrush Color="{Binding BackgroundColorValue}" />
                                 </Border.Background>

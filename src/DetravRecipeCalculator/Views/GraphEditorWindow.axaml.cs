@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.Input;
@@ -42,6 +43,7 @@ public partial class GraphEditorWindow : Window
 
         if (DataContext is GraphEditorVM vm)
         {
+
             foreach (var recipe in vm.Pipeline.Recipes)
             {
                 if (recipe.Id == null)
@@ -98,11 +100,18 @@ public partial class GraphEditorWindow : Window
         }
     }
 
-    private void MiCut_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void MiCut_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
         {
-            vm.UndoRedo.PushState("Cut");
+            var data = vm.Cut(lastClick);
+            if (data != null && Clipboard != null && data.Length > 0)
+            {
+                var dataObject = new DataObject();
+                dataObject.Set("GraphEditor_Nodes", data);
+                await Clipboard.SetDataObjectAsync(dataObject);
+                vm.UndoRedo.PushState("Cut");
+            }
         }
     }
 
@@ -110,7 +119,7 @@ public partial class GraphEditorWindow : Window
     {
         if (DataContext is GraphEditorVM vm)
         {
-            var data = vm.Copy();
+            var data = vm.Copy(lastClick);
             if (data != null && Clipboard != null && data.Length > 0)
             {
                 var dataObject = new DataObject();
@@ -130,7 +139,7 @@ public partial class GraphEditorWindow : Window
 
                 foreach (var node in nodes)
                 {
-                    vm.Nodes.Remove(node);
+                    vm.DeleteNode(node);
                 }
             }
             vm.UndoRedo.PushState("Delete");
@@ -247,4 +256,42 @@ public partial class GraphEditorWindow : Window
         if (!e.Handled)
             base.OnPointerReleased(e);
     }
+
+    private void LineConnection_Disconnect(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm && sender is Control control && control.DataContext is ConnectionVM connectionVM)
+        {
+            vm.Disconnect(connectionVM);
+            e.Handled = true;
+        }
+    }
+
+
+
+    //private void LineConnection_Disconnect(object? sender, Nodify.ConnectionEventArgs e)
+    //{
+
+    //    if (DataContext is GraphEditorVM vm && sender is Control control && control.DataContext is ConnectionVM connectionVM)
+    //    {
+    //        vm.Disconnect(connectionVM);
+    //        e.Handled = true;
+    //    }
+    //}
+
+    //private void Binding_1(object? sender, Nodify.ConnectionEventArgs e)
+    //{
+    //}
+
+    //private void LineConnection_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    //{
+    //    LineConnection
+    //    if ((e.KeyModifiers & KeyModifiers.Alt) == KeyModifiers.Alt && e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+    //    {
+    //        if (DataContext is GraphEditorVM vm && sender is Control control && control.DataContext is ConnectionVM connectionVM)
+    //        {
+    //            vm.Disconnect(connectionVM);
+    //            e.Handled = true;
+    //        }
+    //    }
+    //}
 }

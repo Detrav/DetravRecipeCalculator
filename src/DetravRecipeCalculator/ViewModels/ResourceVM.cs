@@ -112,7 +112,11 @@ namespace DetravRecipeCalculator.ViewModels
 
         private void UpdateBitmap()
         {
-            if (Icon == null || Icon.Length < 4 || ForegroundColorValue == Colors.White)
+            if (Icon == null || Icon.Length < 4)
+            {
+                IconFiltered = null;
+            }
+            else if (ForegroundColorValue == Colors.White)
             {
                 IconFiltered = Icon;
             }

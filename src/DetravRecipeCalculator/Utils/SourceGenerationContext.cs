@@ -11,7 +11,9 @@ namespace DetravRecipeCalculator.Utils
     [JsonSourceGenerationOptions(WriteIndented = true)]
     [JsonSerializable(typeof(Config))]
     [JsonSerializable(typeof(PipelineModel))]
+    [JsonSerializable(typeof(GraphModel))]
     public partial class SourceGenerationContext : JsonSerializerContext
     {
+        
     }
 }

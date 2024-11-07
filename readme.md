@@ -74,16 +74,12 @@ Thank you to these resources for providing high-quality icons that enhance the u
 
 
 6. Graph editor
-7. Node serialization
-8. Resource icons
-9. Connections
-10. Connections color
-11. Calculation
-12. tier switch with icon
-13. node switch with icon
-14. hide show additional info button
-15. shortcut
 16. localization
+17. add total node
+18. switching time (ticks (minecraft), seconds, minutes, hours, days, weeks, months (30 days), years(365 days))
+19. undo redo for graph editor
+20. save load graph editor model
+21. done expression editor
 
 ## Changelog
 
@@ -113,4 +109,16 @@ Current Version
  
 + Added prototype of node graph editor.
 + Added node preview in the middle column with clickable functionality, allowing future calculation previews.
++ Added icons for tier switching.
++ Added functionality to adjust the number of crafts (machines).
++ Added colors for connectors.
++ Added connection lines with support for resource colors.
++ Added ability to delete connection lines.
++ Added resource icons on nodes.
++ Added basic resource calculation and display.
++ Added graph state serialization.
++ Added ability to copy and paste nodes.
+* Modified node pasting mechanics: pasted nodes are now selected by default.
++ Added common editing shortcuts: undo, redo, cut, copy, delete, paste.
+* Moved shortcuts to a separate menu, as they were not frequently used in the context menu.
 ```

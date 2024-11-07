@@ -25,7 +25,6 @@ namespace DetravRecipeCalculator.Utils
             }
             catch
             {
-
             }
             return null;
         }

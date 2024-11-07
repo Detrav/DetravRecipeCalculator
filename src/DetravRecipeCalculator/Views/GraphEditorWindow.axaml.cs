@@ -2,12 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using CommunityToolkit.Mvvm.Input;
 using DetravRecipeCalculator.Utils;
 using DetravRecipeCalculator.ViewModels;
-using Nodify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +14,13 @@ namespace DetravRecipeCalculator.Views;
 
 public partial class GraphEditorWindow : Window
 {
-    Point lastClick;
+    private Point lastClick;
+
+    private string? lastText;
 
     public GraphEditorWindow()
     {
         InitializeComponent();
-
         ContextFlyout!.Opened += ContextFlyout_Opened;
 
         miAddComment.Click += MiAddComment_Click;
@@ -37,153 +35,41 @@ public partial class GraphEditorWindow : Window
         DataContextChanged += GraphEditorWindow_DataContextChanged;
     }
 
-    private void GraphEditorWindow_DataContextChanged(object? sender, EventArgs e)
+    protected override void OnClosing(WindowClosingEventArgs e)
     {
-        miAddNode.Items.Clear();
-
-        if (DataContext is GraphEditorVM vm)
-        {
-
-            foreach (var recipe in vm.Pipeline.Recipes)
-            {
-                if (recipe.Id == null)
-                {
-                    recipe.Id = Guid.NewGuid().ToString();
-                }
-
-                var therecipe = recipe;
-                miAddNode.Items.Add(new MenuItem()
-                {
-                    Header = therecipe.Name ?? "Unknown",
-                    Command = new RelayCommand(() =>
-                    {
-                        var node = new RecipeNodeVM();
-                        node.Location = lastClick;
-                        node.RefreshValues(vm.Pipeline, therecipe);
-                        vm.Nodes.Add(node);
-                    })
-                });
-            }
-        }
+        Config.Instance.SaveSate(this);
+        base.OnClosing(e);
     }
 
-    private void MiUndo_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    protected override void OnLoaded(RoutedEventArgs e)
     {
-        if (DataContext is GraphEditorVM vm)
-            vm.UndoRedo.Undo();
+        Config.Instance.LoadSate(this);
+        base.OnLoaded(e);
     }
 
-    private void MiRedo_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Button_Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (DataContext is GraphEditorVM vm)
-            vm.UndoRedo.Redo();
+        Close(false);
     }
 
-    private async void MiPaste_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Button_Ok_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (DataContext is GraphEditorVM vm && Clipboard != null && (await Clipboard.GetFormatsAsync()).Contains("GraphEditor_Nodes"))
-        {
-            try
-            {
-                var data = await Clipboard.GetDataAsync("GraphEditor_Nodes") as byte[];
-
-                if (data != null)
-                {
-                    vm.Paste(data, lastClick);
-                    vm.UndoRedo.PushState("Paste");
-                }
-            }
-            catch (Exception ex)
-            {
-                await MessageBoxExtentions.ShowErrorAsync(ex, this);
-            }
-        }
+        Close(true);
     }
 
-    private async void MiCut_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is GraphEditorVM vm)
-        {
-            var data = vm.Cut(lastClick);
-            if (data != null && Clipboard != null && data.Length > 0)
-            {
-                var dataObject = new DataObject();
-                dataObject.Set("GraphEditor_Nodes", data);
-                await Clipboard.SetDataObjectAsync(dataObject);
-                vm.UndoRedo.PushState("Cut");
-            }
-        }
-    }
-
-    private async void MiCopy_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is GraphEditorVM vm)
-        {
-            var data = vm.Copy(lastClick);
-            if (data != null && Clipboard != null && data.Length > 0)
-            {
-                var dataObject = new DataObject();
-                dataObject.Set("GraphEditor_Nodes", data);
-                await Clipboard.SetDataObjectAsync(dataObject);
-            }
-        }
-    }
-
-    private void MiDelete_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is GraphEditorVM vm)
-        {
-            if (vm.SelectedNodes != null)
-            {
-                var nodes = vm.SelectedNodes.ToArray();
-
-                foreach (var node in nodes)
-                {
-                    vm.DeleteNode(node);
-                }
-            }
-            vm.UndoRedo.PushState("Delete");
-        }
-    }
-
-    private void GraphEditorWindow_PointerMoved(object? sender, PointerEventArgs e)
-    {
-        lastClick = Editor.DpiScaledViewportTransform.Value.Invert().Transform(e.GetPosition(Editor));
-    }
-
-    private void MiAddComment_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is GraphEditorVM vm)
-        {
-            var comment = new CommentNodeViewModel();
-            comment.Location = lastClick;
-            vm.Nodes.Add(comment);
-        }
-    }
-
-
-
-    private async void ContextFlyout_Opened(object? sender, System.EventArgs e)
-    {
-
-        if (DataContext is GraphEditorVM vm)
-        {
-            miUndo.IsEnabled = vm.UndoRedo.CanUndo;
-            miRedo.IsEnabled = vm.UndoRedo.CanRedo;
-        }
-        else
-            miUndo.IsEnabled = miRedo.IsEnabled = false;
-
-        miCopy.IsEnabled = CanCopy();
-        miCut.IsEnabled = CanCut();
-        miDelete.IsEnabled = CanDelete();
-        miPaste.IsEnabled = await CanPaste();
-
-    }
-
-    private bool CanDelete()
+    public bool CanCopy()
     {
         return DataContext is GraphEditorVM vm && vm.SelectedNodes != null && vm.SelectedNodes.Any();
+    }
+
+    public bool CanCut()
+    {
+        return DataContext is GraphEditorVM vm && vm.SelectedNodes != null && vm.SelectedNodes.Any();
+    }
+
+    public async Task<bool> CanPaste()
+    {
+        return Clipboard != null && (await Clipboard.GetFormatsAsync()).Contains("GraphEditor_Nodes");
     }
 
     protected override void OnKeyDown(KeyEventArgs e)
@@ -227,25 +113,8 @@ public partial class GraphEditorWindow : Window
         base.OnKeyUp(e);
     }
 
-    public bool CanCopy()
-    {
-
-        return DataContext is GraphEditorVM vm && vm.SelectedNodes != null && vm.SelectedNodes.Any();
-    }
-
-    public bool CanCut()
-    {
-        return DataContext is GraphEditorVM vm && vm.SelectedNodes != null && vm.SelectedNodes.Any();
-    }
-
-    public async Task<bool> CanPaste()
-    {
-        return Clipboard != null && (await Clipboard.GetFormatsAsync()).Contains("GraphEditor_Nodes");
-    }
-
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
-
         if (!e.Handled && e.InitialPressMouseButton == MouseButton.Right)
         {
             ContextRequestedEventArgs contextRequestedEventArgs = new ContextRequestedEventArgs(e);
@@ -257,20 +126,178 @@ public partial class GraphEditorWindow : Window
             base.OnPointerReleased(e);
     }
 
+    private bool CanDelete()
+    {
+        return DataContext is GraphEditorVM vm && vm.SelectedNodes != null && vm.SelectedNodes.Any();
+    }
+
+    private async void ContextFlyout_Opened(object? sender, System.EventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+        {
+            miUndo.IsEnabled = vm.UndoRedo.CanUndo;
+            miRedo.IsEnabled = vm.UndoRedo.CanRedo;
+        }
+        else
+            miUndo.IsEnabled = miRedo.IsEnabled = false;
+
+        miCopy.IsEnabled = CanCopy();
+        miCut.IsEnabled = CanCut();
+        miDelete.IsEnabled = CanDelete();
+        miPaste.IsEnabled = await CanPaste();
+    }
+
+    private void GraphEditorWindow_DataContextChanged(object? sender, EventArgs e)
+    {
+        miAddNode.Items.Clear();
+
+        if (DataContext is GraphEditorVM vm)
+        {
+            foreach (var recipe in vm.Pipeline.Recipes)
+            {
+                if (recipe.Id == null)
+                {
+                    recipe.Id = Guid.NewGuid().ToString();
+                }
+
+                var therecipe = recipe;
+                miAddNode.Items.Add(new MenuItem()
+                {
+                    Header = therecipe.Name ?? "Unknown",
+                    Command = new RelayCommand(() =>
+                    {
+                        var node = new RecipeNodeVM(vm);
+                        node.Location = lastClick;
+                        node.RefreshValues(therecipe);
+                        vm.Nodes.Add(node);
+                        vm.UndoRedo.PushState("Add node " + therecipe.Name);
+                    })
+                });
+            }
+        }
+    }
+
+    private void GraphEditorWindow_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        lastClick = Editor.DpiScaledViewportTransform.Value.Invert().Transform(e.GetPosition(Editor));
+    }
+
     private void LineConnection_Disconnect(object? sender, RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm && sender is Control control && control.DataContext is ConnectionVM connectionVM)
         {
             vm.Disconnect(connectionVM);
+            vm.UndoRedo.PushState("Disconnect");
             e.Handled = true;
         }
     }
 
+    private void MiAddComment_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+        {
+            var comment = new CommentNodeVM(vm);
+            comment.Location = lastClick;
+            vm.Nodes.Add(comment);
+            vm.UndoRedo.PushState("Add comment");
+        }
+    }
 
+    private async void MiCopy_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+        {
+            var data = vm.Copy(lastClick);
+            if (data != null && Clipboard != null && data.Length > 0)
+            {
+                var dataObject = new DataObject();
+                dataObject.Set("GraphEditor_Nodes", data);
+                await Clipboard.SetDataObjectAsync(dataObject);
+            }
+        }
+    }
+
+    private async void MiCut_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+        {
+            var data = vm.Cut(lastClick);
+            if (data != null && Clipboard != null && data.Length > 0)
+            {
+                var dataObject = new DataObject();
+                dataObject.Set("GraphEditor_Nodes", data);
+                await Clipboard.SetDataObjectAsync(dataObject);
+                vm.UndoRedo.PushState("Cut");
+            }
+        }
+    }
+
+    private void MiDelete_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+        {
+            if (vm.SelectedNodes != null)
+            {
+                var nodes = vm.SelectedNodes.ToArray();
+
+                foreach (var node in nodes)
+                {
+                    vm.DeleteNode(node);
+                }
+            }
+            vm.UndoRedo.PushState("Delete");
+        }
+    }
+
+    private async void MiPaste_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm && Clipboard != null && (await Clipboard.GetFormatsAsync()).Contains("GraphEditor_Nodes"))
+        {
+            try
+            {
+                var data = await Clipboard.GetDataAsync("GraphEditor_Nodes") as byte[];
+
+                if (data != null)
+                {
+                    vm.Paste(data, lastClick);
+                    vm.UndoRedo.PushState("Paste");
+                }
+            }
+            catch (Exception ex)
+            {
+                await MessageBoxExtentions.ShowErrorAsync(ex, this);
+            }
+        }
+    }
+
+    private void MiRedo_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.UndoRedo.Redo();
+    }
+
+    private void MiUndo_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.UndoRedo.Undo();
+    }
+
+    private void TextBox_Comment_GotFocus(object? sender, Avalonia.Input.GotFocusEventArgs e)
+    {
+        lastText = (sender as TextBox)?.Text;
+    }
+
+    private void TextBox_Comment_LostFocus(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var newText = (sender as TextBox)?.Text;
+        if (DataContext is GraphEditorVM vm && lastText != newText)
+        {
+            vm.UndoRedo.PushState("Change comment");
+        }
+    }
 
     //private void LineConnection_Disconnect(object? sender, Nodify.ConnectionEventArgs e)
     //{
-
     //    if (DataContext is GraphEditorVM vm && sender is Control control && control.DataContext is ConnectionVM connectionVM)
     //    {
     //        vm.Disconnect(connectionVM);

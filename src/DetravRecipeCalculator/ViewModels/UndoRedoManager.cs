@@ -9,21 +9,24 @@ namespace DetravRecipeCalculator.ViewModels
 {
     public interface IUndoRedoObject
     {
-        public object SaveState();
+        public bool Saved { get; set; }
 
         public void RestoreState(object state);
 
-        public bool Saved { get; set; }
+        public object SaveState();
     }
 
     public partial class UndoRedoManager : ViewModelBase
     {
-        private IUndoRedoObject undoRedoObject;
-        [ObservableProperty]
-        private bool canUndo;
+        private readonly List<(string, object)> undoRedoStates = new List<(string, object)>();
+
         [ObservableProperty]
         private bool canRedo;
-        private readonly List<(string, object)> undoRedoStates = new List<(string, object)>();
+
+        [ObservableProperty]
+        private bool canUndo;
+
+        private IUndoRedoObject undoRedoObject;
         private int undoRedoStatesIndex;
 
         public UndoRedoManager(IUndoRedoObject undoRedoObject)
@@ -32,38 +35,6 @@ namespace DetravRecipeCalculator.ViewModels
             Reset();
         }
 
-
-        public void Undo()
-        {
-            if (undoRedoStatesIndex > 0)
-            {
-                undoRedoStatesIndex--;
-                RestoreCurrentState();
-            }
-            UpdateUndoRedoFlags();
-        }
-
-        public void Redo()
-        {
-            if (undoRedoStatesIndex < undoRedoStates.Count - 1)
-            {
-                undoRedoStatesIndex++;
-                RestoreCurrentState();
-            }
-            UpdateUndoRedoFlags();
-        }
-
-        public void RestoreCurrentState()
-        {
-            undoRedoObject.RestoreState(undoRedoStates[undoRedoStatesIndex].Item2);
-            UpdateUndoRedoFlags();
-        }
-
-        private void UpdateUndoRedoFlags()
-        {
-            CanUndo = undoRedoStatesIndex > 0;
-            CanRedo = undoRedoStatesIndex < undoRedoStates.Count - 1;
-        }
         public void PushState(string name)
         {
             undoRedoStatesIndex++;
@@ -78,11 +49,43 @@ namespace DetravRecipeCalculator.ViewModels
             UpdateUndoRedoFlags();
         }
 
+        public void Redo()
+        {
+            if (undoRedoStatesIndex < undoRedoStates.Count - 1)
+            {
+                undoRedoStatesIndex++;
+                RestoreCurrentState();
+            }
+            UpdateUndoRedoFlags();
+        }
+
         public void Reset()
         {
             undoRedoStatesIndex = 0;
             undoRedoStates.Clear();
             undoRedoStates.Add(("Initial", undoRedoObject.SaveState()));
+        }
+
+        public void RestoreCurrentState()
+        {
+            undoRedoObject.RestoreState(undoRedoStates[undoRedoStatesIndex].Item2);
+            UpdateUndoRedoFlags();
+        }
+
+        public void Undo()
+        {
+            if (undoRedoStatesIndex > 0)
+            {
+                undoRedoStatesIndex--;
+                RestoreCurrentState();
+            }
+            UpdateUndoRedoFlags();
+        }
+
+        private void UpdateUndoRedoFlags()
+        {
+            CanUndo = undoRedoStatesIndex > 0;
+            CanRedo = undoRedoStatesIndex < undoRedoStates.Count - 1;
         }
     }
 }

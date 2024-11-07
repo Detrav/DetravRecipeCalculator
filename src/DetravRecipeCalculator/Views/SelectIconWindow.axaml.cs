@@ -14,6 +14,10 @@ namespace DetravRecipeCalculator.Views;
 
 public partial class SelectIconWindow : Window
 {
+    private const string ICONS_PACK_FOLDER = "game-icons";
+
+    private const string ICONS_PACK_URL = "https://game-icons.net/archives/png/zip/ffffff/transparent/game-icons.net.png.zip";
+
     public SelectIconWindow()
     {
         InitializeComponent();
@@ -21,8 +25,44 @@ public partial class SelectIconWindow : Window
         Opened += SelectIconWindow_Opened;
     }
 
-    private const string ICONS_PACK_URL = "https://game-icons.net/archives/png/zip/ffffff/transparent/game-icons.net.png.zip";
-    private const string ICONS_PACK_FOLDER = "game-icons";
+    public SelectIconItemVM? Result { get; set; }
+
+    protected override void OnClosing(WindowClosingEventArgs e)
+    {
+        Config.Instance.SaveSate(this);
+        base.OnClosing(e);
+    }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        Config.Instance.LoadSate(this);
+        base.OnLoaded(e);
+    }
+
+    private void Button_Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Close(false);
+    }
+
+    private void Button_Ok_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Close(true);
+    }
+
+    private void Grid_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    {
+        if (sender is Grid grid && DataContext is SelectIconVM vm && grid.DataContext is SelectIconItemVM itemvm)
+        {
+            foreach (var item in vm.Icons)
+            {
+                item.IsSelected = false;
+            }
+
+            itemvm.IsSelected = true;
+
+            Result = itemvm;
+        }
+    }
 
     private async void SelectIconWindow_Opened(object? sender, EventArgs e)
     {
@@ -31,7 +71,6 @@ public partial class SelectIconWindow : Window
             return;
         if (Design.IsDesignMode)
             return;
-
 
         if (DataContext is SelectIconVM vm)
         {
@@ -58,48 +97,6 @@ public partial class SelectIconWindow : Window
             {
                 IsEnabled = true;
             }
-        }
-    }
-
-    public SelectIconItemVM? Result { get; set; }
-
-
-    protected override void OnLoaded(RoutedEventArgs e)
-    {
-        Config.Instance.LoadSate(this);
-        base.OnLoaded(e);
-    }
-    protected override void OnClosing(WindowClosingEventArgs e)
-    {
-        Config.Instance.SaveSate(this);
-        base.OnClosing(e);
-
-    }
-
-
-
-    private void Button_Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Close(false);
-    }
-
-    private void Button_Ok_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Close(true);
-    }
-
-    private void Grid_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
-    {
-        if (sender is Grid grid && DataContext is SelectIconVM vm && grid.DataContext is SelectIconItemVM itemvm)
-        {
-            foreach (var item in vm.Icons)
-            {
-                item.IsSelected = false;
-            }
-
-            itemvm.IsSelected = true;
-
-            Result = itemvm;
         }
     }
 }

@@ -19,25 +19,21 @@ public partial class Resource2EditorWindow : Window
         InitializeComponent();
     }
 
-    protected override void OnLoaded(RoutedEventArgs e)
-    {
-        Config.Instance.LoadSate(this);
-        base.OnLoaded(e);
-    }
     protected override void OnClosing(WindowClosingEventArgs e)
     {
         Config.Instance.SaveSate(this);
         base.OnClosing(e);
     }
 
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        Config.Instance.LoadSate(this);
+        base.OnLoaded(e);
+    }
+
     private void Button_Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Close(false);
-    }
-
-    private void Button_Ok_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Close(true);
     }
 
     private void Button_IconDelete_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -73,9 +69,25 @@ public partial class Resource2EditorWindow : Window
                 {
                     await MessageBoxExtentions.ShowErrorAsync(ex, this);
                 }
-
             }
         }
+    }
+
+    private async void Button_IconPaste_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is ResourceVM vm)
+        {
+            var newIcon = await ClipboardHelper.GetImageAsync(Clipboard);
+            if (newIcon != null)
+            {
+                vm.Icon = newIcon;
+            }
+        }
+    }
+
+    private void Button_Ok_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Close(true);
     }
 
     private async void Button_SelectIcon_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -96,18 +108,6 @@ public partial class Resource2EditorWindow : Window
                 {
                     await MessageBoxExtentions.ShowErrorAsync(ex, this);
                 }
-            }
-        }
-    } 
-    
-    private async void Button_IconPaste_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is ResourceVM vm)
-        {
-            var newIcon = await ClipboardHelper.GetImageAsync(Clipboard);
-            if (newIcon != null)
-            {
-                vm.Icon = newIcon;
             }
         }
     }

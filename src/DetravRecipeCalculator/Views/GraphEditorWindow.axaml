@@ -9,7 +9,7 @@
     xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
     xmlns:vm="using:DetravRecipeCalculator.ViewModels"
     x:Name="theWnd"
-    Title="GraphEditorWindow"
+    Title="{Binding Loc.WindowTitle.Text}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:GraphEditorVM"
@@ -58,87 +58,107 @@
 
     <Window.ContextFlyout>
         <MenuFlyout>
-            <MenuItem x:Name="miAddNode" Header="Add Node" />
-            <MenuItem x:Name="miAddComment" Header="Add Comment" />
+            <MenuItem x:Name="miAddNode" Header="{Binding Loc.MenuAddNode.Text}" />
+            <MenuItem x:Name="miAddComment" Header="{Binding Loc.MenuAddComment.Text}" />
             <Separator />
-            <MenuItem Header="Edit">
-                <MenuItem x:Name="miUndo" Header="Undo" />
-                <MenuItem x:Name="miRedo" Header="Redo" />
+            <MenuItem Header="{Binding Loc.MenuEdit.Text}">
+                <MenuItem x:Name="miUndo" Header="{Binding Loc.MenuUndo.Text}" />
+                <MenuItem x:Name="miRedo" Header="{Binding Loc.MenuRedo.Text}" />
                 <Separator />
-                <MenuItem x:Name="miCopy" Header="Copy" />
-                <MenuItem x:Name="miCut" Header="Cut" />
-                <MenuItem x:Name="miPaste" Header="Paste" />
+                <MenuItem x:Name="miCopy" Header="{Binding Loc.MenuCopy.Text}" />
+                <MenuItem x:Name="miCut" Header="{Binding Loc.MenuCut.Text}" />
+                <MenuItem x:Name="miPaste" Header="{Binding Loc.MenuPaste.Text}" />
                 <Separator />
-                <MenuItem x:Name="miDelete" Header="Delete" />
+                <MenuItem x:Name="miDelete" Header="{Binding Loc.MenuDelete.Text}" />
             </MenuItem>
         </MenuFlyout>
     </Window.ContextFlyout>
+    <DockPanel>
+        <UniformGrid Columns="2" DockPanel.Dock="Bottom">
+            <Button
+                Margin="3"
+                HorizontalAlignment="Stretch"
+                Background="LightGreen"
+                Click="Button_Ok_Click">
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Loc.WindowOk.Text}" />
+            </Button>
+            <Button
+                Margin="3"
+                HorizontalAlignment="Stretch"
+                Background="LightCoral"
+                Click="Button_Cancel_Click">
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Loc.WindowCancel.Text}" />
+            </Button>
+        </UniformGrid>
+        <Grid Background="{StaticResource NodifyEditor.BackgroundBrush}">
 
-    <Grid Background="{StaticResource NodifyEditor.BackgroundBrush}">
+            <nodify:NodifyEditor
+                x:Name="Editor"
+                Background="{StaticResource SmallGridLinesDrawingBrush}"
+                Connections="{Binding Connections}"
+                DisconnectConnectorCommand="{Binding DisconnectConnectorCommand}"
+                GridCellSize="15"
+                ItemsDragCompletedCommand="{Binding ItemsDragCompletedCommand}"
+                ItemsSource="{Binding Nodes}"
+                PendingConnection="{Binding PendingConnection}"
+                SelectedItems="{Binding SelectedNodes}">
+                <nodify:NodifyEditor.PendingConnectionTemplate>
+                    <DataTemplate DataType="vm:PendingConnectionVM">
+                        <nodify:PendingConnection
+                            AllowOnlyConnectors="True"
+                            CompletedCommand="{Binding FinishCommand}"
+                            StartedCommand="{Binding StartCommand}" />
+                    </DataTemplate>
+                </nodify:NodifyEditor.PendingConnectionTemplate>
+                <nodify:NodifyEditor.ConnectionTemplate>
+                    <DataTemplate DataType="vm:ConnectionVM">
+                        <nodify:LineConnection
+                            Disconnect="LineConnection_Disconnect"
+                            Source="{Binding Output.Anchor}"
+                            Target="{Binding Input.Anchor}">
+                            <nodify:LineConnection.Stroke>
+                                <SolidColorBrush Color="{Binding Output.ConnectorCollor}" />
+                            </nodify:LineConnection.Stroke>
+                        </nodify:LineConnection>
+                    </DataTemplate>
+                </nodify:NodifyEditor.ConnectionTemplate>
+                <nodify:NodifyEditor.DataTemplates>
+                    <DataTemplate DataType="vm:DebugNodeVM">
+                        <nodify:Node Header="{Binding Title}" />
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:CommentNodeVM">
+                        <nodify:GroupingNode
+                            ActualSize="{Binding Size}"
+                            Header="{Binding Title}"
+                            MovementMode="Group">
+                            <TextBox
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top"
+                                AcceptsReturn="True"
+                                AcceptsTab="True"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                GotFocus="TextBox_Comment_GotFocus"
+                                LostFocus="TextBox_Comment_LostFocus"
+                                Watermark="{Binding Loc.NodeCommentPlaceholder.Text}" />
+                        </nodify:GroupingNode>
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:RecipeNodeVM">
+                        <views:RecipeNodeView />
+                    </DataTemplate>
+                </nodify:NodifyEditor.DataTemplates>
+                <nodify:NodifyEditor.ItemContainerTheme>
+                    <ControlTheme
+                        x:DataType="vm:NodeVM"
+                        BasedOn="{StaticResource {x:Type nodify:ItemContainer}}"
+                        TargetType="nodify:ItemContainer">
+                        <Setter Property="Location" Value="{Binding Location}" />
 
-        <nodify:NodifyEditor
-            x:Name="Editor"
-            Background="{StaticResource SmallGridLinesDrawingBrush}"
-            Connections="{Binding Connections}"
-            DisconnectConnectorCommand="{Binding DisconnectConnectorCommand}"
-            GridCellSize="15"
-            ItemsSource="{Binding Nodes}"
-            PendingConnection="{Binding PendingConnection}"
-            SelectedItems="{Binding SelectedNodes}">
-            <nodify:NodifyEditor.PendingConnectionTemplate>
-                <DataTemplate DataType="vm:PendingConnectionVM">
-                    <nodify:PendingConnection
-                        AllowOnlyConnectors="True"
-                        CompletedCommand="{Binding FinishCommand}"
-                        StartedCommand="{Binding StartCommand}" />
-                </DataTemplate>
-            </nodify:NodifyEditor.PendingConnectionTemplate>
-            <nodify:NodifyEditor.ConnectionTemplate>
-                <DataTemplate DataType="vm:ConnectionVM">
-                    <nodify:LineConnection
-                        Disconnect="LineConnection_Disconnect"
-                        Source="{Binding Output.Anchor}"
-                        Target="{Binding Input.Anchor}">
-                        <nodify:LineConnection.Stroke>
-                            <SolidColorBrush Color="{Binding Output.ConnectorCollor}" />
-                        </nodify:LineConnection.Stroke>
-                    </nodify:LineConnection>
-                </DataTemplate>
-            </nodify:NodifyEditor.ConnectionTemplate>
-            <nodify:NodifyEditor.DataTemplates>
-                <DataTemplate DataType="vm:DebugNodeVM">
-                    <nodify:Node Header="{Binding Title}" />
-                </DataTemplate>
-                <DataTemplate DataType="vm:CommentNodeViewModel">
-                    <nodify:GroupingNode
-                        ActualSize="{Binding Size}"
-                        Header="{Binding Title}"
-                        MovementMode="Group">
-                        <TextBox
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Top"
-                            AcceptsReturn="True"
-                            AcceptsTab="True"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            BorderThickness="0"
-                            IsUndoEnabled="False"
-                            Watermark="Click this to edit" />
-                    </nodify:GroupingNode>
-                </DataTemplate>
-                <DataTemplate DataType="vm:RecipeNodeVM">
-                    <views:RecipeNodeView />
-                </DataTemplate>
-            </nodify:NodifyEditor.DataTemplates>
-            <nodify:NodifyEditor.ItemContainerTheme>
-                <ControlTheme
-                    x:DataType="vm:NodeViewModel"
-                    BasedOn="{StaticResource {x:Type nodify:ItemContainer}}"
-                    TargetType="{x:Type nodify:ItemContainer}">
-                    <Setter Property="Location" Value="{Binding Location}" />
-                </ControlTheme>
-            </nodify:NodifyEditor.ItemContainerTheme>
-        </nodify:NodifyEditor>
-        <Grid Panel.ZIndex="-2" Background="{StaticResource LargeGridLinesDrawingBrush}" />
-    </Grid>
+                    </ControlTheme>
+                </nodify:NodifyEditor.ItemContainerTheme>
+            </nodify:NodifyEditor>
+            <Grid Panel.ZIndex="-2" Background="{StaticResource LargeGridLinesDrawingBrush}" />
+        </Grid>
+    </DockPanel>
 </Window>

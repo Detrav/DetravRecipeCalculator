@@ -10,33 +10,24 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.Utils
 {
-
     public partial class Config
     {
+        public Config()
+        {
+        }
 
         public static Config Instance { get; set; } = Load();
+
         public string AppDataDirectory { get; set; } =
 #if DEBUG
-            Environment.CurrentDirectory;
+    Environment.CurrentDirectory;
+
 #else
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DetravRecipeCalculator");
 #endif
 
-        public void CreateAppDataDirectoryIfNotExists()
-        {
-            if (!Directory.Exists(AppDataDirectory))
-                Directory.CreateDirectory(AppDataDirectory);
-        }
-
-        public Config()
-        {
-
-        }
-
         public static Config Load()
         {
-
-
             if (!Design.IsDesignMode && File.Exists("config.json"))
             {
                 var result = JsonSerializer.Deserialize<Config>(File.ReadAllText("config.json"), SourceGenerationContext.Default.Config);
@@ -47,6 +38,23 @@ namespace DetravRecipeCalculator.Utils
             }
 
             return new Config();
+        }
+
+        public void CreateAppDataDirectoryIfNotExists()
+        {
+            if (!Directory.Exists(AppDataDirectory))
+                Directory.CreateDirectory(AppDataDirectory);
+        }
+
+        public void LoadSate(Window window, string? customName = null)
+        {
+            string name = customName ?? window.GetType().Name;
+
+            if (WindowSavedStates.TryGetValue(name, out var state))
+            {
+                window.Width = state.Width;
+                window.Height = state.Height;
+            }
         }
 
         public void Save()
@@ -64,18 +72,6 @@ namespace DetravRecipeCalculator.Utils
             state.Height = window.Height;
 
             WindowSavedStates[customName ?? window.GetType().Name] = state;
-
-        }
-
-        public void LoadSate(Window window, string? customName = null)
-        {
-            string name = customName ?? window.GetType().Name;
-
-            if (WindowSavedStates.TryGetValue(name, out var state))
-            {
-                window.Width = state.Width;
-                window.Height = state.Height;
-            }
         }
     }
 }

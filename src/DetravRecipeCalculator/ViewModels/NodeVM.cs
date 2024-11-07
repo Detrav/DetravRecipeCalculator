@@ -5,31 +5,41 @@ using DetravRecipeCalculator.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
+using static DetravRecipeCalculator.ViewModels.GraphEditorVM;
 
 namespace DetravRecipeCalculator.ViewModels
 {
-    public abstract partial class NodeViewModel : ViewModelBase
+    public abstract partial class NodeVM : ViewModelBase
     {
-        [ObservableProperty]
-        private string? title;
         [ObservableProperty]
         private Point location;
 
+        [ObservableProperty]
+        private string? title;
 
-        public ObservableCollection<ConnectorViewModel> Input { get; } = new ObservableCollection<ConnectorViewModel>();
-        public ObservableCollection<ConnectorViewModel> Output { get; } = new ObservableCollection<ConnectorViewModel>();
+        public GraphEditorVMLoc Loc => GraphEditorVMLoc.Instance;
 
-
-        public virtual void RestoreState(PipelineVM pipeline, NodeModel model)
+        public NodeVM(GraphEditorVM parent)
         {
+            this.Parent = parent;
+        }
 
+        public ObservableCollection<ConnectorVM> Input { get; } = new ObservableCollection<ConnectorVM>();
+        public ObservableCollection<ConnectorVM> Output { get; } = new ObservableCollection<ConnectorVM>();
+        public GraphEditorVM Parent { get; }
+
+        public virtual void RefreshValues(RecipeVM? recipe = null)
+        {
+        }
+
+        public virtual void RestoreState(NodeModel model)
+        {
             Location = model.Location;
 
             Input.Clear();
             foreach (var itemModel in model.Input)
             {
-                var item = new ConnectorViewModel();
+                var item = new ConnectorVM();
                 item.RestoreState(itemModel);
                 item.IsInput = true;
                 Input.Add(item);
@@ -37,14 +47,13 @@ namespace DetravRecipeCalculator.ViewModels
             Output.Clear();
             foreach (var itemModel in model.Output)
             {
-                var item = new ConnectorViewModel();
+                var item = new ConnectorVM();
                 item.RestoreState(itemModel);
                 item.IsInput = false;
                 Output.Add(item);
             }
 
-            RefreshValues(pipeline);
-
+            RefreshValues();
         }
 
         public virtual NodeModel SaveState()
@@ -67,12 +76,5 @@ namespace DetravRecipeCalculator.ViewModels
 
             return model;
         }
-
-
-        public virtual void RefreshValues(PipelineVM pipeline, RecipeVM? recipe = null)
-        {
-
-        }
-
     }
 }

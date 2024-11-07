@@ -21,12 +21,10 @@ namespace DetravRecipeCalculator.Utils
             {
                 try
                 {
-
                     if (vm.Path != null && vm.Bitmap == null)
                     {
                         vm.Bitmap = new Bitmap(vm.Path);
                     }
-
                 }
                 catch
                 {

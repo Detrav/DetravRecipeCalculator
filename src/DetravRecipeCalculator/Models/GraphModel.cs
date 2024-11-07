@@ -10,9 +10,9 @@ namespace DetravRecipeCalculator.Models
     public class GraphModel
     {
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
-        public List<NodeModel> Nodes { get; } = new List<NodeModel>();
+        public List<ConnectionModel> Connections { get; } = new List<ConnectionModel>();
 
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
-        public List<ConnectionModel> Connections { get; } = new List<ConnectionModel>();
+        public List<NodeModel> Nodes { get; } = new List<NodeModel>();
     }
 }

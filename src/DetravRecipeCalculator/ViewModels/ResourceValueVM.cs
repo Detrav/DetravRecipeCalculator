@@ -9,27 +9,16 @@ using System.Windows.Input;
 
 namespace DetravRecipeCalculator.ViewModels
 {
-    public class ResourceValueVMLocalization
-    {
-        public static ResourceValueVMLocalization Instance { get; } = new ResourceValueVMLocalization();
-
-        public XLocItem NameTip { get; } = new XLocItem("__ResourceValue_NameTip");
-        public XLocItem ValueTip { get; } = new XLocItem("__ResourceValue_ValueTip");
-
-        public XLocItem MoveUpTip { get; } = new XLocItem("__ResourceValue_MoveUpTip");
-        public XLocItem MoveDownTip { get; } = new XLocItem("__ResourceValue_MoveDownTip");
-        public XLocItem DeleteTip { get; } = new XLocItem("__ResourceValue_DeleteTip");
-        public XLocItem HelpTip { get; } = new XLocItem("__ResourceValue_HelpTip");
-    }
-
     public partial class ResourceValueVM : ViewModelBase, IUndoRedoObject
     {
         [ObservableProperty]
         private string? name;
-        [ObservableProperty]
-        private string? value;
+
         [ObservableProperty]
         private bool saved;
+
+        [ObservableProperty]
+        private string? value;
 
         public ResourceValueVMLocalization Loc { get; } = ResourceValueVMLocalization.Instance;
 
@@ -49,5 +38,17 @@ namespace DetravRecipeCalculator.ViewModels
             model.Value = Value;
             return model;
         }
+    }
+
+    public class ResourceValueVMLocalization
+    {
+        public static ResourceValueVMLocalization Instance { get; } = new ResourceValueVMLocalization();
+
+        public XLocItem DeleteTip { get; } = new XLocItem("__ResourceValue_DeleteTip");
+        public XLocItem HelpTip { get; } = new XLocItem("__ResourceValue_HelpTip");
+        public XLocItem MoveDownTip { get; } = new XLocItem("__ResourceValue_MoveDownTip");
+        public XLocItem MoveUpTip { get; } = new XLocItem("__ResourceValue_MoveUpTip");
+        public XLocItem NameTip { get; } = new XLocItem("__ResourceValue_NameTip");
+        public XLocItem ValueTip { get; } = new XLocItem("__ResourceValue_ValueTip");
     }
 }

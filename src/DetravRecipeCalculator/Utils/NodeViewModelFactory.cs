@@ -11,31 +11,33 @@ namespace DetravRecipeCalculator.Utils
     {
         static NodeViewModelFactory()
         {
-            Register<CommentNodeViewModel>();
-            Register<RecipeNodeVM>();
-            Register<DebugNodeVM>();
+            Register<CommentNodeVM>(parent => new CommentNodeVM(parent));
+            Register<RecipeNodeVM>(parent => new RecipeNodeVM(parent));
+            Register<DebugNodeVM>(parent => new DebugNodeVM(parent));
         }
 
-        public static Dictionary<string, Func<NodeViewModel>> Factory { get; } = new Dictionary<string, Func<NodeViewModel>>();
+        public delegate NodeVM NodeVMActivator(GraphEditorVM parent);
 
-        public static void Register<T>()
-            where T : NodeViewModel, new()
+        public static Dictionary<string, NodeVMActivator> Factory { get; } = new Dictionary<string, NodeVMActivator>();
+
+        public static NodeVM? Create(string? name, GraphEditorVM parent)
         {
-            Factory[typeof(T).Name] = () => new T();
+            if (!String.IsNullOrWhiteSpace(name) && Factory.TryGetValue(name, out var activator))
+            {
+                return activator(parent);
+            }
+            return null;
         }
 
-        public static string GetName(NodeViewModel @object)
+        public static string GetName(NodeVM @object)
         {
             return @object.GetType().Name;
         }
 
-        public static NodeViewModel? Create(string? name)
+        public static void Register<T>(NodeVMActivator activator)
+                            where T : NodeVM
         {
-            if (!String.IsNullOrWhiteSpace(name) && Factory.TryGetValue(name, out var activator))
-            {
-                return activator();
-            }
-            return null;
+            Factory[typeof(T).Name] = activator;
         }
     }
 }

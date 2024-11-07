@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DetravRecipeCalculator.Models;
+using DetravRecipeCalculator.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO.Pipes;
@@ -10,18 +11,27 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.ViewModels
 {
-    public partial class CommentNodeViewModel : NodeViewModel
+    public partial class CommentNodeVM : NodeVM
     {
-        public CommentNodeViewModel()
-        {
-            Title = "Comment";
-        }
-
-        [ObservableProperty]
-        private Size size = new Size(200, 150);
         [ObservableProperty]
         private string? comment;
 
+        [ObservableProperty]
+        private Size size = new Size(200, 150);
+
+        public CommentNodeVM(GraphEditorVM parent)
+                            : base(parent)
+        {
+            Title = Loc.NodeCommentTitle.Text;
+        }
+
+        public override void RestoreState(NodeModel model)
+        {
+            Size = model.Size;
+            Comment = model.Comment;
+
+            base.RestoreState(model);
+        }
 
         public override NodeModel SaveState()
         {
@@ -32,14 +42,5 @@ namespace DetravRecipeCalculator.ViewModels
 
             return model;
         }
-
-        public override void RestoreState(PipelineVM pipeline, NodeModel model)
-        {
-            Size = model.Size;
-            Comment = model.Comment;
-
-            base.RestoreState(pipeline, model);
-        }
-
     }
 }

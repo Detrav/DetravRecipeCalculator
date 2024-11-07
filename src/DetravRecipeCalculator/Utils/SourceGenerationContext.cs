@@ -14,6 +14,5 @@ namespace DetravRecipeCalculator.Utils
     [JsonSerializable(typeof(GraphModel))]
     public partial class SourceGenerationContext : JsonSerializerContext
     {
-        
     }
 }

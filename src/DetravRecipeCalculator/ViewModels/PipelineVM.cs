@@ -59,6 +59,7 @@ namespace DetravRecipeCalculator.ViewModels
         public ObservableCollection<RecipeVM> Recipes { get; } = new ObservableCollection<RecipeVM>();
         public ObservableCollection<ResourceVM> Resources { get; } = new ObservableCollection<ResourceVM>();
         public UndoRedoManager UndoRedo { get; }
+        public GraphModel? Graph { get; set; }
 
         public static PipelineVM Load(string path)
         {
@@ -73,6 +74,20 @@ namespace DetravRecipeCalculator.ViewModels
             result.RefreshResourcesFilters();
             result.UndoRedo.Reset();
             return result;
+        }
+
+        public void RefreshPreview()
+        {
+            if (SelectedRecipe == null)
+            {
+                RecipeNodePreview = null;
+                return;
+            }
+
+            var editor = new GraphEditorVM(this);
+
+            RecipeNodePreview = new RecipeNodeVM(editor);
+            RecipeNodePreview.RefreshValues(SelectedRecipe);
         }
 
         public void RestoreState(object state)
@@ -96,9 +111,9 @@ namespace DetravRecipeCalculator.ViewModels
                     Resources.Add(resource);
                 }
 
-
-
                 RefreshResources();
+
+                Graph = model.Graph;
             }
         }
 
@@ -145,19 +160,9 @@ namespace DetravRecipeCalculator.ViewModels
                 }
             }
 
+            model.Graph = Graph;
+
             return model;
-        }
-
-        public void RefreshPreview()
-        {
-            if (SelectedRecipe == null)
-            {
-                RecipeNodePreview = null;
-                return;
-            }
-
-            RecipeNodePreview = new RecipeNodeVM();
-            RecipeNodePreview.RefreshValues(this, SelectedRecipe);
         }
 
         partial void OnFilePathChanged(string? value)
@@ -234,8 +239,6 @@ namespace DetravRecipeCalculator.ViewModels
                     });
                 }
             }
-
-
         }
 
         private void RefreshResourcesFilters()

@@ -16,45 +16,74 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.ViewModels
 {
-    public partial class ConnectorViewModel : ViewModelBase
+    public partial class ConnectorVM : ViewModelBase
     {
+        [ObservableProperty]
+        private Point anchor;
+
+        [ObservableProperty]
+        private Color? backgroundColor;
+
+        [ObservableProperty]
+        private int connectionsNumber;
+
+        [ObservableProperty]
+        private Color? connectorCollor;
 
         [ObservableProperty]
         private byte[]? icon;
-        [ObservableProperty]
-        private Color? connectorCollor;
-        [ObservableProperty]
-        private Color? backgroundColor;
-        [ObservableProperty]
-        private string? name;
-        [ObservableProperty]
-        private double value;
-        [ObservableProperty]
-        private string? valueExpression;
-        [ObservableProperty]
-        private int tier;
-        [ObservableProperty]
-        private int number;
-        [ObservableProperty]
-        private Point anchor;
-        [ObservableProperty]
-        private bool isConnected;
-        [ObservableProperty]
-        private bool isInput;
-        [ObservableProperty]
-        private double timeToCraft;
-        [ObservableProperty]
-        private double valuePerSecond;
-        [ObservableProperty]
-        private double valuePerSecondResult;
-        [ObservableProperty]
-        private int connectionsNumber;
+
         [ObservableProperty]
         private string? id;
+
+        [ObservableProperty]
+        private bool isConnected;
+
+        [ObservableProperty]
+        private bool isInput;
+
         [ObservableProperty]
         private bool isUnknown;
 
-        internal void RefreshValues(NodeViewModel nodeVM, ResourceValueVM item, ResourceVM? resource)
+        [ObservableProperty]
+        private string? name;
+
+        [ObservableProperty]
+        private int number;
+
+        [ObservableProperty]
+        private int tier;
+
+        [ObservableProperty]
+        private double timeToCraft;
+
+        [ObservableProperty]
+        private double value;
+
+        [ObservableProperty]
+        private string? valueExpression;
+
+        [ObservableProperty]
+        private double valuePerSecond;
+
+        [ObservableProperty]
+        private double valuePerSecondResult;
+
+        public void RestoreState(PinModel model)
+        {
+            Id = model.Id;
+            Name = model.Name;
+        }
+
+        public PinModel SaveState()
+        {
+            var model = new PinModel();
+            model.Id = Id = Guid.NewGuid().ToString();
+            model.Name = Name;
+            return model;
+        }
+
+        internal void RefreshValues(NodeVM nodeVM, ResourceValueVM item, ResourceVM? resource)
         {
             Name = item.Name;
             if (resource != null)
@@ -77,8 +106,12 @@ namespace DetravRecipeCalculator.ViewModels
             }
         }
 
+        partial void OnConnectionsNumberChanged(int value)
+        {
+            IsConnected = value != 0;
+        }
 
-        partial void OnValueExpressionChanged(string? value)
+        partial void OnNumberChanged(int value)
         {
             RefreshValue();
         }
@@ -88,7 +121,17 @@ namespace DetravRecipeCalculator.ViewModels
             RefreshValue();
         }
 
-        partial void OnNumberChanged(int value)
+        partial void OnTimeToCraftChanged(double value)
+        {
+            UpdateValuePerSecond();
+        }
+
+        partial void OnValueChanged(double value)
+        {
+            UpdateValuePerSecond();
+        }
+
+        partial void OnValueExpressionChanged(string? value)
         {
             RefreshValue();
         }
@@ -96,11 +139,6 @@ namespace DetravRecipeCalculator.ViewModels
         private void RefreshValue()
         {
             Value = ExpressionUtils.GetValue(ValueExpression, Tier, 0) * Number;
-        }
-
-        partial void OnTimeToCraftChanged(double value)
-        {
-            UpdateValuePerSecond();
         }
 
         private void UpdateValuePerSecond()
@@ -113,31 +151,6 @@ namespace DetravRecipeCalculator.ViewModels
             }
 
             ValuePerSecond = Value / time;
-        }
-
-        partial void OnValueChanged(double value)
-        {
-            UpdateValuePerSecond();
-        }
-
-        partial void OnConnectionsNumberChanged(int value)
-        {
-            IsConnected = value != 0;
-        }
-
-        public PinModel SaveState()
-        {
-            var model = new PinModel();
-            model.Id = Id = Guid.NewGuid().ToString();
-            model.Name = Name;
-            return model;
-        }
-
-        public void RestoreState(PinModel model)
-        {
-            Id = model.Id;
-            Name = model.Name;
-
         }
     }
 }

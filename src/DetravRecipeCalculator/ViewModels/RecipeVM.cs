@@ -50,9 +50,6 @@ namespace DetravRecipeCalculator.ViewModels
     public partial class RecipeVM : ViewModelBase, IUndoRedoObject
     {
         [ObservableProperty]
-        private string? id;
-
-        [ObservableProperty]
         private string? backgroundColor;
 
         [ObservableProperty]
@@ -66,6 +63,12 @@ namespace DetravRecipeCalculator.ViewModels
 
         [ObservableProperty]
         private byte[]? icon;
+
+        [ObservableProperty]
+        private byte[]? iconFiltered;
+
+        [ObservableProperty]
+        private string? id;
 
         [ObservableProperty]
         private bool isEnabled;
@@ -82,64 +85,14 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private string? timeToCraft;
 
-        [ObservableProperty]
-        private byte[]? iconFiltered;
-
-        partial void OnBackgroundColorChanged(string? value)
-        {
-            BackgroundColorValue = DetravColorHelper.GetColorFormString(BackgroundColor, Colors.DarkGray);
-        }
-
-        partial void OnForegroundColorChanged(string? value)
-        {
-            ForegroundColorValue = DetravColorHelper.GetColorFormString(ForegroundColor, Colors.White);
-        }
-
-        partial void OnForegroundColorValueChanged(Color? value)
-        {
-            UpdateBitmap();
-        }
-
-        partial void OnIconChanged(byte[]? value)
-        {
-            UpdateBitmap();
-        }
-
         public RecipeVM()
         {
         }
 
-        private void UpdateBitmap()
-        {
-            if (Icon == null || Icon.Length < 4)
-            {
-                IconFiltered = null;
-            }
-            else if (ForegroundColorValue == Colors.White)
-            {
-                IconFiltered = Icon;
-            }
-            else
-            {
-                try
-                {
-                    var c = ForegroundColorValue.GetValueOrDefault();
-                    using var filter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(new SKColor(c.R, c.G, c.B, c.A), SKBlendMode.Modulate));
-                    using var bmp = SKBitmap.Decode(Icon);
-                    using var img = SKImage.FromBitmap(bmp);
-                    using var img2 = img.ApplyImageFilter(filter, new SKRectI(0, 0, img.Width, img.Height), new SKRectI(0, 0, img.Width, img.Height), out SKRectI subSet, out SKPoint point);
-                    using var data = img2.Encode(SKEncodedImageFormat.Png, 90);
-                    IconFiltered = data.ToArray();
-                }
-                catch
-                {
-                    IconFiltered = null;
-                }
-            }
-        }
-
         public ObservableCollection<ResourceValueVM> Input { get; } = new ObservableCollection<ResourceValueVM>();
+
         public RecipeModelLocalization Loc { get; } = RecipeModelLocalization.Instance;
+
         public ObservableCollection<ResourceValueVM> Output { get; } = new ObservableCollection<ResourceValueVM>();
 
         public void RestoreState(object state)
@@ -176,7 +129,6 @@ namespace DetravRecipeCalculator.ViewModels
 
         public object SaveState()
         {
-
             var model = new RecipeModel();
 
             model.Id = Id;
@@ -205,6 +157,55 @@ namespace DetravRecipeCalculator.ViewModels
             }
 
             return model;
+        }
+
+        partial void OnBackgroundColorChanged(string? value)
+        {
+            BackgroundColorValue = DetravColorHelper.GetColorFormString(BackgroundColor, Colors.DarkGray);
+        }
+
+        partial void OnForegroundColorChanged(string? value)
+        {
+            ForegroundColorValue = DetravColorHelper.GetColorFormString(ForegroundColor, Colors.White);
+        }
+
+        partial void OnForegroundColorValueChanged(Color? value)
+        {
+            UpdateBitmap();
+        }
+
+        partial void OnIconChanged(byte[]? value)
+        {
+            UpdateBitmap();
+        }
+
+        private void UpdateBitmap()
+        {
+            if (Icon == null || Icon.Length < 4)
+            {
+                IconFiltered = null;
+            }
+            else if (ForegroundColorValue == Colors.White)
+            {
+                IconFiltered = Icon;
+            }
+            else
+            {
+                try
+                {
+                    var c = ForegroundColorValue.GetValueOrDefault();
+                    using var filter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(new SKColor(c.R, c.G, c.B, c.A), SKBlendMode.Modulate));
+                    using var bmp = SKBitmap.Decode(Icon);
+                    using var img = SKImage.FromBitmap(bmp);
+                    using var img2 = img.ApplyImageFilter(filter, new SKRectI(0, 0, img.Width, img.Height), new SKRectI(0, 0, img.Width, img.Height), out SKRectI subSet, out SKPoint point);
+                    using var data = img2.Encode(SKEncodedImageFormat.Png, 90);
+                    IconFiltered = data.ToArray();
+                }
+                catch
+                {
+                    IconFiltered = null;
+                }
+            }
         }
 
         //public string GetVizualizeText()

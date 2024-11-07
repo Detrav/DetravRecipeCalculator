@@ -9,11 +9,25 @@ namespace DetravRecipeCalculator.Views;
 
 public partial class MainWindow : Window
 {
-    bool shouldClose = false;
+    private bool shouldClose = false;
+
     public MainWindow()
     {
         InitializeComponent();
         Closing += MainWindow_Closing;
+    }
+
+    protected override void OnClosing(WindowClosingEventArgs e)
+    {
+        Config.Instance.SaveSate(this);
+        Config.Instance.Save();
+        base.OnClosing(e);
+    }
+
+    protected override void OnOpened(EventArgs e)
+    {
+        Config.Instance.LoadSate(this);
+        base.OnOpened(e);
     }
 
     private void MainWindow_Closing(object? sender, WindowClosingEventArgs e)
@@ -21,7 +35,7 @@ public partial class MainWindow : Window
         if (shouldClose)
             return;
 
-        if (DataContext is MainViewModel vm)
+        if (DataContext is MainVM vm)
         {
             if (vm.Pipeline != null && !vm.Pipeline.Saved)
             {
@@ -45,25 +59,11 @@ public partial class MainWindow : Window
                     }
                 }
                 break;
+
             case MsBox.Avalonia.Enums.ButtonResult.No:
                 shouldClose = true;
                 Close();
                 break;
         }
     }
-
-    protected override void OnClosing(WindowClosingEventArgs e)
-    {
-        Config.Instance.SaveSate(this);
-        Config.Instance.Save();
-        base.OnClosing(e);
-    }
-
-    protected override void OnOpened(EventArgs e)
-    {
-        Config.Instance.LoadSate(this);
-        base.OnOpened(e);
-    }
-
-
 }

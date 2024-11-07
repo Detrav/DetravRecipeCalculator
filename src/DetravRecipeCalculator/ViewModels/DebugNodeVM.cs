@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.ViewModels
 {
-    public partial class DebugNodeVM : NodeViewModel
+    public partial class DebugNodeVM : NodeVM
     {
-        
+        public DebugNodeVM(GraphEditorVM parent) : base(parent)
+        {
+        }
     }
 }

@@ -17,9 +17,34 @@ namespace DetravRecipeCalculator.Utils
         private static readonly List<WeakReference<XLocItem>> items = new List<WeakReference<XLocItem>>();
         private Dictionary<string, string> _localization = new Dictionary<string, string>();
 
+        static Xloc()
+        {
+            foreach (var name in typeof(Xloc).Assembly.GetManifestResourceNames())
+            {
+                if (name.StartsWith("DetravRecipeCalculator.Localization.", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".lang", StringComparison.OrdinalIgnoreCase))
+                {
+                    var stream = typeof(Xloc).Assembly.GetManifestResourceStream(name);
+                    if (stream != null)
+                    {
+                        var items = name.Split('.');
+
+                        LoadLocalization(items[items.Length - 2], stream);
+                    }
+                }
+            }
+            FallbackLocale = GetLocale("en");
+            CurrentLocale = GetLocale(Config.Instance.CurrentLocale ?? "en");
+        }
+
+        public static IEnumerable<string> AvailableLocales => _locales.Keys;
         public static Xloc CurrentLocale { get; private set; } = new Xloc();
         public static Xloc FallbackLocale { get; private set; } = new Xloc();
-        public static IEnumerable<string> AvailableLocales => _locales.Keys;
+
+        public static string Get(string id)
+        {
+            return CurrentLocale.Get(id, true);
+        }
+
         public static Xloc GetLocale(string locale)
         {
             if (_locales.TryGetValue(locale, out var xloc))
@@ -32,26 +57,6 @@ namespace DetravRecipeCalculator.Utils
             items.Add(new WeakReference<XLocItem>(item));
 
             CurrentLocale.LoadLocale(item);
-        }
-
-        static Xloc()
-        {
-            foreach (var name in typeof(Xloc).Assembly.GetManifestResourceNames())
-            {
-                if (name.StartsWith("DetravRecipeCalculator.Localization.", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".lang", StringComparison.OrdinalIgnoreCase))
-                {
-                    var stream = typeof(Xloc).Assembly.GetManifestResourceStream(name);
-                    if (stream != null)
-                    {
-                        var items = name.Split('.');
-
-
-                        LoadLocalization(items[items.Length - 2], stream);
-                    }
-                }
-            }
-            FallbackLocale = GetLocale("en");
-            CurrentLocale = GetLocale(Config.Instance.CurrentLocale ?? "en");
         }
 
         public static void SwitchLocalization(string locale)
@@ -72,11 +77,18 @@ namespace DetravRecipeCalculator.Utils
             }
         }
 
+        public string Get(string id, bool fallBack2Default)
+        {
+            if (_localization.TryGetValue(id, out var value) || fallBack2Default && FallbackLocale._localization.TryGetValue(id, out value))
+            {
+                return value;
+            }
+            return id;
+        }
+
         private static void LoadLocalization(string name, Stream stream)
         {
             Xloc xloc = new Xloc();
-
-
 
             using var tr = new StreamReader(stream, Encoding.UTF8);
 
@@ -132,15 +144,6 @@ namespace DetravRecipeCalculator.Utils
             return sb.ToString();
         }
 
-        public string Get(string id, bool fallBack2Default)
-        {
-            if (_localization.TryGetValue(id, out var value) || fallBack2Default && FallbackLocale._localization.TryGetValue(id, out value))
-            {
-                return value;
-            }
-            return id;
-        }
-
         private void LoadLocale(XLocItem item)
         {
             item.Text = Get(item.Id, true);
@@ -152,11 +155,6 @@ namespace DetravRecipeCalculator.Utils
             //{
             //    item.Text = item.Id;
             //}
-        }
-
-        public static string Get(string id)
-        {
-            return CurrentLocale.Get(id, true);
         }
     }
 }

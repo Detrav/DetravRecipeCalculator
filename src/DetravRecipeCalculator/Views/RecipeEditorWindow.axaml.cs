@@ -17,49 +17,26 @@ namespace DetravRecipeCalculator.Views;
 
 public partial class RecipeEditorWindow : Window
 {
-
-    public IEnumerable<string>? ResourceNames { get; set; }
-
     public RecipeEditorWindow()
     {
         InitializeComponent();
     }
 
+    public IEnumerable<string>? ResourceNames { get; set; }
+
     public AutoCompleteFilterPredicate<string> TextFilter { get; }
         = (search, item) => String.IsNullOrEmpty(search) || search.Length < 2 || item.Contains(search, StringComparison.OrdinalIgnoreCase);
 
-    protected override void OnLoaded(RoutedEventArgs e)
-    {
-        Config.Instance.LoadSate(this);
-        base.OnLoaded(e);
-    }
     protected override void OnClosing(WindowClosingEventArgs e)
     {
         Config.Instance.SaveSate(this);
         base.OnClosing(e);
     }
 
-    private async void Button_ExpressionHelp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    protected override void OnLoaded(RoutedEventArgs e)
     {
-        await MessageBoxManager.GetMessageBoxStandard(Xloc.Get("__Expressions_Title"), Xloc.Get("__Expressions_Help"), MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Question).ShowDialogAsync(this);
-    }
-
-    private void Button_Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Close(false);
-    }
-
-    private void Button_Ok_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Close(true);
-    }
-
-    private void Button_AddOutput_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is RecipeVM vm)
-        {
-            vm.Output.Add(new ResourceValueVM());
-        }
+        Config.Instance.LoadSate(this);
+        base.OnLoaded(e);
     }
 
     private void Button_AddInput_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -70,76 +47,22 @@ public partial class RecipeEditorWindow : Window
         }
     }
 
-    private void Button_InputDeleteResource_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Button_AddOutput_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
+        if (DataContext is RecipeVM vm)
         {
-            vm.Input.Remove(itemVM);
+            vm.Output.Add(new ResourceValueVM());
         }
     }
 
-    private void Button_OutputDeleteResource_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Button_Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
-        {
-            vm.Output.Remove(itemVM);
-        }
+        Close(false);
     }
 
-
-    private void Button_InputMoveUp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Button_ExpressionHelp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
-        {
-            var index = vm.Input.IndexOf(itemVM);
-
-            if (index > 0)
-            {
-                vm.Input[index] = vm.Input[index - 1];
-                vm.Input[index - 1] = itemVM;
-            }
-        }
-    }
-
-    private void Button_OutputMoveUp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
-        {
-            var index = vm.Output.IndexOf(itemVM);
-
-            if (index > 0)
-            {
-                vm.Output[index] = vm.Output[index - 1];
-                vm.Output[index - 1] = itemVM;
-            }
-        }
-    }
-
-    private void Button_InputMoveDown_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
-        {
-            var index = vm.Input.IndexOf(itemVM);
-            if (index < vm.Input.Count - 1)
-            {
-                vm.Input[index] = vm.Input[index + 1];
-                vm.Input[index + 1] = itemVM;
-            }
-        }
-    }
-
-    private void Button_OutputMoveDown_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
-        {
-
-            var index = vm.Output.IndexOf(itemVM);
-            if (index < vm.Output.Count - 1)
-            {
-                vm.Output[index] = vm.Output[index + 1];
-                vm.Output[index + 1] = itemVM;
-            }
-        }
+        await MessageBoxManager.GetMessageBoxStandard(Xloc.Get("__Expressions_Title"), Xloc.Get("__Expressions_Help"), MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Question).ShowDialogAsync(this);
     }
 
     private void Button_IconDelete_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -175,7 +98,93 @@ public partial class RecipeEditorWindow : Window
                 {
                     await MessageBoxExtentions.ShowErrorAsync(ex, this);
                 }
+            }
+        }
+    }
 
+    private void Button_InputDeleteResource_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
+        {
+            vm.Input.Remove(itemVM);
+        }
+    }
+
+    private void Button_InputMoveDown_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
+        {
+            var index = vm.Input.IndexOf(itemVM);
+            if (index < vm.Input.Count - 1)
+            {
+                vm.Input[index] = vm.Input[index + 1];
+                vm.Input[index + 1] = itemVM;
+            }
+        }
+    }
+
+    private void Button_InputMoveUp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
+        {
+            var index = vm.Input.IndexOf(itemVM);
+
+            if (index > 0)
+            {
+                vm.Input[index] = vm.Input[index - 1];
+                vm.Input[index - 1] = itemVM;
+            }
+        }
+    }
+
+    private void Button_Ok_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        Close(true);
+    }
+
+    private void Button_OutputDeleteResource_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
+        {
+            vm.Output.Remove(itemVM);
+        }
+    }
+
+    private void Button_OutputMoveDown_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
+        {
+            var index = vm.Output.IndexOf(itemVM);
+            if (index < vm.Output.Count - 1)
+            {
+                vm.Output[index] = vm.Output[index + 1];
+                vm.Output[index + 1] = itemVM;
+            }
+        }
+    }
+
+    private void Button_OutputMoveUp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (sender is Control control && control.DataContext is ResourceValueVM itemVM && DataContext is RecipeVM vm)
+        {
+            var index = vm.Output.IndexOf(itemVM);
+
+            if (index > 0)
+            {
+                vm.Output[index] = vm.Output[index - 1];
+                vm.Output[index - 1] = itemVM;
+            }
+        }
+    }
+
+    private async void Button_PasteIcon_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is RecipeVM vm)
+        {
+            var newIcon = await ClipboardHelper.GetImageAsync(Clipboard);
+            if (newIcon != null)
+            {
+                vm.Icon = newIcon;
             }
         }
     }
@@ -198,18 +207,6 @@ public partial class RecipeEditorWindow : Window
                 {
                     await MessageBoxExtentions.ShowErrorAsync(ex, this);
                 }
-            }
-        }
-    }
-
-    private async void Button_PasteIcon_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is RecipeVM vm)
-        {
-            var newIcon = await ClipboardHelper.GetImageAsync(Clipboard);
-            if(newIcon != null)
-            {
-                vm.Icon = newIcon;
             }
         }
     }

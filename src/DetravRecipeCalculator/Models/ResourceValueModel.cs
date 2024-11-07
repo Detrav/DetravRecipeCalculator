@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.Models
 {
- 
     public class ResourceValueModel
     {
         public string? Name { get; set; }

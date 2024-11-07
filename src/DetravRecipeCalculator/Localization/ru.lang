@@ -34,6 +34,7 @@ __MainView_Create=Создать
 __MainView_Edit=Редактировать
 __MainView_Delete=Удалить
 __MainView_EnableDisable=Включить/Отключить
+__MainView_Refresh=Обновить
 
 __Dialog_BtnOk=ОК
 __Dialog_BtnCancel=Отмена	
@@ -90,3 +91,16 @@ __Resource_ConnectorColorTip=Цвет, используемый для отри�
 __SelectIcon_WindowTitle=Выберите иконку
 __SelectIcon_DownloadPrompt=Загрузить иконки
 __SelectIcon_DownloadText=Набор иконок не найден. Хотите скачать набор иконок?
+
+__GraphEditor_WindowTitle=Редактор графов
+__GraphEditor_MenuAddNode=Добавить узел
+__GraphEditor_MenuAddComment=Добавить комментарий
+__GraphEditor_MenuEdit=Редактировать
+__GraphEditor_MenuUndo=Отменить
+__GraphEditor_MenuRedo=Повторить
+__GraphEditor_MenuCopy=Копировать
+__GraphEditor_MenuCut=Вырезать
+__GraphEditor_MenuPaste=Вставить
+__GraphEditor_MenuDelete=Удалить
+__GraphEditor_NodeCommentTitle=Комментарий
+__GraphEditor_NodeCommentPlaceholder=Нажмите, чтобы редактировать

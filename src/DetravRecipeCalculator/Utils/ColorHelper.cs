@@ -30,23 +30,27 @@ namespace DetravRecipeCalculator.Utils
                     if (!TryGetValue(value.AsSpan(2, 1), 0xf, out g)) return defaultColor;
                     if (!TryGetValue(value.AsSpan(3, 1), 0xf, out b)) return defaultColor;
                     break;
+
                 case 5:
                     if (!TryGetValue(value.AsSpan(1, 1), 0xf, out a)) return defaultColor;
                     if (!TryGetValue(value.AsSpan(2, 1), 0xf, out r)) return defaultColor;
                     if (!TryGetValue(value.AsSpan(3, 1), 0xf, out g)) return defaultColor;
                     if (!TryGetValue(value.AsSpan(4, 1), 0xf, out b)) return defaultColor;
                     break;
+
                 case 7:
                     if (!TryGetValue(value.AsSpan(1, 2), 0xff, out r)) return defaultColor;
                     if (!TryGetValue(value.AsSpan(3, 2), 0xff, out g)) return defaultColor;
                     if (!TryGetValue(value.AsSpan(5, 2), 0xff, out b)) return defaultColor;
                     break;
+
                 case 9:
                     if (!TryGetValue(value.AsSpan(1, 2), 0xff, out a)) return defaultColor;
                     if (!TryGetValue(value.AsSpan(3, 2), 0xff, out r)) return defaultColor;
                     if (!TryGetValue(value.AsSpan(5, 2), 0xff, out g)) return defaultColor;
                     if (!TryGetValue(value.AsSpan(7, 2), 0xff, out b)) return defaultColor;
                     break;
+
                 default:
                     return defaultColor;
             }

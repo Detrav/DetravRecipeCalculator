@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.Utils
 {
-    partial class Config
+    public partial class Config
     {
         public string? CurrentLocale { get; set; }
+
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public Dictionary<string, WindowSavedState> WindowSavedStates { get; } = new Dictionary<string, WindowSavedState>();
     }

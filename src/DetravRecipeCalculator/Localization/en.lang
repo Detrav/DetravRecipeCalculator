@@ -34,6 +34,7 @@ __MainView_Create=Create
 __MainView_Edit=Edit
 __MainView_Delete=Delete
 __MainView_EnableDisable=Enable/Disable
+__MainView_Refresh=Refresh
 
 __Dialog_BtnOk=OK
 __Dialog_BtnCancel=Cancel
@@ -91,3 +92,17 @@ __Resource_ConnectorColorTip=Color used for drawing the connection line and pins
 __SelectIcon_WindowTitle=Select an icon
 __SelectIcon_DownloadPrompt=Download icons
 __SelectIcon_DownloadText=Icon pack not found. Do you want to download the icon pack?
+
+
+__GraphEditor_WindowTitle=Graph Editor
+__GraphEditor_MenuAddNode=Add Node
+__GraphEditor_MenuAddComment=Add Comment
+__GraphEditor_MenuEdit=Edit
+__GraphEditor_MenuUndo=Undo
+__GraphEditor_MenuRedo=Redo
+__GraphEditor_MenuCopy=Copy
+__GraphEditor_MenuCut=Cut
+__GraphEditor_MenuPaste=Paste
+__GraphEditor_MenuDelete=Delete
+__GraphEditor_NodeCommentTitle=Comment
+__GraphEditor_NodeCommentPlaceholder=Click this to edit

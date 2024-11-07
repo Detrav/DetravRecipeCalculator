@@ -13,12 +13,12 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private string? text;
 
-        public string Id { get; }
-
         public XLocItem(string id)
         {
             this.Id = id;
             Xloc.Register(this);
         }
+
+        public string Id { get; }
     }
 }

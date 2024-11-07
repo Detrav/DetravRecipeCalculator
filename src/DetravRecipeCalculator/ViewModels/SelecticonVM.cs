@@ -11,59 +11,48 @@ using System.Threading.Tasks;
 
 namespace DetravRecipeCalculator.ViewModels
 {
+    public partial class SelectIconItemVM : ViewModelBase
+    {
+        [ObservableProperty]
+        private object? bitmap;
+
+        [ObservableProperty]
+        private bool isSelected;
+
+        [ObservableProperty]
+        private string? name;
+
+        [ObservableProperty]
+        private string? path;
+    }
+
     public partial class SelectIconVM : ViewModelBase
     {
-        public static SelectIconVM Instance { get; } = new SelectIconVM();
-
-        public ObservableCollection<SelectIconItemVM> Icons { get; } = new ObservableCollection<SelectIconItemVM>();
         [ObservableProperty]
         private IEnumerable<SelectIconItemVM>? filteredIcons;
 
-        public XLocItem WindowTitle { get; } = new XLocItem("__SelectIcon_WindowTitle");
-        public XLocItem WindowOk { get; } = new XLocItem("__Dialog_BtnOk");
-        public XLocItem WindowCancel { get; } = new XLocItem("__Dialog_BtnCancel");
         [ObservableProperty]
         private string? filterForName;
 
-
-        partial void OnFilterForNameChanged(string? value)
-        {
-            RefreshFilters();
-        }
-
-        private void RefreshFilters()
-        {
-            if (String.IsNullOrEmpty(FilterForName))
-            {
-                FilteredIcons = Icons;
-            }
-            else
-            {
-                FilteredIcons = Icons.Where(m => m.Name == null || m.Name.Contains(FilterForName, StringComparison.OrdinalIgnoreCase)).ToArray();
-            }
-        }
-
         public SelectIconVM()
         {
-
             Icons.CollectionChanged += Icons_CollectionChanged;
             ReloadIcons();
-
         }
 
-        private void Icons_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            RefreshFilters();
-        }
+        public static SelectIconVM Instance { get; } = new SelectIconVM();
+
+        public ObservableCollection<SelectIconItemVM> Icons { get; } = new ObservableCollection<SelectIconItemVM>();
+        public XLocItem WindowCancel { get; } = new XLocItem("__Dialog_BtnCancel");
+        public XLocItem WindowOk { get; } = new XLocItem("__Dialog_BtnOk");
+        public XLocItem WindowTitle { get; } = new XLocItem("__SelectIcon_WindowTitle");
 
         internal void ReloadIcons()
         {
-
             Icons.CollectionChanged -= Icons_CollectionChanged;
             Icons.Clear();
             try
             {
-
                 Utils.Config.Instance.CreateAppDataDirectoryIfNotExists(); ;
                 var path = Path.GetFullPath(Utils.Config.Instance.AppDataDirectory);
                 var len = path.Length + 1;
@@ -86,17 +75,27 @@ namespace DetravRecipeCalculator.ViewModels
                 RefreshFilters();
             }
         }
-    }
 
-    public partial class SelectIconItemVM : ViewModelBase
-    {
-        [ObservableProperty]
-        string? name;
-        [ObservableProperty]
-        string? path;
-        [ObservableProperty]
-        object? bitmap;
-        [ObservableProperty]
-        bool isSelected;
+        private void Icons_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RefreshFilters();
+        }
+
+        partial void OnFilterForNameChanged(string? value)
+        {
+            RefreshFilters();
+        }
+
+        private void RefreshFilters()
+        {
+            if (String.IsNullOrEmpty(FilterForName))
+            {
+                FilteredIcons = Icons;
+            }
+            else
+            {
+                FilteredIcons = Icons.Where(m => m.Name == null || m.Name.Contains(FilterForName, StringComparison.OrdinalIgnoreCase)).ToArray();
+            }
+        }
     }
 }

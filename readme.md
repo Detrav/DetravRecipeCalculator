@@ -30,7 +30,7 @@
 
 ## Future Development
 
-Features currently under consideration include options to share crafted plans as either images or direct links, allowing users to easily share and collaborate on complex crafting workflows.
+Unfortunately, I don't have time to do support, however, I made a telegram bot with notifications from github, and now I definitely won't miss an Issue, if you suddenly wrote, and I don't answer during the day, most likely I'm swamped at work and I don't have time to check the issue or telegram.
 
 
 ## How It Works
@@ -57,6 +57,10 @@ To install and use Detrav Recipe Calculator, follow these steps:
 2. Follow platform-specific instructions for **Windows**, **Linux**, or **macOS**.
 3. Launch the application and start building your first crafting project!
 
+## Uninstallation
+
+Delete the folder where the executable file was located, and also delete the folder with the settings in the directory `%APPDATA%/DetravRecipeCalculator`.
+
 ## Summary
 
 Detrav Recipe Calculator is designed to simplify and elevate the process of crafting planning, providing a high degree of customization and control. Whether you’re managing resources for a game or organizing complex production workflows, Detrav Recipe Calculator has you covered.
@@ -73,12 +77,9 @@ Thank you to these resources for providing high-quality icons that enhance the u
 ## ToDo
 
 
-6. Graph editor
-16. localization
+
 17. add total node
-18. switching time (ticks (minecraft), seconds, minutes, hours, days, weeks, months (30 days), years(365 days))
-19. undo redo for graph editor
-20. save load graph editor model
+18. switching time (ticks (minecraft), seconds, minutes, hours, days, weeks, months (30 days), years(365 days))	
 21. done expression editor
 22. add short resource name
 23. project templates for new (create)
@@ -127,4 +128,9 @@ Current Version
 * Modified node pasting mechanics: pasted nodes are now selected by default.
 + Added common editing shortcuts: undo, redo, cut, copy, delete, paste.
 * Moved shortcuts to a separate menu, as they were not frequently used in the context menu.
++ Added undo and redo functionality for the graph editor.
++ Added save and load functionality for the graph editor model.
++ Added graph editor prototype.
++ Added localization support to the graph editor.
 ```
+

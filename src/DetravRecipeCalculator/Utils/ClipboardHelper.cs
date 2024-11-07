@@ -13,31 +13,16 @@ namespace DetravRecipeCalculator.Utils
     {
         public static async Task<byte[]?> GetImageAsync(IClipboard? clipboard)
         {
-
             if (clipboard != null)
             {
                 var formats = await clipboard.GetFormatsAsync();
 
-
-
                 if (formats.Contains("PNG")) return await GetImagePNGAsync(clipboard, "PNG");
                 if (formats.Contains("image/jpeg")) return await GetImageJpegAsync(clipboard, "image/jpeg");
                 if (formats.Contains("Unknown_Format_8")) return await GetImageBitmapAsync(clipboard, "Unknown_Format_8");
-
             }
 
-
             return null;
-        }
-
-        private static Task<byte[]?> GetImagePNGAsync(IClipboard clipboard, string format)
-        {
-            return TryGetFormatAsync(clipboard, format);
-        }
-
-        private static Task<byte[]?> GetImageJpegAsync(IClipboard clipboard, string format)
-        {
-            return TryGetFormatAsync(clipboard, format);
         }
 
         private static async Task<byte[]?> GetImageBitmapAsync(IClipboard clipboard, string format)
@@ -50,7 +35,7 @@ namespace DetravRecipeCalculator.Utils
                 var pixels = new SKColor[header.biWidth * header.biHeight];
                 var pixelIndex = header.biWidth * header.biHeight - 1;
 
-                var pos = 52; // length of bitmap header 
+                var pos = 52; // length of bitmap header
                 for (var y = header.biHeight - 1; y >= 0; y--)
                 {
                     for (var x = header.biWidth - 1; x >= 0; x--)
@@ -62,7 +47,6 @@ namespace DetravRecipeCalculator.Utils
                         {
                             var a = bitmapInfoData[pos++];
                             pixels[y * header.biWidth + (header.biWidth - 1 - x)] = new SKColor(r, g, b, a);
-
                         }
                         else
                         {
@@ -83,7 +67,6 @@ namespace DetravRecipeCalculator.Utils
 
                 //using var writeStream = File.Open(Path.Combine(path, fileName), FileMode.OpenOrCreate, FileAccess.Write);
                 //bitmap.Encode(SKEncodedImageFormat.Png, 100).SaveTo(writeStream);
-
             }
             catch
             {
@@ -91,29 +74,14 @@ namespace DetravRecipeCalculator.Utils
             }
         }
 
-
-
-        private static async Task<byte[]?> TryGetFormatAsync(IClipboard clipboard, string format)
+        private static Task<byte[]?> GetImageJpegAsync(IClipboard clipboard, string format)
         {
+            return TryGetFormatAsync(clipboard, format);
+        }
 
-
-            try
-            {
-                var obj = await clipboard.GetDataAsync(format);
-                var data = obj as byte[];
-
-                if (data == null || data.Length < 4)
-                    return null;
-
-                SKBitmap.Decode(data).Dispose();
-                return data;
-            }
-            catch
-            {
-
-            }
-
-            return null;
+        private static Task<byte[]?> GetImagePNGAsync(IClipboard clipboard, string format)
+        {
+            return TryGetFormatAsync(clipboard, format);
         }
 
         // https://github.com/AvaloniaUI/Avalonia/discussions/14647
@@ -137,19 +105,39 @@ namespace DetravRecipeCalculator.Utils
             };
         }
 
+        private static async Task<byte[]?> TryGetFormatAsync(IClipboard clipboard, string format)
+        {
+            try
+            {
+                var obj = await clipboard.GetDataAsync(format);
+                var data = obj as byte[];
+
+                if (data == null || data.Length < 4)
+                    return null;
+
+                SKBitmap.Decode(data).Dispose();
+                return data;
+            }
+            catch
+            {
+            }
+
+            return null;
+        }
+
         private class BitmapHeaderInfo
         {
-            public uint biSize;
-            public int biWidth;
+            public ushort biBitCount;
+            public uint biClrImportant;
+            public uint biClrUsed;
+            public uint biCompression;
             public int biHeight;
             public ushort biPlanes;
-            public ushort biBitCount;
-            public uint biCompression;
+            public uint biSize;
             public uint biSizeImage;
+            public int biWidth;
             public int biXPelsPerMeter;
             public int biYPelsPerMeter;
-            public uint biClrUsed;
-            public uint biClrImportant;
         }
     }
 }

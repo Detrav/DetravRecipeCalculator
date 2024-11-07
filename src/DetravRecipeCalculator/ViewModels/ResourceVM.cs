@@ -60,6 +60,9 @@ namespace DetravRecipeCalculator.ViewModels
         private byte[]? icon;
 
         [ObservableProperty]
+        private byte[]? iconFiltered;
+
+        [ObservableProperty]
         private bool isEnabled;
 
         [ObservableProperty]
@@ -68,75 +71,9 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private bool saved;
 
-        [ObservableProperty]
-        private byte[]? iconFiltered;
-
         public ResourceVM()
         {
             OnConnectorColorChanged(null);
-        }
-
-        partial void OnForegroundColorChanged(string? value)
-        {
-            ForegroundColorValue = DetravColorHelper.GetColorFormString(ForegroundColor, Colors.White);
-        }
-
-        partial void OnBackgroundColorChanged(string? value)
-        {
-            BackgroundColorValue = DetravColorHelper.GetColorFormString(BackgroundColor, Colors.DarkGray);
-        }
-
-        partial void OnConnectorColorChanged(string? value)
-        {
-            int i = 1;
-            var seed = (Name ?? "None").Sum(m => (int)(m * i++));
-            var r = new Random(seed);
-
-            ConnectorColorValue = DetravColorHelper.GetColorFormString(ConnectorColor, new Color(255, (byte)r.Next(256), (byte)r.Next(256), (byte)r.Next(256)));
-        }
-
-        partial void OnNameChanged(string? value)
-        {
-            OnConnectorColorChanged(ConnectorColor);
-        }
-
-        partial void OnForegroundColorValueChanged(Color? value)
-        {
-            UpdateBitmap();
-        }
-
-        partial void OnIconChanged(byte[]? value)
-        {
-            UpdateBitmap();
-        }
-
-        private void UpdateBitmap()
-        {
-            if (Icon == null || Icon.Length < 4)
-            {
-                IconFiltered = null;
-            }
-            else if (ForegroundColorValue == Colors.White)
-            {
-                IconFiltered = Icon;
-            }
-            else
-            {
-                try
-                {
-                    var c = ForegroundColorValue.GetValueOrDefault();
-                    using var filter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(new SKColor(c.R, c.G, c.B, c.A), SKBlendMode.Modulate));
-                    using var bmp = SKBitmap.Decode(Icon);
-                    using var img = SKImage.FromBitmap(bmp);
-                    using var img2 = img.ApplyImageFilter(filter, new SKRectI(0, 0, img.Width, img.Height), new SKRectI(0, 0, img.Width, img.Height), out SKRectI subSet, out SKPoint point);
-                    using var data = img2.Encode(SKEncodedImageFormat.Png, 90);
-                    IconFiltered = data.ToArray();
-                }
-                catch
-                {
-                    IconFiltered = null;
-                }
-            }
         }
 
         public ResourceModelLocalization Loc { get; } = ResourceModelLocalization.Instance;
@@ -166,6 +103,69 @@ namespace DetravRecipeCalculator.ViewModels
             model.Icon = Icon;
 
             return model;
+        }
+
+        partial void OnBackgroundColorChanged(string? value)
+        {
+            BackgroundColorValue = DetravColorHelper.GetColorFormString(BackgroundColor, Colors.DarkGray);
+        }
+
+        partial void OnConnectorColorChanged(string? value)
+        {
+            int i = 1;
+            var seed = (Name ?? "None").Sum(m => (int)(m * i++));
+            var r = new Random(seed);
+
+            ConnectorColorValue = DetravColorHelper.GetColorFormString(ConnectorColor, new Color(255, (byte)r.Next(256), (byte)r.Next(256), (byte)r.Next(256)));
+        }
+
+        partial void OnForegroundColorChanged(string? value)
+        {
+            ForegroundColorValue = DetravColorHelper.GetColorFormString(ForegroundColor, Colors.White);
+        }
+
+        partial void OnForegroundColorValueChanged(Color? value)
+        {
+            UpdateBitmap();
+        }
+
+        partial void OnIconChanged(byte[]? value)
+        {
+            UpdateBitmap();
+        }
+
+        partial void OnNameChanged(string? value)
+        {
+            OnConnectorColorChanged(ConnectorColor);
+        }
+
+        private void UpdateBitmap()
+        {
+            if (Icon == null || Icon.Length < 4)
+            {
+                IconFiltered = null;
+            }
+            else if (ForegroundColorValue == Colors.White)
+            {
+                IconFiltered = Icon;
+            }
+            else
+            {
+                try
+                {
+                    var c = ForegroundColorValue.GetValueOrDefault();
+                    using var filter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(new SKColor(c.R, c.G, c.B, c.A), SKBlendMode.Modulate));
+                    using var bmp = SKBitmap.Decode(Icon);
+                    using var img = SKImage.FromBitmap(bmp);
+                    using var img2 = img.ApplyImageFilter(filter, new SKRectI(0, 0, img.Width, img.Height), new SKRectI(0, 0, img.Width, img.Height), out SKRectI subSet, out SKPoint point);
+                    using var data = img2.Encode(SKEncodedImageFormat.Png, 90);
+                    IconFiltered = data.ToArray();
+                }
+                catch
+                {
+                    IconFiltered = null;
+                }
+            }
         }
     }
 }

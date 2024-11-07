@@ -14,7 +14,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <DataTemplate x:Key="ConnectorPreview" DataType="vm:ConnectorViewModel">
+            <DataTemplate x:Key="ConnectorPreview" DataType="vm:ConnectorVM">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <Border
@@ -48,7 +48,7 @@
         Input="{Binding Input}"
         Output="{Binding Output}">
         <nodify:Node.InputConnectorTemplate>
-            <DataTemplate DataType="vm:ConnectorViewModel">
+            <DataTemplate DataType="vm:ConnectorVM">
                 <nodify:NodeInput
                     Anchor="{Binding Anchor, Mode=OneWayToSource}"
                     Header="{Binding}"
@@ -62,7 +62,7 @@
             </DataTemplate>
         </nodify:Node.InputConnectorTemplate>
         <nodify:Node.OutputConnectorTemplate>
-            <DataTemplate DataType="vm:ConnectorViewModel">
+            <DataTemplate DataType="vm:ConnectorVM">
                 <nodify:NodeOutput
                     Anchor="{Binding Anchor, Mode=OneWayToSource}"
                     Header="{Binding}"

@@ -30,7 +30,7 @@
 
 ## Future Development
 
-Unfortunately, I don't have time to do support, however, I made a telegram bot with notifications from github, and now I definitely won't miss an Issue, if you suddenly wrote, and I don't answer during the day, most likely I'm swamped at work and I don't have time to check the issue or telegram.
+Unfortunately, I don't have time to do support, but if I see a notification from github I will try to help, if you suddenly wrote, and I don't answer, most likely I am swamped with work and I don't have time to check the issue.
 
 
 ## How It Works
@@ -111,7 +111,7 @@ Version 0.2
 + Added 3px corner radius for icons.
 + Added icon preview to listbox.
 
-Current Version
+Version 0.3
 ---------------
  
 + Added prototype of node graph editor.
@@ -132,5 +132,10 @@ Current Version
 + Added save and load functionality for the graph editor model.
 + Added graph editor prototype.
 + Added localization support to the graph editor.
+
+Current Version
+---------------
+
+
 ```
 

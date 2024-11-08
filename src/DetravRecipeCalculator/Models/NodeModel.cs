@@ -20,8 +20,6 @@ namespace DetravRecipeCalculator.Models
         [JsonConverter(typeof(PointJsonConverter))]
         public Point Location { get; set; }
 
-        public int Number { get; set; }
-
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public List<PinModel> Output { get; } = new List<PinModel>();
 
@@ -30,7 +28,9 @@ namespace DetravRecipeCalculator.Models
         [JsonConverter(typeof(SizeJsonConverter))]
         public Size Size { get; set; }
 
-        public int Tier { get; set; }
         public string? Type { get; set; }
+
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
+        public Dictionary<string, double> Variables { get; } = new Dictionary<string, double>();
     }
 }

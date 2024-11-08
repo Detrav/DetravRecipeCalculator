@@ -1,4 +1,5 @@
 ﻿__LanguageName=Русский язык
+__LanguageCulture=ru-RU
 __Main_Menu_File=Файл
 __Main_Menu_File_New=Создать
 __Main_Menu_File_Open=Открыть
@@ -57,6 +58,8 @@ __Recipe_SelectIcon=Выбрать значок из набора значков
 __Recipe_OpenIcon=Открыть значок с диска
 __Recipe_DeleteIcon=Удалить значок
 __Recipe_PasteIcon=Воставить значок из буфера обмена
+__Recipe_Variables=Переменные
+__Recipe_VariablesTip=Переменные, разделённые пробелом. Переменная Number=1 добавляется автоматически в любом случае.\nТакже можно использовать символ = для установки значения по умолчанию, смотрите пример в placeholder.
 
 __Recipe_Note=Заметка:
 __Recipe_NoteTip=Заметки, которые будут отображаться на узле.
@@ -88,6 +91,9 @@ __Resource_BackgroundColorTip=Цвет, используемый для отоб
 __Resource_ConnectorColor=Цвет линии подключения:
 __Resource_ConnectorColorTip=Цвет, используемый для отрисовки линии подключения и контактов на узле.\nФорматы: #rgb #argb #rrggbb #aarrggbb
 
+__Resource_ShortResourceName=Короткое имя:
+__Resource_ShortResourceNameTip=Короткое имя для удобного отображения в сводной таблице и на связях узлов.
+
 __SelectIcon_WindowTitle=Выберите иконку
 __SelectIcon_DownloadPrompt=Загрузить иконки
 __SelectIcon_DownloadText=Набор иконок не найден. Хотите скачать набор иконок?
@@ -104,3 +110,26 @@ __GraphEditor_MenuPaste=Вставить
 __GraphEditor_MenuDelete=Удалить
 __GraphEditor_NodeCommentTitle=Комментарий
 __GraphEditor_NodeCommentPlaceholder=Нажмите, чтобы редактировать
+__GraphEditor_TimeType_Title=Переключить тип времени
+
+__Enum_TimeType_Auto=Авто (по умолчанию в секундах)
+__Enum_TimeType_Auto_v=с
+__Enum_TimeType_Tick=Тик (Minecraft — 20 тиков в секунду)
+__Enum_TimeType_Tick_v=т
+__Enum_TimeType_Second=Секунда
+__Enum_TimeType_Second_v=с
+__Enum_TimeType_Minute=Минута (60 секунд)
+__Enum_TimeType_Minute_v=м
+__Enum_TimeType_Hour=Час (60 минут)
+__Enum_TimeType_Hour_v=ч
+__Enum_TimeType_Day=День (24 часа)
+__Enum_TimeType_Day_v=д
+__Enum_TimeType_Week=Неделя (7 дней)
+__Enum_TimeType_Week_v=н
+__Enum_TimeType_Month=Месяц (30 дней)
+__Enum_TimeType_Month_v=М
+__Enum_TimeType_Year=Год (365 дней)
+__Enum_TimeType_Year_v=г
+
+__Expressions_Title=Помощь по выражениям
+__Expressions_Help=Математические операции: + (Сложение), - (Вычитание), * (Умножение), / (Деление), % (Остаток от деления), ^ (Степень)\nФункции: SIN(число), COS(число) и другие функции\nПолная документация доступна здесь https://github.com/matheval/expression-evaluator-c-sharp\nТакже доступны переменные.\nПример: 177 * 2 ^ Tier\nПеременная Number используется автоматически: value * Number.

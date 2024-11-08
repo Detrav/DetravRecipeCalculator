@@ -15,5 +15,6 @@ namespace DetravRecipeCalculator.Models
         public byte[]? Icon { get; set; }
         public bool IsEnabled { get; set; }
         public string? Name { get; set; }
+        public string? ShortResourceName { get; set; }
     }
 }

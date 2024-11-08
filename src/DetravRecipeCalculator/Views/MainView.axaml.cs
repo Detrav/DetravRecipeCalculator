@@ -224,6 +224,21 @@ public partial class MainView : UserControl
                                     if (item2.Name == oldName)
                                         item2.Name = newName;
                             }
+
+                            if (vm.Pipeline.Graph != null)
+                            {
+                                var g = vm.Pipeline.Graph;
+
+                                foreach (var node in g.Nodes)
+                                {
+                                    foreach (var pin in node.Input)
+                                        if (pin.Name == oldName)
+                                            pin.Name = newName;
+                                    foreach (var pin in node.Output)
+                                        if (pin.Name == oldName)
+                                            pin.Name = newName;
+                                }
+                            }
                         }
 
                         vm.Pipeline.SelectedResource.RestoreState(item.SaveState());
@@ -267,7 +282,10 @@ public partial class MainView : UserControl
         {
             var vm = new GraphEditorVM(mvm.Pipeline);
             if (mvm.Pipeline.Graph != null)
+            {
                 vm.RestoreState(mvm.Pipeline.Graph);
+                vm.UndoRedo.Reset();
+            }
             var wnd = new GraphEditorWindow()
             {
                 DataContext = vm,

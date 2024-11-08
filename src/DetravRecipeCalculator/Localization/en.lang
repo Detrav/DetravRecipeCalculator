@@ -1,4 +1,5 @@
 ﻿__LanguageName=English
+__LanguageCulture=en-US
 __Main_Menu_File=File
 __Main_Menu_File_New=New
 __Main_Menu_File_Open=Open
@@ -57,6 +58,9 @@ __Recipe_SelectIcon=Select icon from icon packs
 __Recipe_OpenIcon=Open icon from drive
 __Recipe_DeleteIcon=Delete icon
 __Recipe_PasteIcon=Paste icon from clipboard
+__Recipe_Variables=Variables
+__Recipe_VariablesTip=Variables separated by space. The variable Number=1 is added automatically in any case.\nYou can also use the = symbol to set a default value, see placeholder for example.
+
 
 __Recipe_Note=Note:
 __Recipe_NoteTip=Notes to be displayed on the node.
@@ -88,6 +92,9 @@ __Resource_BackgroundColorTip=Color used for node border and icon background dis
 __Resource_ConnectorColor=Connector color:
 __Resource_ConnectorColorTip=Color used for drawing the connection line and pins on the node.\nFormats: #rgb #argb #rrggbb #aarrggbb
 
+__Resource_ShortResourceName=Short Name:
+__Resource_ShortResourceNameTip=A short name for convenient display in summary tables and on node connections.
+
 
 __SelectIcon_WindowTitle=Select an icon
 __SelectIcon_DownloadPrompt=Download icons
@@ -106,3 +113,26 @@ __GraphEditor_MenuPaste=Paste
 __GraphEditor_MenuDelete=Delete
 __GraphEditor_NodeCommentTitle=Comment
 __GraphEditor_NodeCommentPlaceholder=Click this to edit
+__GraphEditor_TimeType_Title=Switch Time Type
+
+__Enum_TimeType_Auto=Auto (currently is seconds)
+__Enum_TimeType_Auto_v=s
+__Enum_TimeType_Tick=Tick (Minecraft — 20 per one second)
+__Enum_TimeType_Tick_v=t
+__Enum_TimeType_Second=Second
+__Enum_TimeType_Second_v=s
+__Enum_TimeType_Minute=Minute (60 seconds)
+__Enum_TimeType_Minute_v=m
+__Enum_TimeType_Hour=Hour (60 minutes)
+__Enum_TimeType_Hour_v=h
+__Enum_TimeType_Day=Day (24 hours)
+__Enum_TimeType_Day_v=d
+__Enum_TimeType_Week=Week (7 days)
+__Enum_TimeType_Week_v=w
+__Enum_TimeType_Month=Month (30 days)
+__Enum_TimeType_Month_v=M
+__Enum_TimeType_Year=Year (365 days)
+__Enum_TimeType_Year_v=y
+
+__Expressions_Title=Expression Help
+__Expressions_Help=Math + (Add), - (Subtract), * (Multiply), / (Divide), % (Modulo), ^ (Power)\nFunctions: SIN(number), COS(number) and other functions\nFull documentation available here https://github.com/matheval/expression-evaluator-c-sharp\nAlso available is the ability to define variables.\nExample: 177 * 2 ^ Tier\nThe variable Number is used automatically: value * Number.

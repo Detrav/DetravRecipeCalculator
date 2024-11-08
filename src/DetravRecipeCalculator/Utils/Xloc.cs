@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -19,6 +20,8 @@ namespace DetravRecipeCalculator.Utils
 
         static Xloc()
         {
+            CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+
             foreach (var name in typeof(Xloc).Assembly.GetManifestResourceNames())
             {
                 if (name.StartsWith("DetravRecipeCalculator.Localization.", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".lang", StringComparison.OrdinalIgnoreCase))
@@ -75,6 +78,17 @@ namespace DetravRecipeCalculator.Utils
                     i--;
                 }
             }
+
+            var targetCulture = Get("__LanguageCulture");
+
+            //try
+            //{
+            //    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(targetCulture);
+            //}
+            //catch
+            //{
+            //    CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture;
+            //}
         }
 
         public string Get(string id, bool fallBack2Default)

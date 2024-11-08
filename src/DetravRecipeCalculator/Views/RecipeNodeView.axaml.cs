@@ -14,4 +14,6 @@ public partial class RecipeNodeView : UserControl
             this.DataContext = RecipeNodeVM.DebugInstance;
         }
     }
+
+
 }

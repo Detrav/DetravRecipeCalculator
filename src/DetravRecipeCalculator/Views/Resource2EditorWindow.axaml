@@ -176,6 +176,14 @@
                         ToolTip.Tip="{Binding Loc.ConnectorColorTip.Text}"
                         Watermark="#101010" />
                 </DockPanel>
+
+                <TextBlock Margin="3" Text="{Binding Loc.ShortResourceName.Text}" />
+                <TextBox
+                    Margin="3"
+                    Text="{Binding ShortResourceName}"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding Loc.ShortResourceNameTip.Text}"
+                    Watermark="q" />
             </StackPanel>
         </ScrollViewer>
 

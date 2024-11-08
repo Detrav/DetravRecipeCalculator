@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace DetravRecipeCalculator.Utils
 {
@@ -56,6 +57,17 @@ namespace DetravRecipeCalculator.Utils
             }
 
             return new Color(a, r, g, b);
+        }
+
+        public static Color GetRandomColor(string? seedName)
+        {
+            int i = 1;
+            var seed = (seedName ?? "None").Sum(m => (int)(m * i++));
+            var r = new Random(seed);
+
+            var color = new Color(255, (byte)r.Next(256), (byte)r.Next(256), (byte)r.Next(256));
+
+            return color;
         }
 
         private static bool TryGetValue(ReadOnlySpan<char> readOnlySpan, double size, out byte color)

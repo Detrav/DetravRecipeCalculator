@@ -34,6 +34,10 @@ namespace DetravRecipeCalculator.ViewModels
         public XLocItem WindowCancel { get; } = new XLocItem("__Dialog_BtnCancel");
         public XLocItem WindowOk { get; } = new XLocItem("__Dialog_BtnOk");
         public XLocItem WindowTitle { get; } = new XLocItem("__Resource_WindowTitle");
+
+
+        public XLocItem ShortResourceName { get; } = new XLocItem("__Resource_ShortResourceName");
+        public XLocItem ShortResourceNameTip { get; } = new XLocItem("__Resource_ShortResourceNameTip");
     }
 
     public partial class ResourceVM : ViewModelBase, IUndoRedoObject
@@ -42,19 +46,19 @@ namespace DetravRecipeCalculator.ViewModels
         private string? backgroundColor;
 
         [ObservableProperty]
-        private Color? backgroundColorValue = Colors.DarkGray;
+        private Color backgroundColorValue = Colors.DarkGray;
 
         [ObservableProperty]
         private string? connectorColor;
 
         [ObservableProperty]
-        private Color? connectorColorValue;
+        private Color connectorColorValue;
 
         [ObservableProperty]
         private string? foregroundColor;
 
         [ObservableProperty]
-        private Color? foregroundColorValue = Colors.White;
+        private Color foregroundColorValue = Colors.White;
 
         [ObservableProperty]
         private byte[]? icon;
@@ -70,6 +74,8 @@ namespace DetravRecipeCalculator.ViewModels
 
         [ObservableProperty]
         private bool saved;
+        [ObservableProperty]
+        private string? shortResourceName;
 
         public ResourceVM()
         {
@@ -87,6 +93,7 @@ namespace DetravRecipeCalculator.ViewModels
                 BackgroundColor = model.BackgroundColor;
                 ForegroundColor = model.ForegroundColor;
                 ConnectorColor = model.ConnectorColor;
+                ShortResourceName = model.ShortResourceName;
                 Icon = model.Icon;
             }
         }
@@ -100,6 +107,7 @@ namespace DetravRecipeCalculator.ViewModels
             model.BackgroundColor = BackgroundColor;
             model.ForegroundColor = ForegroundColor;
             model.ConnectorColor = ConnectorColor;
+            model.ShortResourceName = ShortResourceName;
             model.Icon = Icon;
 
             return model;
@@ -112,11 +120,8 @@ namespace DetravRecipeCalculator.ViewModels
 
         partial void OnConnectorColorChanged(string? value)
         {
-            int i = 1;
-            var seed = (Name ?? "None").Sum(m => (int)(m * i++));
-            var r = new Random(seed);
 
-            ConnectorColorValue = DetravColorHelper.GetColorFormString(ConnectorColor, new Color(255, (byte)r.Next(256), (byte)r.Next(256), (byte)r.Next(256)));
+            ConnectorColorValue = DetravColorHelper.GetColorFormString(ConnectorColor, DetravColorHelper.GetRandomColor(Name));
         }
 
         partial void OnForegroundColorChanged(string? value)
@@ -124,7 +129,7 @@ namespace DetravRecipeCalculator.ViewModels
             ForegroundColorValue = DetravColorHelper.GetColorFormString(ForegroundColor, Colors.White);
         }
 
-        partial void OnForegroundColorValueChanged(Color? value)
+        partial void OnForegroundColorValueChanged(Color value)
         {
             UpdateBitmap();
         }
@@ -153,7 +158,7 @@ namespace DetravRecipeCalculator.ViewModels
             {
                 try
                 {
-                    var c = ForegroundColorValue.GetValueOrDefault();
+                    var c = ForegroundColorValue;
                     using var filter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(new SKColor(c.R, c.G, c.B, c.A), SKBlendMode.Modulate));
                     using var bmp = SKBitmap.Decode(Icon);
                     using var img = SKImage.FromBitmap(bmp);

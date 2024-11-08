@@ -21,5 +21,12 @@
             <Setter Property="ContentBrush" Value="Transparent" />
         </Style>
 
+        <Style Selector="ScrollViewer">
+            <Setter Property="ClipToBounds" Value="False" />
+            <Style Selector="^ /template/ ScrollBar:vertical">
+                <Setter Property="Margin" Value="0,0,-10,0" />
+            </Style>
+        </Style>
+
     </Application.Styles>
 </Application>

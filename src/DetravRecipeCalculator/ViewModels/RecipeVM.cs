@@ -45,6 +45,9 @@ namespace DetravRecipeCalculator.ViewModels
         public XLocItem WindowCancel { get; } = new XLocItem("__Dialog_BtnCancel");
         public XLocItem WindowOk { get; } = new XLocItem("__Dialog_BtnOk");
         public XLocItem WindowTitle { get; } = new XLocItem("__Recipe_WindowTitle");
+
+        public XLocItem Variables { get; } = new XLocItem("__Recipe_Variables");
+        public XLocItem VariablesTip { get; } = new XLocItem("__Recipe_VariablesTip");
     }
 
     public partial class RecipeVM : ViewModelBase, IUndoRedoObject
@@ -53,13 +56,13 @@ namespace DetravRecipeCalculator.ViewModels
         private string? backgroundColor;
 
         [ObservableProperty]
-        private Color? backgroundColorValue = Colors.DarkGray;
+        private Color backgroundColorValue = Colors.DarkGray;
 
         [ObservableProperty]
         private string? foregroundColor;
 
         [ObservableProperty]
-        private Color? foregroundColorValue = Colors.White;
+        private Color foregroundColorValue = Colors.White;
 
         [ObservableProperty]
         private byte[]? icon;
@@ -84,6 +87,8 @@ namespace DetravRecipeCalculator.ViewModels
 
         [ObservableProperty]
         private string? timeToCraft;
+        [ObservableProperty]
+        private string? variables;
 
         public RecipeVM()
         {
@@ -107,6 +112,7 @@ namespace DetravRecipeCalculator.ViewModels
                 ForegroundColor = model.ForegroundColor;
                 Note = model.Note;
                 Icon = model.Icon;
+                Variables = model.Variables;
 
                 Input.Clear();
                 Output.Clear();
@@ -139,6 +145,7 @@ namespace DetravRecipeCalculator.ViewModels
             model.ForegroundColor = ForegroundColor;
             model.Note = Note;
             model.Icon = Icon;
+            model.Variables = Variables;
 
             foreach (var item in Input)
             {
@@ -169,7 +176,7 @@ namespace DetravRecipeCalculator.ViewModels
             ForegroundColorValue = DetravColorHelper.GetColorFormString(ForegroundColor, Colors.White);
         }
 
-        partial void OnForegroundColorValueChanged(Color? value)
+        partial void OnForegroundColorValueChanged(Color value)
         {
             UpdateBitmap();
         }
@@ -193,7 +200,7 @@ namespace DetravRecipeCalculator.ViewModels
             {
                 try
                 {
-                    var c = ForegroundColorValue.GetValueOrDefault();
+                    var c = ForegroundColorValue;
                     using var filter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(new SKColor(c.R, c.G, c.B, c.A), SKBlendMode.Modulate));
                     using var bmp = SKBitmap.Decode(Icon);
                     using var img = SKImage.FromBitmap(bmp);
@@ -208,32 +215,6 @@ namespace DetravRecipeCalculator.ViewModels
             }
         }
 
-        //public string GetVizualizeText()
-        //{
-        //    StringBuilder sb = new StringBuilder();
 
-        //    sb.AppendLine(Xloc.Get("__Recipe_Name") + " " + Name);
-        //    sb.AppendLine(Xloc.Get("__Recipe_TimeToCraft") + " " + TimeToCraft);
-        //    if (IsEnabled) sb.AppendLine(Xloc.Get("__Recipe_IsEnabled"));
-        //    else sb.AppendLine(Xloc.Get("__Recipe_IsDisabled"));
-        //    sb.AppendLine(Xloc.Get("__Recipe_Color") + " " + Color);
-        //    sb.AppendLine(Xloc.Get("__Recipe_Note")); if (!String.IsNullOrWhiteSpace(Note)) sb.AppendLine(Note);
-
-        //    sb.AppendLine(Xloc.Get("__Recipe_InputTitle"));
-
-        //    foreach(var item in Input)
-        //    {
-        //        sb.Append(item.Name).Append(": ").AppendLine(item.Value);
-        //    }
-
-        //    sb.AppendLine(Xloc.Get("__Recipe_OutputTitle"));
-
-        //    foreach (var item in Output)
-        //    {
-        //        sb.Append(item.Name).Append(": ").AppendLine(item.Value);
-        //    }
-
-        //    return sb.ToString();
-        //}
     }
 }

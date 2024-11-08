@@ -18,56 +18,125 @@ namespace DetravRecipeCalculator.ViewModels
 {
     public partial class ConnectorVM : ViewModelBase
     {
+        /// <summary>
+        /// Point to connect
+        /// </summary>
         [ObservableProperty]
         private Point anchor;
 
+        /// <summary>
+        /// Color of background icon
+        /// </summary>
         [ObservableProperty]
-        private Color? backgroundColor;
+        private Color backgroundColor;
 
+        /// <summary>
+        /// Number of connections
+        /// </summary>
         [ObservableProperty]
         private int connectionsNumber;
 
+        /// <summary>
+        /// Collor of pin
+        /// </summary>
         [ObservableProperty]
-        private Color? connectorCollor;
+        private Color connectorCollor;
 
+        /// <summary>
+        /// Current icon
+        /// </summary>
         [ObservableProperty]
         private byte[]? icon;
 
+        /// <summary>
+        /// Id for serialization
+        /// </summary>
         [ObservableProperty]
         private string? id;
 
+        /// <summary>
+        /// Is connected or not
+        /// </summary>
         [ObservableProperty]
         private bool isConnected;
 
+        /// <summary>
+        /// Is input or output
+        /// </summary>
         [ObservableProperty]
         private bool isInput;
 
+        /// <summary>
+        /// Is unknonwn, means not in the recipe, mb deleted
+        /// </summary>
         [ObservableProperty]
         private bool isUnknown;
 
+        /// <summary>
+        /// Display name
+        /// </summary>
         [ObservableProperty]
         private string? name;
 
-        [ObservableProperty]
-        private int number;
-
-        [ObservableProperty]
-        private int tier;
-
+        /// <summary>
+        /// Time to craft in seconds
+        /// </summary>
         [ObservableProperty]
         private double timeToCraft;
 
+        /// <summary>
+        /// Current amount of craft
+        /// </summary>
         [ObservableProperty]
         private double value;
 
+        /// <summary>
+        /// Current amount expression for calculation
+        /// </summary>
         [ObservableProperty]
         private string? valueExpression;
 
+        /// <summary>
+        /// Amount per second
+        /// </summary>
         [ObservableProperty]
         private double valuePerSecond;
 
+        /// <summary>
+        /// Abount per second (real value usage), means you can take only 1 coal but value per seconds need 2 coal... this value will be 1 coal only
+        /// </summary>
         [ObservableProperty]
         private double valuePerSecondResult;
+
+        // time time, seconds, ticks or other
+        [ObservableProperty]
+        private TimeType timeType;
+
+        /// <summary>
+        /// display value in format {valuePerSecond} [{valuePerSecondResult}] q/s
+        /// </summary>
+        [ObservableProperty]
+        private string? displayValuePersecond;
+
+        /// <summary>
+        /// Tooltop
+        /// </summary>
+        [ObservableProperty]
+        private string? displayValuePersecondTip;
+
+        /// <summary>
+        /// short name (eu,q,i) one or two symbols for display
+        /// </summary>
+        [ObservableProperty]
+        private string? shortResourceName;
+
+        /// <summary>
+        /// Flag when on calculation requested resource more then available
+        /// </summary>
+        [ObservableProperty]
+        private bool hasCalculationWarning;
+
+        private readonly Dictionary<string, double> values = new Dictionary<string, double>();
 
         public void RestoreState(PinModel model)
         {
@@ -83,42 +152,40 @@ namespace DetravRecipeCalculator.ViewModels
             return model;
         }
 
-        internal void RefreshValues(NodeVM nodeVM, ResourceValueVM item, ResourceVM? resource)
+        internal void RefreshValues(NodeVM nodeVM, ResourceValueVM? item, ResourceVM? resource)
         {
-            Name = item.Name;
-            if (resource != null)
+            if (item != null)
             {
-                Icon = resource.IconFiltered;
-                ConnectorCollor = resource.ConnectorColorValue;
-                BackgroundColor = resource.BackgroundColorValue;
+                Name = item.Name;
                 ValueExpression = item.Value;
-                IsUnknown = false;
             }
             else
             {
                 IsUnknown = true;
             }
+
+            if (resource != null)
+            {
+                Name = resource.Name;
+                Icon = resource.IconFiltered;
+                ConnectorCollor = resource.ConnectorColorValue;
+                BackgroundColor = resource.BackgroundColorValue;
+                ShortResourceName = resource.ShortResourceName;
+            }
+            else
+            {
+                ConnectorCollor = DetravColorHelper.GetRandomColor(Name);
+                IsUnknown = true;
+            }
             if (nodeVM is RecipeNodeVM recipeNode)
             {
                 TimeToCraft = recipeNode.TimeToCraft;
-                Tier = recipeNode.Tier;
-                Number = recipeNode.Number;
             }
         }
 
         partial void OnConnectionsNumberChanged(int value)
         {
             IsConnected = value != 0;
-        }
-
-        partial void OnNumberChanged(int value)
-        {
-            RefreshValue();
-        }
-
-        partial void OnTierChanged(int value)
-        {
-            RefreshValue();
         }
 
         partial void OnTimeToCraftChanged(double value)
@@ -136,9 +203,22 @@ namespace DetravRecipeCalculator.ViewModels
             RefreshValue();
         }
 
+        partial void OnTimeTypeChanged(TimeType value)
+        {
+            UpdateValuePerSecond();
+            UpdateDisplayValuePersecond();
+        }
+
         private void RefreshValue()
         {
-            Value = ExpressionUtils.GetValue(ValueExpression, Tier, 0) * Number;
+            var newValue = ExpressionUtils.GetValue(ValueExpression, values);
+
+            if (values.TryGetValue("Number", out var number))
+            {
+                newValue *= Math.Round(number);
+            }
+
+            Value = newValue;
         }
 
         private void UpdateValuePerSecond()
@@ -150,7 +230,92 @@ namespace DetravRecipeCalculator.ViewModels
                 time = 0.0000001;
             }
 
-            ValuePerSecond = Value / time;
+            ValuePerSecond = Value / time * TimeType.GetTimeInSeconds();
+        }
+
+        partial void OnValuePerSecondResultChanged(double value)
+        {
+            UpdateDisplayValuePersecond();
+        }
+
+        public ConnectorVM()
+        {
+            UpdateDisplayValuePersecond();
+        }
+
+        private void UpdateDisplayValuePersecond()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            AppendNumber2Format(sb, ValuePerSecond);
+
+            sb.Append(" [");
+            AppendNumber2Format(sb, ValuePerSecondResult);
+            sb.Append("] ");
+            sb.Append(string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName);
+            sb.Append('/');
+            sb.Append(TimeType.GetLocalizedShortValue());
+
+
+            DisplayValuePersecond = sb.ToString();
+
+            sb.Clear();
+
+            sb.Append(ValuePerSecond).Append(' ');
+            sb.Append(string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName);
+            sb.Append('/');
+            sb.Append(TimeType.GetLocalizedShortValue());
+            sb.Append('\n');
+
+            sb.Append(ValuePerSecondResult).Append(' ');
+            sb.Append(string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName);
+            sb.Append('/');
+            sb.Append(TimeType.GetLocalizedShortValue());
+
+            DisplayValuePersecondTip = sb.ToString();
+
+        }
+
+        private void AppendNumber2Format(StringBuilder sb, double v)
+        {
+
+            if (v >= 100)
+            {
+                sb.AppendFormat("{0:0}", v);
+            }
+            else if (v >= 10)
+            {
+                sb.AppendFormat("{0:0.#}", v);
+            }
+            else if (v >= 1)
+            {
+                sb.AppendFormat("{0:0.##}", v);
+            }
+            else if (v >= 0.1)
+            {
+                sb.AppendFormat("{0:0.###}", v);
+            }
+            else
+            {
+                sb.AppendFormat("~{0:0.####}", v);
+            }
+        }
+
+        partial void OnValuePerSecondChanged(double value)
+        {
+            UpdateDisplayValuePersecond();
+        }
+
+        partial void OnShortResourceNameChanged(string? value)
+        {
+            UpdateDisplayValuePersecond();
+        }
+
+        internal void SetParameter(string? name, double value)
+        {
+            if (!String.IsNullOrEmpty(name))
+                values[name] = value;
+            RefreshValue();
         }
     }
 }

@@ -71,6 +71,17 @@
                 <Separator />
                 <MenuItem x:Name="miDelete" Header="{Binding Loc.MenuDelete.Text}" />
             </MenuItem>
+            <MenuItem Header="{Binding Loc.TimeType_Title.Text}">
+                <MenuItem Click="MenuItem_TimeType_Auto_Click" Header="{Binding Loc.TimeType_Auto.Text}" />
+                <MenuItem Click="MenuItem_TimeType_Tick_Click" Header="{Binding Loc.TimeType_Tick.Text}" />
+                <MenuItem Click="MenuItem_TimeType_Second_Click" Header="{Binding Loc.TimeType_Second.Text}" />
+                <MenuItem Click="MenuItem_TimeType_Minute_Click" Header="{Binding Loc.TimeType_Minute.Text}" />
+                <MenuItem Click="MenuItem_TimeType_Hour_Click" Header="{Binding Loc.TimeType_Hour.Text}" />
+                <MenuItem Click="MenuItem_TimeType_Day_Click" Header="{Binding Loc.TimeType_Day.Text}" />
+                <MenuItem Click="MenuItem_TimeType_Week_Click" Header="{Binding Loc.TimeType_Week.Text}" />
+                <MenuItem Click="MenuItem_TimeType_Month_Click" Header="{Binding Loc.TimeType_Month.Text}" />
+                <MenuItem Click="MenuItem_TimeType_Year_Click" Header="{Binding Loc.TimeType_Year.Text}" />
+            </MenuItem>
         </MenuFlyout>
     </Window.ContextFlyout>
     <DockPanel>

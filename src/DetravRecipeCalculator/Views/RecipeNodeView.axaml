@@ -15,7 +15,10 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <DataTemplate x:Key="ConnectorPreview" DataType="vm:ConnectorVM">
-                <StackPanel Orientation="Vertical">
+                <StackPanel
+                    Orientation="Vertical"
+                    ToolTip.ShowDelay="100"
+                    ToolTip.Tip="{Binding DisplayValuePersecondTip}">
                     <StackPanel Orientation="Horizontal">
                         <Border
                             Margin="0,0,3,0"
@@ -30,15 +33,18 @@
                                 Height="16"
                                 Source="{Binding Icon, Converter={x:Static utils:ByteToBitmapConverter.Instance}}" />
                         </Border>
-                        <TextBlock
-                            Margin="0,0,3,0"
-                            LineHeight="16"
-                            Text="{Binding Name}" />
-                        <TextBlock LineHeight="16" Text="{Binding Value}" />
+
+                        <TextBlock xml:space="preserve"><Run Text="{Binding Name}" /><Run Text=": " /><Run Text="{Binding Value, StringFormat=0.##}" /></TextBlock>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock xml:space="preserve"><Run Text="" /><Run Text="{Binding ValuePerSecond}" /><Run Text=" [" /><Run Text="{Binding ValuePerSecond}" /><Run Text="] q/s" /></TextBlock>
-                    </StackPanel>
+                    <TextBlock xml:space="preserve" Text="{Binding DisplayValuePersecond}"></TextBlock>
+                    <Border
+                        Height="3"
+                        Background="Orange"
+                        IsVisible="{Binding HasCalculationWarning}" />
+                    <Border
+                        Height="3"
+                        Background="Red"
+                        IsVisible="{Binding IsUnknown}" />
                 </StackPanel>
             </DataTemplate>
         </ResourceDictionary>
@@ -76,6 +82,12 @@
             </DataTemplate>
         </nodify:Node.OutputConnectorTemplate>
         <Grid ColumnDefinitions="auto,*" RowDefinitions="auto,*">
+            <Border
+                Grid.RowSpan="2"
+                Grid.Column="2"
+                BorderBrush="Red"
+                BorderThickness="3"
+                IsVisible="{Binding IsUnknown}" />
             <Grid.Styles>
                 <Style Selector="TextBlock">
                     <Setter Property="Foreground" Value="Black" />
@@ -102,57 +114,62 @@
                 Grid.Column="1"
                 Orientation="Vertical">
 
-                <DockPanel>
-                    <Button
-                        Width="16"
-                        Height="16"
-                        Margin="3,0"
-                        Padding="0"
-                        HorizontalAlignment="Stretch"
-                        Background="Transparent"
-                        Command="{Binding UpNumberCommand}"
-                        DockPanel.Dock="Right">
-                        <Image Source="/Assets/icons/icons8-right-32.png" />
-                    </Button>
-                    <Button
-                        Width="16"
-                        Height="16"
-                        Margin="3,0"
-                        Padding="0"
-                        HorizontalAlignment="Stretch"
-                        Background="Transparent"
-                        Command="{Binding DownNumberCommand}"
-                        DockPanel.Dock="Right">
-                        <Image Source="/Assets/icons/icons8-left-32.png" />
-                    </Button>
-                    <TextBlock Margin="3" xml:space="preserve"><Run Text="Number: " /><Run Text="{Binding Number}" /></TextBlock>
-                </DockPanel>
-                <DockPanel>
-                    <Button
-                        Width="16"
-                        Height="16"
-                        Margin="3,0"
-                        Padding="0"
-                        HorizontalAlignment="Stretch"
-                        Background="Transparent"
-                        Command="{Binding UpTierCommand}"
-                        DockPanel.Dock="Right">
-                        <Image Source="/Assets/icons/icons8-right-32.png" />
-                    </Button>
-                    <Button
-                        Width="16"
-                        Height="16"
-                        Margin="3,0"
-                        Padding="0"
-                        HorizontalAlignment="Stretch"
-                        Background="Transparent"
-                        Command="{Binding DownTierCommand}"
-                        DockPanel.Dock="Right">
-                        <Image Source="/Assets/icons/icons8-left-32.png" />
-                    </Button>
-                    <TextBlock Margin="3" xml:space="preserve"><Run Text="Tier: " /><Run Text="{Binding Tier}" /></TextBlock>
-                </DockPanel>
-                <TextBlock Margin="3" xml:space="preserve"><Run Text="Time: " /><Run Text="{Binding TimeToCraft}" /><Run Text="s" /></TextBlock>
+                <ItemsControl ItemsSource="{Binding Variables}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="vm:VariableVM">
+                            <DockPanel>
+                                <views:TextBoxFocusable IsVisible="{Binding IsEditing}" Text="{Binding EditValue}" />
+                                <Button
+                                    Width="16"
+                                    Height="16"
+                                    Margin="3,0"
+                                    Padding="0"
+                                    HorizontalAlignment="Stretch"
+                                    Background="Transparent"
+                                    Command="{Binding EditCommand}"
+                                    DockPanel.Dock="Left"
+                                    IsVisible="{Binding !IsEditing}">
+                                    <Image Source="/Assets/icons/icons8-edit-32.png" />
+                                </Button>
+                                <Button
+                                    Width="16"
+                                    Height="16"
+                                    Margin="3,0"
+                                    Padding="0"
+                                    HorizontalAlignment="Stretch"
+                                    Background="Transparent"
+                                    Command="{Binding UpCommand}"
+                                    DockPanel.Dock="Right"
+                                    IsVisible="{Binding !IsEditing}">
+                                    <Image Source="/Assets/icons/icons8-right-32.png" />
+                                </Button>
+                                <Button
+                                    Width="16"
+                                    Height="16"
+                                    Margin="3,0"
+                                    Padding="0"
+                                    HorizontalAlignment="Stretch"
+                                    Background="Transparent"
+                                    Command="{Binding DownCommand}"
+                                    DockPanel.Dock="Right"
+                                    IsVisible="{Binding !IsEditing}">
+                                    <Image Source="/Assets/icons/icons8-left-32.png" />
+                                </Button>
+                                <TextBlock
+                                    Margin="3"
+                                    xml:space="preserve"
+                                    IsVisible="{Binding !IsEditing}"><Run Text="{Binding Name}" /><Run Text=": " /><Run Text="{Binding Value, StringFormat=0.##}" /></TextBlock>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+
+                <TextBlock Margin="3">
+                    <Run Text="Time: " />
+                    <Run Text="{Binding TimeToCraft}" />
+                    <Run Text="s" />
+                </TextBlock>
             </StackPanel>
             <TextBlock
                 Grid.Row="1"

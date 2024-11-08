@@ -25,5 +25,6 @@ namespace DetravRecipeCalculator.Models
         public List<ResourceValueModel> Output { get; } = new List<ResourceValueModel>();
 
         public string? TimeToCraft { get; set; }
+        public string? Variables { get; set; }
     }
 }

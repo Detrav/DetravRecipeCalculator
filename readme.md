@@ -79,14 +79,8 @@ Thank you to these resources for providing high-quality icons that enhance the u
 
 
 17. add total node
-18. switching time (ticks (minecraft), seconds, minutes, hours, days, weeks, months (30 days), years(365 days))	
-21. done expression editor
-22. add short resource name
 23. project templates for new (create)
 24. Save render of graph
-25. show error if node has deleted resource
-26. resource renaming for graph models (after adding save load graph)
-27. added warning sing in node view for resource warnings (mb errors?)
 
 ## Changelog
 
@@ -133,10 +127,22 @@ Version 0.3
 + Added graph editor prototype.
 + Added localization support to the graph editor.
 
-Current Version
+Version 0.4
 ---------------
 
-* tests subscriptions
++ Added time unit switching (ticks (Minecraft), seconds, minutes, hours, days, weeks, months (30 days), years (365 days)).
++ Added short resource name display for pins and output/statistics tables.
+* Implemented resource renaming for graph models.
++ Added error flag for deleted resources.
++ Added warning flag when resource quantity is insufficient for continuous operation.
+- Fixed an issue where undo/redo incorrectly saved the initial state during node graph editing.
++ Added expression parser and implemented mathematical calculations.
+- Fixed time calculation issue, now time is automatically recalculated when the time mode is switched.
+* Changed node parameters, now custom parameters can be set and used in the editor.
+* Switched localization to invariant, now decimal separator is always a dot, not a comma in some languages.
+
+Current Version
+---------------
 
 ```
 

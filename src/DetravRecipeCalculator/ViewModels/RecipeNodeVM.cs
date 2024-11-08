@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -17,7 +18,7 @@ namespace DetravRecipeCalculator.ViewModels
     public partial class RecipeNodeVM : NodeVM
     {
         [ObservableProperty]
-        private Color? backgroundColor;
+        private Color backgroundColor;
 
         [ObservableProperty]
         private byte[]? icon;
@@ -26,54 +27,26 @@ namespace DetravRecipeCalculator.ViewModels
         private string? note;
 
         [ObservableProperty]
-        private int number = 1;
-
-        [ObservableProperty]
         private string? recipeId;
-
-        [ObservableProperty]
-        private int tier = 1;
 
         [ObservableProperty]
         private double timeToCraft;
 
         [ObservableProperty]
         private string? timeToCraftExpression;
+        [ObservableProperty]
+        private bool isUnknown;
+
+        public ObservableCollection<VariableVM> Variables { get; } = new ObservableCollection<VariableVM>();
 
         public RecipeNodeVM(GraphEditorVM parent)
             : base(parent)
         {
-            UpTierCommand = new RelayCommand(() =>
-            {
-                Tier++;
-                Parent.UndoRedo.PushState("Set properties");
-            });
-            DownTierCommand = new RelayCommand(() =>
-            {
-                Tier--;
-                Parent.UndoRedo.PushState("Set properties");
-            });
-            UpNumberCommand = new RelayCommand(() =>
-            {
-                Number++;
-                Parent.UndoRedo.PushState("Set properties");
-            });
-            DownNumberCommand = new RelayCommand(() =>
-            {
-                Number--;
-                Parent.UndoRedo.PushState("Set properties");
-            });
+
         }
 
         public static RecipeNodeVM DebugInstance { get; } = CreateDebugInstance();
 
-        public ICommand DownNumberCommand { get; }
-
-        public ICommand DownTierCommand { get; }
-
-        public ICommand UpNumberCommand { get; }
-
-        public ICommand UpTierCommand { get; }
 
         public override void RefreshValues(RecipeVM? recipe = null)
         {
@@ -81,6 +54,8 @@ namespace DetravRecipeCalculator.ViewModels
             {
                 recipe = Parent.Pipeline.Recipes.FirstOrDefault(m => m.Id == RecipeId);
             }
+
+            Variables.Clear();
 
             if (recipe != null)
             {
@@ -93,16 +68,44 @@ namespace DetravRecipeCalculator.ViewModels
 
                 SyncItems(Input, recipe.Input, true);
                 SyncItems(Output, recipe.Output, false);
+                IsUnknown = false;
+
+
+
+                foreach (var kv in ExpressionUtils.Split(recipe.Variables))
+                {
+                    Variables.Add(new VariableVM(Parent, this)
+                    {
+                        Name = kv.Key,
+                        Value = kv.Value,
+                    });
+                }
+
+            }
+            else
+            {
+                Title = RecipeId;
+                SyncItems(Input, Array.Empty<ResourceValueVM>(), true);
+                SyncItems(Output, Array.Empty<ResourceValueVM>(), false);
+                IsUnknown = true;
             }
         }
 
         public override void RestoreState(NodeModel model)
         {
             RecipeId = model.RecipeId;
-            Tier = model.Tier;
-            Number = model.Number;
 
             base.RestoreState(model);
+
+            foreach (var kv in model.Variables)
+            {
+                var v = Variables.FirstOrDefault(m => m.Name == kv.Key);
+
+                if (v != null)
+                {
+                    v.Value = kv.Value;
+                }
+            }
         }
 
         public override NodeModel SaveState()
@@ -110,8 +113,12 @@ namespace DetravRecipeCalculator.ViewModels
             var model = base.SaveState();
 
             model.RecipeId = RecipeId;
-            model.Tier = Tier;
-            model.Number = Number;
+
+            foreach (var variable in Variables)
+            {
+                if (variable.Name != null)
+                    model.Variables[variable.Name] = variable.Value;
+            }
 
             return model;
         }
@@ -121,15 +128,11 @@ namespace DetravRecipeCalculator.ViewModels
             var result = new RecipeNodeVM(new GraphEditorVM())
             {
                 Title = "DebugNode",
-                Number = 1,
-                Tier = 1,
                 TimeToCraftExpression = "10",
             };
 
             result.Input.Add(new ConnectorVM()
             {
-                Tier = 1,
-                Number = 1,
                 IsInput = true,
                 Name = "Coal",
                 ValueExpression = "1",
@@ -138,38 +141,27 @@ namespace DetravRecipeCalculator.ViewModels
 
             result.Output.Add(new ConnectorVM()
             {
-                Tier = 1,
-                Number = 1,
                 IsInput = false,
                 Name = "EU",
                 ValueExpression = "2000",
                 ConnectorCollor = Colors.Wheat
             });
 
+            result.Variables.Add(new VariableVM(result.Parent, result)
+            {
+                Name = "Number",
+                Value = 1
+            });
+
+            result.Variables.Add(new VariableVM(result.Parent, result)
+            {
+                Name = "Tier",
+                Value = 1
+            });
+
             return result;
         }
 
-        partial void OnNumberChanged(int value)
-        {
-            RefreshTimeToCraft();
-
-            foreach (var item in Input)
-                item.Number = Number;
-
-            foreach (var item in Output)
-                item.Number = Number;
-        }
-
-        partial void OnTierChanged(int value)
-        {
-            RefreshTimeToCraft();
-
-            foreach (var item in Input)
-                item.Tier = Tier;
-
-            foreach (var item in Output)
-                item.Tier = Tier;
-        }
 
         partial void OnTimeToCraftChanged(double value)
         {
@@ -185,12 +177,13 @@ namespace DetravRecipeCalculator.ViewModels
             RefreshTimeToCraft();
         }
 
-        private void RefreshTimeToCraft()
+        public void RefreshTimeToCraft()
         {
-            TimeToCraft = ExpressionUtils.GetValue(TimeToCraftExpression, Tier, 1) * Number;
+
+            TimeToCraft = ExpressionUtils.GetValue(TimeToCraftExpression, Variables.Where(m => m.Name != null).ToDictionary(m => m.Name!, m => m.Value));
         }
 
-        private void SyncItems(ObservableCollection<ConnectorVM> pins, ObservableCollection<ResourceValueVM> recipe, bool input)
+        private void SyncItems(ObservableCollection<ConnectorVM> pins, IEnumerable<ResourceValueVM> recipe, bool input)
         {
             var oldList = pins.ToList();
             pins.Clear();
@@ -198,26 +191,27 @@ namespace DetravRecipeCalculator.ViewModels
             foreach (var item in recipe)
             {
                 var pin = oldList.FirstOrDefault(m => m.Name == item.Name);
-                var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == item.Name);
-
                 if (pin == null)
-                {
                     pin = new ConnectorVM();
-                }
                 else
-                {
                     oldList.Remove(pin);
-                }
 
+                var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == item.Name);
+                pin.TimeType = TimeType;
                 pin.IsInput = input;
                 pin.RefreshValues(this, item, resource);
 
                 pins.Add(pin);
             }
 
-            foreach (var item in oldList)
+            foreach (var pin in oldList)
             {
-                pins.Add(item);
+                var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == pin.Name);
+                pin.TimeType = TimeType;
+                pin.IsInput = input;
+                pin.RefreshValues(this, null, resource);
+
+                pins.Add(pin);
             }
         }
     }

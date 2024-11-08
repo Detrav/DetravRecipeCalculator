@@ -296,6 +296,55 @@ public partial class GraphEditorWindow : Window
         }
     }
 
+    private void MenuItem_TimeType_Auto_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.TimeType = TimeType.Auto;
+
+    }
+    private void MenuItem_TimeType_Tick_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.TimeType = TimeType.Tick;
+    }
+    private void MenuItem_TimeType_Second_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.TimeType = TimeType.Second;
+    }
+    private void MenuItem_TimeType_Minute_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.TimeType = TimeType.Minute;
+    }
+    private void MenuItem_TimeType_Hour_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.TimeType = TimeType.Hour;
+    }
+    private void MenuItem_TimeType_Day_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.TimeType = TimeType.Day;
+    }
+    private void MenuItem_TimeType_Week_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.TimeType = TimeType.Week;
+    }
+
+    private void MenuItem_TimeType_Month_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.TimeType = TimeType.Month;
+    }
+
+    private void MenuItem_TimeType_Year_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+            vm.TimeType = TimeType.Year;
+    }
+
     //private void LineConnection_Disconnect(object? sender, Nodify.ConnectionEventArgs e)
     //{
     //    if (DataContext is GraphEditorVM vm && sender is Control control && control.DataContext is ConnectionVM connectionVM)

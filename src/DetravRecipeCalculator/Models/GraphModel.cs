@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DetravRecipeCalculator.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,6 @@ namespace DetravRecipeCalculator.Models
 
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public List<NodeModel> Nodes { get; } = new List<NodeModel>();
+        public TimeType TimeType { get; set; }
     }
 }

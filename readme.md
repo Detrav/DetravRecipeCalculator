@@ -136,6 +136,7 @@ Version 0.3
 Current Version
 ---------------
 
+* tests subscriptions
 
 ```
 

@@ -36,23 +36,11 @@
 
         <Grid RowDefinitions="Auto,Auto,Auto">
             <Grid ColumnDefinitions="Auto, Auto">
-                <views:ResultTableView
-                    Grid.Column="0"
-                    Margin="3"
-                    DataContext="{Binding TotalInput}" />
-                <views:ResultTableView
-                    Grid.Column="1"
-                    Margin="3"
-                    DataContext="{Binding TotalOutput}" />
+                <views:ResultTableView Grid.Column="0" DataContext="{Binding TotalInput}" />
+                <views:ResultTableView Grid.Column="1" DataContext="{Binding TotalOutput}" />
             </Grid>
-            <views:ResultTableView
-                Grid.Row="1"
-                Margin="3"
-                DataContext="{Binding TotalResources}" />
-            <views:ResultTableView
-                Grid.Row="2"
-                Margin="3"
-                DataContext="{Binding TotalRecipes}" />
+            <views:ResultTableView Grid.Row="1" DataContext="{Binding TotalResources}" />
+            <views:ResultTableView Grid.Row="2" DataContext="{Binding TotalRecipes}" />
         </Grid>
 
     </nodify:Node>

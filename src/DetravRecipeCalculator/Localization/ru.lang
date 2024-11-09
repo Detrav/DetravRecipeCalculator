@@ -136,3 +136,13 @@ __Expressions_Title=Помощь по выражениям
 __Expressions_Help=Математические операции: + (Сложение), - (Вычитание), * (Умножение), / (Деление), % (Остаток от деления), ^ (Степень)\nФункции: SIN(число), COS(число) и другие функции\nПолная документация доступна здесь https://github.com/matheval/expression-evaluator-c-sharp\nТакже доступны переменные.\nПример: 177 * 2 ^ Tier\nПеременная Number используется автоматически: value * Number.
 
 __ResultTable_Title=Таблица результатов
+__ResultTable_Table_Name=Имя
+__ResultTable_Table_Input=Вход
+__ResultTable_Table_Output=Выход
+__ResultTable_Table_Shortage=Дефицит
+__ResultTable_Table_Surplus=Избыток
+
+__ResultTable_TitleRecipes=Рецепты (Узлы, Машины)
+__ResultTable_TitleOutput=Сводка по выходным данным
+__ResultTable_TitleInput=Сводка по входным данным
+__ResultTable_TitleResources=Сводка по ресурсам (Этапы)

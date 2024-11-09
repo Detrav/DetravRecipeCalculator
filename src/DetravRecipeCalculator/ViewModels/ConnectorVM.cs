@@ -119,12 +119,6 @@ namespace DetravRecipeCalculator.ViewModels
         private string? displayValuePersecondTip;
 
         /// <summary>
-        /// short name (eu,q,i) one or two symbols for display
-        /// </summary>
-        [ObservableProperty]
-        private string? shortResourceName;
-
-        /// <summary>
         /// Flag when on calculation requested resource more then available
         /// </summary>
         [ObservableProperty]
@@ -167,7 +161,6 @@ namespace DetravRecipeCalculator.ViewModels
                 Icon = resource.IconFiltered;
                 ConnectorCollor = resource.ConnectorColorValue;
                 BackgroundColor = resource.BackgroundColorValue;
-                ShortResourceName = resource.ShortResourceName;
             }
             else
             {
@@ -239,11 +232,11 @@ namespace DetravRecipeCalculator.ViewModels
         {
             StringBuilder sb = new StringBuilder();
 
-            AppendNumber2Format(sb, ValuePerSecond);
+
+            sb.Append(GetFormated(ValuePerSecond));
 
             sb.Append(' ');
 
-            sb.Append(string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName);
             sb.Append('/');
             sb.Append(TimeType.GetLocalizedShortValue());
 
@@ -253,7 +246,6 @@ namespace DetravRecipeCalculator.ViewModels
             sb.Clear();
 
             sb.Append(ValuePerSecond).Append(' ');
-            sb.Append(string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName);
             sb.Append('/');
             sb.Append(TimeType.GetLocalizedShortValue());
 
@@ -262,28 +254,28 @@ namespace DetravRecipeCalculator.ViewModels
 
         }
 
-        private void AppendNumber2Format(StringBuilder sb, double v)
+        public static string GetFormated(double v)
         {
 
             if (v >= 100)
             {
-                sb.AppendFormat("{0:0}", v);
+                return string.Format("{0:0}", v);
             }
             else if (v >= 10)
             {
-                sb.AppendFormat("{0:0.#}", v);
+                return string.Format("{0:0.#}", v);
             }
             else if (v >= 1)
             {
-                sb.AppendFormat("{0:0.##}", v);
+                return string.Format("{0:0.##}", v);
             }
             else if (v >= 0.1)
             {
-                sb.AppendFormat("{0:0.###}", v);
+                return string.Format("{0:0.###}", v);
             }
             else
             {
-                sb.AppendFormat("~{0:0.####}", v);
+                return string.Format("~{0:0.####}", v);
             }
         }
 
@@ -292,21 +284,12 @@ namespace DetravRecipeCalculator.ViewModels
             UpdateDisplayValuePersecond();
         }
 
-        partial void OnShortResourceNameChanged(string? value)
-        {
-            UpdateDisplayValuePersecond();
-        }
 
         public void SetParameter(string? name, double value)
         {
             if (!String.IsNullOrEmpty(name))
                 values[name] = value;
             RefreshValue();
-        }
-
-        public string GetUnit()
-        {
-            return (string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName) + "/" + TimeType.GetLocalizedShortValue();
         }
     }
 }

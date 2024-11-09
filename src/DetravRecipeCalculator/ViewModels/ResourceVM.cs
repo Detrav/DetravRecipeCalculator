@@ -74,8 +74,6 @@ namespace DetravRecipeCalculator.ViewModels
 
         [ObservableProperty]
         private bool saved;
-        [ObservableProperty]
-        private string? shortResourceName;
 
         public ResourceVM()
         {
@@ -93,7 +91,6 @@ namespace DetravRecipeCalculator.ViewModels
                 BackgroundColor = model.BackgroundColor;
                 ForegroundColor = model.ForegroundColor;
                 ConnectorColor = model.ConnectorColor;
-                ShortResourceName = model.ShortResourceName;
                 Icon = model.Icon;
             }
         }
@@ -107,7 +104,6 @@ namespace DetravRecipeCalculator.ViewModels
             model.BackgroundColor = BackgroundColor;
             model.ForegroundColor = ForegroundColor;
             model.ConnectorColor = ConnectorColor;
-            model.ShortResourceName = ShortResourceName;
             model.Icon = Icon;
 
             return model;

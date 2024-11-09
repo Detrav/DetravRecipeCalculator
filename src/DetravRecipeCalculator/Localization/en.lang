@@ -139,3 +139,13 @@ __Expressions_Title=Expression Help
 __Expressions_Help=Math + (Add), - (Subtract), * (Multiply), / (Divide), % (Modulo), ^ (Power)\nFunctions: SIN(number), COS(number) and other functions\nFull documentation available here https://github.com/matheval/expression-evaluator-c-sharp\nAlso available is the ability to define variables.\nExample: 177 * 2 ^ Tier\nThe variable Number is used automatically: value * Number.
 
 __ResultTable_Title=Result Table
+__ResultTable_Table_Name=Name
+__ResultTable_Table_Input=Input
+__ResultTable_Table_Output=Output
+__ResultTable_Table_Shortage=Shortage
+__ResultTable_Table_Surplus=Surplus
+
+__ResultTable_TitleRecipes=Recipes (Nodes, Machines)
+__ResultTable_TitleOutput=Output Summary
+__ResultTable_TitleInput=Input Summary
+__ResultTable_TitleResources=Resources Summary (Steps)

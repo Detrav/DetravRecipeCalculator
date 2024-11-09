@@ -49,6 +49,12 @@ The calculator is broken down into four main stages:
 4. **Build the Crafting Graph**
    - Use the visual editor to create a node-based graph of your crafting workflow. The graph provides a comprehensive view of your resource requirements and surplus, including a summary of total quantities and any excess materials.
 
+5. **What tables are obtained**
+   - `Input Summary` - the table shows the resources required to run the current scheme. They must be supplied through the pipeline in your game (job).
+   - `Output Summary` - the table shows the resulting resources if all the necessary starting resources are provided.
+   - `Recipes (Nodes, Machines)` - required machines (recipes) and a list of their settings.
+   - `Resources Summary (Steps)` - the table contains all stages and description of all resources, in the Input and Output columns the actual amount of necessary resources is recorded, in the Shortage column the shortage of resources for full capacity is recorded, in the Surplus column the surplus of resources is recorded, which will remain or accumulate.
+
 ## Installation
 
 To install and use Detrav Recipe Calculator, follow these steps:
@@ -143,7 +149,6 @@ Version 0.4
 Current Version
 ---------------
 
-+ added total node... still in process...
-
++ Added "Total Node" with four output tables. Tables can be toggled on or off. Usability is still under review, but they are structured similarly to tables I previously created in Excel, so I kept this layout.
 ```
 

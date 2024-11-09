@@ -38,6 +38,7 @@ namespace DetravRecipeCalculator.ViewModels
         private Exception? error;
 
         private const int MAX_GENERATION = 100;
+        private int generationCount;
 
         public override void RefreshValues(RecipeVM? recipe = null)
         {
@@ -60,15 +61,22 @@ namespace DetravRecipeCalculator.ViewModels
             var thisNode = AddNodeToList(nodes, this);
             List<NodeHelper> firstNodes = new List<NodeHelper>();
 
-            var totalRecipes = new ResultDataTable();
-            var totalInput = new ResultDataTable();
-            var totalOutput = new ResultDataTable();
-            var totalResources = new ResultDataTable();
+            var totalRecipes = new ResultDataTable(Xloc.Get("__ResultTable_TitleRecipes"), TotalRecipes?.IsVisible);
+            var totalInput = new ResultDataTable(Xloc.Get("__ResultTable_TitleInput"), TotalInput?.IsVisible);
+            var totalOutput = new ResultDataTable(Xloc.Get("__ResultTable_TitleOutput"), TotalOutput?.IsVisible);
+            var totalResources = new ResultDataTable(Xloc.Get("__ResultTable_TitleResources"), TotalResources?.IsVisible);
 
-            totalRecipes.AddOrUpdateColumn("Name", "Name");
-            totalInput.AddOrUpdateColumn("Name", "Name");
-            totalOutput.AddOrUpdateColumn("Name", "Name");
-            totalResources.AddOrUpdateColumn("Name", "Name");
+            totalRecipes.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+
+            totalInput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+            totalInput.AddOrUpdateColumn("Input", Xloc.Get("__ResultTable_Table_Input") + " /" + TimeType.GetLocalizedShortValue());
+
+            totalOutput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+            totalOutput.AddOrUpdateColumn("Output", Xloc.Get("__ResultTable_Table_Output") + " /" + TimeType.GetLocalizedShortValue());
+
+
+            generationCount = 0;
+
 
             Error = null;
 
@@ -92,27 +100,39 @@ namespace DetravRecipeCalculator.ViewModels
                     {
                         var row = new ResultTableRow();
 
-                        RowNameVM rowNameModel = new RowNameVM()
+                        var rowNameModel = new ResultTableCellName()
                         {
                             Icon = recipeNode.Icon,
                             IconBackground = recipeNode.BackgroundColor,
                             Name = recipeNode.Title
                         };
 
-                        totalRecipes.SetCell("Name", row, rowNameModel, null);
+                        totalRecipes.SetCell("Name", row, rowNameModel);
 
                         foreach (var parameter in recipeNode.Variables)
                         {
                             if (parameter.Name != null)
-                                totalRecipes.AddToCell(parameter.Name, row, parameter.Value, null);
+                                totalRecipes.AddToCell(parameter.Name, row, parameter.Value);
                         }
                         totalRecipes.Rows.Add(row);
                     }
                 }
 
+
+                // push steps table
+                totalResources.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+
+                for (int i = 1; i < generationCount; i++)
+                {
+                    totalResources.AddOrUpdateColumn("Input" + i, Xloc.Get("__ResultTable_Table_Input") + " #" + i + " /" + TimeType.GetLocalizedShortValue());
+                    totalResources.AddOrUpdateColumn("Shortage" + i, Xloc.Get("__ResultTable_Table_Shortage") + " #" + i + " /" + TimeType.GetLocalizedShortValue());
+                    totalResources.AddOrUpdateColumn("Output" + i, Xloc.Get("__ResultTable_Table_Output") + " #" + i + " /" + TimeType.GetLocalizedShortValue());
+                    totalResources.AddOrUpdateColumn("Surplus" + i, Xloc.Get("__ResultTable_Table_Surplus") + " #" + i + " /" + TimeType.GetLocalizedShortValue());
+                }
+
                 // calculate all values with generation
 
-                for (int i = 2; i < MAX_GENERATION; i++)
+                for (int i = 2; i < generationCount; i++)
                 {
                     bool stop = true;
                     foreach (var node in nodes.Where(m => m.Generation == i))
@@ -126,7 +146,7 @@ namespace DetravRecipeCalculator.ViewModels
 
                             var request = pin.Connector.ValuePerSecond;
 
-                            if (request > 0)
+                            if (request > 0 && pin.Connections.Count > 0)
                             {
                                 foreach (var connection in pin.Connections)
                                 {
@@ -146,7 +166,9 @@ namespace DetravRecipeCalculator.ViewModels
                         {
                             if (node == thisNode) continue;
 
-                            pin.ValuePerSecondLeft = pin.ValuePerSecondResult = percentage * pin.Connector.ValuePerSecond;
+                            pin.ValuePerSecondLeft = pin.Connector.ValuePerSecond;
+                            pin.ValuePerSecondResult = percentage * pin.Connector.ValuePerSecond;
+
                             var request = pin.ValuePerSecondResult;
 
                             if (request > 0)
@@ -158,13 +180,18 @@ namespace DetravRecipeCalculator.ViewModels
                                     {
                                         connection.ValuePerSecondLeft = 0;
                                         request -= connection.ValuePerSecondLeft;
+                                        pin.ValuePerSecondLeft -= connection.ValuePerSecondLeft;
                                     }
                                     else
                                     {
                                         connection.ValuePerSecondLeft -= request;
+                                        pin.ValuePerSecondLeft -= request;
+                                        //request = 0;
                                         break;
                                     }
                                 }
+
+                                pin.ValuePerSecondLeft = request;
                             }
                         }
 
@@ -177,6 +204,8 @@ namespace DetravRecipeCalculator.ViewModels
                         break;
                 }
 
+                //push all inputs
+
                 foreach (var node in nodes)
                 {
                     if (node == thisNode) continue;
@@ -185,99 +214,28 @@ namespace DetravRecipeCalculator.ViewModels
                     {
                         if (pin.Connections.Count == 0)
                         {
-                            var row = totalInput.Rows.FirstOrDefault(m => m.Id == pin.Connector.Name);
-
-                            if (row == null)
-                            {
-                                row = new ResultTableRow(pin.Connector.Name);
-                                var nameModel = new RowNameVM();
-                                nameModel.Name = pin.Connector.Name;
-                                nameModel.Icon = pin.Connector.Icon;
-                                nameModel.IconBackground = pin.Connector.BackgroundColor;
-                                totalRecipes.SetCell("Name", row, nameModel, null);
-                                totalInput.Rows.Add(row);
-                            }
-
-                            totalInput.AddToCell("Input", row, pin.ValuePerSecondResult, () => "Input " + pin.Connector.GetUnit());
-
+                            totalInput.AddtToCellWithFindRow(pin, "Input", pin.ValuePerSecondResult);
+                            //totalResources.AddtToCellWithFindRow(pin, "Input", pin.ValuePerSecondResult);
                         }
-                    }
-                }
 
-                foreach (var node in nodes)
-                {
-                    if (node == thisNode) continue;
+                        totalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.ValuePerSecondResult);
+                        totalResources.AddtToCellWithFindRow(pin, "Shortage" + node.Generation, pin.ValuePerSecondLeft);
+                    }
 
                     foreach (var pin in node.Output)
                     {
                         if (pin.Connections.Count == 0 || pin.Connections.All(m => m.Node == thisNode))
                         {
-                            var row = totalOutput.Rows.FirstOrDefault(m => m.Id == pin.Connector.Name);
-
-                            if (row == null)
-                            {
-                                row = new ResultTableRow(pin.Connector.Name);
-                                var nameModel = new RowNameVM();
-                                nameModel.Name = pin.Connector.Name;
-                                nameModel.Icon = pin.Connector.Icon;
-                                nameModel.IconBackground = pin.Connector.BackgroundColor;
-                                totalRecipes.SetCell("Name", row, nameModel, null);
-                                totalOutput.Rows.Add(row);
-                            }
-
-                            totalOutput.AddToCell("Output", row, pin.ValuePerSecondResult, () => "Output " + pin.Connector.GetUnit());
-
+                            totalOutput.AddtToCellWithFindRow(pin, "Output", pin.ValuePerSecondResult);
+                            //totalResources.AddtToCellWithFindRow(pin, "Output", pin.ValuePerSecondResult);
                         }
+
+                        totalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.ValuePerSecondResult);
+                        totalResources.AddtToCellWithFindRow(pin, "Surplus" + node.Generation, pin.ValuePerSecondLeft);
                     }
+
+
                 }
-
-                foreach (var node in nodes)
-                {
-                    if (node == thisNode) continue;
-
-                    foreach (var pin in node.Input)
-                    {
-
-                        var row = totalResources.Rows.FirstOrDefault(m => m.Id == pin.Connector.Name);
-
-                        if (row == null)
-                        {
-                            row = new ResultTableRow(pin.Connector.Name);
-                            var nameModel = new RowNameVM();
-                            nameModel.Name = pin.Connector.Name;
-                            nameModel.Icon = pin.Connector.Icon;
-                            nameModel.IconBackground = pin.Connector.BackgroundColor;
-                            totalRecipes.SetCell("Name", row, nameModel, null);
-                            totalResources.Rows.Add(row);
-                        }
-
-                        totalResources.AddToCell("Input", row, pin.ValuePerSecondResult, () => "Input " + pin.Connector.GetUnit());
-                        totalResources.AddToCell("Shortage", row, pin.ValuePerSecondLeft, () => "Shortage " + pin.Connector.GetUnit());
-                    }
-
-                    foreach (var pin in node.Output)
-                    {
-                        if (node == thisNode) continue;
-
-
-                        var row = totalResources.Rows.FirstOrDefault(m => m.Id == pin.Connector.Name);
-
-                        if (row == null)
-                        {
-                            row = new ResultTableRow(pin.Connector.Name);
-                            var nameModel = new RowNameVM();
-                            nameModel.Name = pin.Connector.Name;
-                            nameModel.Icon = pin.Connector.Icon;
-                            nameModel.IconBackground = pin.Connector.BackgroundColor;
-                            totalRecipes.SetCell("Name", row, nameModel, null);
-                            totalResources.Rows.Add(row);
-                        }
-
-                        totalResources.AddToCell("Output", row, pin.ValuePerSecondResult, () => "Output " + pin.Connector.GetUnit());
-                        totalResources.AddToCell("Surplus", row, pin.ValuePerSecondLeft, () => "Surplus " + pin.Connector.GetUnit());
-                    }
-                }
-
             }
             catch (Exception ex)
             {
@@ -297,7 +255,8 @@ namespace DetravRecipeCalculator.ViewModels
         {
             foreach (var pin in node.Input)
             {
-                pin.ValuePerSecondLeft = pin.ValuePerSecondResult = pin.Connector.ValuePerSecond;
+                pin.ValuePerSecondResult = pin.Connector.ValuePerSecond;
+                pin.ValuePerSecondLeft = 0;
 
             }
 
@@ -334,6 +293,11 @@ namespace DetravRecipeCalculator.ViewModels
                     }
                 }
             }
+
+            if (generation > generationCount)
+            {
+                generationCount = generation;
+            }
         }
 
         private bool FindLoop(NodeHelper node, NodeHelper current)
@@ -357,6 +321,12 @@ namespace DetravRecipeCalculator.ViewModels
                 nodeHelper = new NodeHelper(node);
                 nodes.Add(nodeHelper);
 
+                foreach (var pin in node.Output)
+                {
+                    var pinHelper = new PinHelper(nodeHelper, pin);
+                    nodeHelper.Output.Add(pinHelper);
+                }
+
                 foreach (var pin in node.Input)
                 {
                     var pinHelper = new PinHelper(nodeHelper, pin);
@@ -378,10 +348,13 @@ namespace DetravRecipeCalculator.ViewModels
                         if (node.Output.Any(m => m == connection.Output))
                         {
                             var nodeHelper = AddNodeToList(nodes, node);
-                            var outputPinHelper = new PinHelper(nodeHelper, connection.Output);
-                            outputPinHelper.Connections.Add(pin);
-                            pin.Connections.Add(outputPinHelper);
-                            nodeHelper.Output.Add(outputPinHelper);
+
+                            var outputPinHelper = nodeHelper.Output.FirstOrDefault(m => m.Connector == connection.Output);
+                            if (outputPinHelper != null)
+                            {
+                                outputPinHelper.Connections.Add(pin);
+                                pin.Connections.Add(outputPinHelper);
+                            }
                         }
                     }
                 }
@@ -389,55 +362,63 @@ namespace DetravRecipeCalculator.ViewModels
 
         }
 
-        private class NodeHelper
+
+    }
+
+    class NodeHelper
+    {
+        public NodeVM Node { get; }
+        public List<PinHelper> Input { get; } = new List<PinHelper>();
+        public List<PinHelper> Output { get; } = new List<PinHelper>();
+        public int Generation { get; set; }
+
+        public NodeHelper(NodeVM node)
         {
-            public NodeVM Node { get; }
-            public List<PinHelper> Input { get; } = new List<PinHelper>();
-            public List<PinHelper> Output { get; } = new List<PinHelper>();
-            public int Generation { get; set; }
-
-            public NodeHelper(NodeVM node)
-            {
-                this.Node = node;
-            }
-        }
-
-        private class PinHelper
-        {
-            public NodeHelper Node { get; }
-            public ConnectorVM Connector { get; }
-
-            /// <summary>
-            /// The value that real consumes or produces
-            /// </summary>
-            public double ValuePerSecondResult { get; set; }
-            /// <summary>
-            /// The value that left from produces
-            /// </summary>
-            public double ValuePerSecondLeft { get; set; }
-
-            public List<PinHelper> Connections { get; } = new List<PinHelper>();
-
-            public PinHelper(NodeHelper node, ConnectorVM connector)
-            {
-                this.Node = node;
-                this.Connector = connector;
-            }
+            this.Node = node;
         }
     }
 
-    public class RowNameVM
+    class PinHelper
     {
+        public NodeHelper Node { get; }
+        public ConnectorVM Connector { get; }
 
-        public Color IconBackground { get; set; }
+        /// <summary>
+        /// The value that real consumes or produces
+        /// </summary>
+        public double ValuePerSecondResult { get; set; }
+        /// <summary>
+        /// The value that left from produces
+        /// </summary>
+        public double ValuePerSecondLeft { get; set; }
 
-        public string? Name { get; set; }
+        public List<PinHelper> Connections { get; } = new List<PinHelper>();
 
-        public byte[]? Icon { get; set; }
+        public PinHelper(NodeHelper node, ConnectorVM connector)
+        {
+            this.Node = node;
+            this.Connector = connector;
+        }
     }
 
-    public class ResultDataTable
+    public partial class ResultDataTable : ViewModelBase
     {
+        [ObservableProperty]
+        private bool isVisible = true;
+
+
+        public string Title { get; }
+
+        public ResultDataTable(string title, bool? isVisible)
+        {
+            this.Title = title;
+
+            if (isVisible.HasValue)
+            {
+                IsVisible = isVisible.Value;
+            }
+        }
+
         public List<ResultTableColumn> Columns { get; } = new List<ResultTableColumn>();
         public List<ResultTableRow> Rows { get; } = new List<ResultTableRow>();
 
@@ -448,43 +429,52 @@ namespace DetravRecipeCalculator.ViewModels
 
         public void AddOrUpdateColumn(string name, string displayName)
         {
-            GetColumnByName(name, () => displayName);
+            var c = GetColumnByName(name);
+            c.DisplayName = displayName;
         }
 
-        public void AddOrUpdateColumn(string name, Func<string> displayNameFactory)
-        {
-            GetColumnByName(name, displayNameFactory);
-        }
-
-        private ResultTableColumn GetColumnByName(string name, Func<string>? displayNameFactory)
+        private ResultTableColumn GetColumnByName(string name)
         {
             var column = Columns.FirstOrDefault(m => m.Name == name);
             if (column == null)
             {
                 int index = Columns.Count;
                 Columns.Add(column = new ResultTableColumn(name, index));
-
-                if (displayNameFactory != null)
-                {
-                    column.DisplayName = displayNameFactory();
-                }
             }
 
             return column;
         }
 
-        public void SetCell(string columnName, ResultTableRow row, object value, Func<string>? displayNameFactory)
+        public void SetCell(string columnName, ResultTableRow row, ResultTableCell value)
         {
-            var column = GetColumnByName(columnName, displayNameFactory);
+            var column = GetColumnByName(columnName);
 
             row.Set(column.Index, value);
         }
 
-        public void AddToCell(string columnName, ResultTableRow row, double value, Func<string>? displayNameFactory)
+        public void AddToCell(string columnName, ResultTableRow row, double value)
         {
-            var column = GetColumnByName(columnName, displayNameFactory);
+            var column = GetColumnByName(columnName);
 
             row.Add(column.Index, value);
+        }
+
+        internal void AddtToCellWithFindRow(PinHelper pin, string columnName, double value)
+        {
+            var row = Rows.FirstOrDefault(m => m.Id == pin.Connector.Name);
+
+            if (row == null)
+            {
+                row = new ResultTableRow(pin.Connector.Name);
+                var nameModel = new ResultTableCellName();
+                nameModel.Name = pin.Connector.Name;
+                nameModel.Icon = pin.Connector.Icon;
+                nameModel.IconBackground = pin.Connector.BackgroundColor;
+                SetCell("Name", row, nameModel);
+                Rows.Add(row);
+            }
+
+            AddToCell(columnName, row, value);
         }
     }
 
@@ -507,7 +497,7 @@ namespace DetravRecipeCalculator.ViewModels
 
     public class ResultTableRow
     {
-        public List<ResultTableItemParameter> Parameters { get; } = new List<ResultTableItemParameter>();
+        public List<ResultTableCell?> Cells { get; } = new List<ResultTableCell?>();
         public string? Id { get; }
 
         public ResultTableRow(string? id = null)
@@ -515,49 +505,63 @@ namespace DetravRecipeCalculator.ViewModels
             this.Id = id;
         }
 
-        public void Set(int index, object value)
+        public void Set(int index, ResultTableCell value)
         {
-            while (index >= Parameters.Count)
+            while (index >= Cells.Count)
             {
-                Parameters.Add(new ResultTableItemParameter());
+                Cells.Add(null);
             }
 
-            Parameters[index].Value = value;
+            Cells[index] = value;
         }
 
         public void Add(int index, double value)
         {
-            while (index >= Parameters.Count)
+            while (index >= Cells.Count)
             {
-                Parameters.Add(new ResultTableItemParameter());
+                Cells.Add(null);
             }
 
-            if (Parameters[index].Value is double doubleValue)
+            if (Cells[index] is ResultTableCellDouble cell)
             {
-                Parameters[index].Value = doubleValue + value;
+                cell.Value += value;
             }
             else
             {
-                Parameters[index].Value = value;
+                Cells[index] = new ResultTableCellDouble()
+                {
+                    Value = value,
+                };
             }
         }
 
-        public object? GetValue(int index)
+        public ResultTableCell? GetValue(int index)
         {
-            if (index < Parameters.Count)
-                return Parameters[index];
+            if (index < Cells.Count)
+                return Cells[index];
             return null;
         }
 
     }
 
-    public partial class ResultTableItemParameter
+    public class ResultTableCellName : ResultTableCell
     {
-        public object? Value { get; set; }
+        public Color IconBackground { get; set; }
 
-        public ResultTableItemParameter()
-        {
+        public string? Name { get; set; }
 
-        }
+        public byte[]? Icon { get; set; }
+    }
+
+    public class ResultTableCellDouble : ResultTableCell
+    {
+        public double Value { get; set; }
+        public string ValueString => ConnectorVM.GetFormated(Value);
+    }
+
+
+    public abstract class ResultTableCell
+    {
+
     }
 }

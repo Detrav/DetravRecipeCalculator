@@ -54,7 +54,7 @@ public partial class ResultTableView : UserControl
                     {
                         return new ContentControl()
                         {
-                            Content = model?.GetValue(currentColumn.Index) is ResultTableItemParameter parameter ? parameter.Value : null,
+                            Content = model?.GetValue(currentColumn.Index),
                         };
                     }), options: new TemplateColumnOptions<ResultTableRow>()
                     {
@@ -103,10 +103,10 @@ public partial class ResultTableView : UserControl
         if (v1 == null) return v2 == null ? 0 : -1;
         if (v2 == null) return 1;
 
-        if (v1 is double doubleValue1 && v2 is double doubleValue2)
-            return Comparer<double>.Default.Compare(doubleValue1, doubleValue2);
+        if (v1 is ResultTableCellDouble cell1 && v2 is ResultTableCellDouble cell2)
+            return Comparer<double>.Default.Compare(cell1.Value, cell2.Value);
 
-        if (v1 is ViewModels.RowNameVM name1 && v2 is ViewModels.RowNameVM name2)
+        if (v1 is ResultTableCellName name1 && v2 is ResultTableCellName name2)
             return Comparer<string>.Default.Compare(name1.Name, name2.Name);
 
         return 0;

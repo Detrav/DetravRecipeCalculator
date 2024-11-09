@@ -22,8 +22,7 @@ namespace DetravRecipeCalculator.ViewModels
     public partial class ResultTableNodeVM : NodeVM
     {
 
-        [ObservableProperty]
-        private ConnectorVM? inputPin;
+
 
         public ResultTableNodeVM(GraphEditorVM parent) : base(parent)
         {
@@ -35,12 +34,11 @@ namespace DetravRecipeCalculator.ViewModels
         {
             if (generate)
             {
-                InputPin = new ConnectorVM(this);
-                InputPin.IsInput = true;
-                InputPin.ConnectorCollor = Colors.Gray;
-                InputPin.IsAny = true;
-                InputPin.Name = null;
-                Input.Add(InputPin);
+                var inputPin = new ConnectorVM(this, true);
+                inputPin.ConnectorCollor = Colors.Gray;
+                inputPin.IsAny = true;
+                inputPin.Name = null;
+                Input.Add(inputPin);
             }
         }
 
@@ -55,6 +53,24 @@ namespace DetravRecipeCalculator.ViewModels
 
         private const int MAX_GENERATION = 100;
         private int generationCount;
+
+        public override ConnectorVM GetReplacementFor(ConnectorVM self, ConnectorVM other)
+        {
+            if (self.IsInput)
+            {
+                var pin = Input.FirstOrDefault(m => m.Name == other.Name);
+                if (pin != null)
+                    return pin;
+
+                pin = new ConnectorVM(this, other.Name, true);
+                Input.Add(pin);
+                return pin;
+            }
+            else
+            {
+                return base.GetReplacementFor(self, other);
+            }
+        }
 
         public void Rebuild()
         {
@@ -212,23 +228,23 @@ namespace DetravRecipeCalculator.ViewModels
 
             base.RestoreState(model);
 
-            InputPin = null;
+            ConnectorVM? inputPin = null;
             foreach (var pin in Input)
             {
                 if (pin.IsAny)
                 {
-                    InputPin = pin;
+                    inputPin = pin;
                     break;
                 }
             }
 
-            if (InputPin == null)
-                Input.Insert(0, InputPin = new ConnectorVM(this));
+            if (inputPin == null)
+                Input.Insert(0, inputPin = new ConnectorVM(this, true));
 
-            InputPin.IsInput = true;
-            InputPin.ConnectorCollor = Colors.Gray;
-            InputPin.IsAny = true;
-            InputPin.Name = null;
+            inputPin.IsUnknown = false;
+            inputPin.ConnectorCollor = Colors.Gray;
+            inputPin.IsAny = true;
+            inputPin.Name = null;
         }
 
         private static void FillInputOutputTables(ResultDataTable totalInput, ResultDataTable totalOutput, ResultDataTable totalResources)

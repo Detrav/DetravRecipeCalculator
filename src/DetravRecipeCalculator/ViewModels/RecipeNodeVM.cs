@@ -129,17 +129,15 @@ namespace DetravRecipeCalculator.ViewModels
                 TimeToCraftExpression = "10",
             };
 
-            result.Input.Add(new ConnectorVM(result)
+            result.Input.Add(new ConnectorVM(result, true)
             {
-                IsInput = true,
                 Name = "Coal",
                 ValueExpression = "1",
                 ConnectorCollor = Colors.Black
             });
 
-            result.Output.Add(new ConnectorVM(result)
+            result.Output.Add(new ConnectorVM(result, false)
             {
-                IsInput = false,
                 Name = "EU",
                 ValueExpression = "2000",
                 ConnectorCollor = Colors.Wheat
@@ -184,12 +182,10 @@ namespace DetravRecipeCalculator.ViewModels
             {
                 var pin = oldList.FirstOrDefault(m => m.Name == item.Name);
                 if (pin == null)
-                    pin = new ConnectorVM(this, item.Name);
+                    pin = new ConnectorVM(this, item.Name, input);
                 else
                     oldList.Remove(pin);
 
-                pin.TimeType = TimeType;
-                pin.IsInput = input;
                 pin.TimeToCraft = TimeToCraft;
                 pin.ValueExpression = item.Value;
                 pins.Add(pin);
@@ -198,8 +194,6 @@ namespace DetravRecipeCalculator.ViewModels
             foreach (var pin in oldList)
             {
                 var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == pin.Name);
-                pin.TimeType = TimeType;
-                pin.IsInput = input;
                 pin.TimeToCraft = TimeToCraft;
                 pin.IsUnknown = true;
                 pins.Add(pin);

@@ -49,19 +49,15 @@ namespace DetravRecipeCalculator.ViewModels
             Input.Clear();
             foreach (var itemModel in model.Input)
             {
-                var item = new ConnectorVM(this);
+                var item = new ConnectorVM(this, true);
                 item.RestoreState(itemModel);
-                item.TimeType = TimeType;
-                item.IsInput = true;
                 Input.Add(item);
             }
             Output.Clear();
             foreach (var itemModel in model.Output)
             {
-                var item = new ConnectorVM(this);
+                var item = new ConnectorVM(this, false);
                 item.RestoreState(itemModel);
-                item.TimeType = TimeType;
-                item.IsInput = false;
                 Output.Add(item);
             }
         }
@@ -85,6 +81,12 @@ namespace DetravRecipeCalculator.ViewModels
             }
 
             return model;
+        }
+
+        public virtual ConnectorVM GetReplacementFor(ConnectorVM self, ConnectorVM other)
+        {
+            self.RestoreState(other.SaveState());
+            return self;
         }
     }
 }

@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MsBox.Avalonia.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Xml.Linq;
 
 namespace DetravRecipeCalculator.ViewModels
 {
@@ -21,25 +24,31 @@ namespace DetravRecipeCalculator.ViewModels
             _editor = editor;
 
             StartCommand = new RelayCommand<ConnectorVM>(value => source = value);
-            FinishCommand = new RelayCommand<ConnectorVM>(target =>
+            FinishCommand = new RelayCommand<ConnectorVM>(FinishConnect);
+        }
+        private void FinishConnect(ConnectorVM? target)
+        {
+            var source = Source;
+            if (target != null && source != null && source.IsInput == (!target.IsInput) && (source.Name == target.Name || source.IsAny == (!target.IsAny)))
             {
-                if (target != null && Source != null && (Source.Name == target.Name || Source.IsAny || target.IsAny) && Source != target)
-                {
-                    if (!editor.Connections.Any(m => m.Output == Source && m.Input == target))
-                    {
-                        if (Source.IsInput && !target.IsInput)
-                        {
-                            editor.AddConnection(new ConnectionVM(target, Source));
-                            editor.UndoRedo.PushState("Add connection");
-                        }
-                        else if (!Source.IsInput && target.IsInput)
-                        {
-                            editor.AddConnection(new ConnectionVM(Source, target));
-                            editor.UndoRedo.PushState("Add connection");
-                        }
-                    }
-                }
-            });
+                if (source.IsInput) Connect(target, source);
+                else Connect(source, target);
+            }
+
+        }
+
+        private void Connect(ConnectorVM output, ConnectorVM input)
+        {
+            if (output.IsAny) output = output.Parent.GetReplacementFor(output, input);
+            else if (input.IsAny) input = input.Parent.GetReplacementFor(input, output);
+
+            if (!_editor.Connections.Any(m => m.Output == output && m.Input == input))
+            {
+                var connection = new ConnectionVM(output, input);
+
+                _editor.AddConnection(connection);
+                _editor.UndoRedo.PushState("Add connection");
+            }
         }
 
         public ICommand FinishCommand { get; }

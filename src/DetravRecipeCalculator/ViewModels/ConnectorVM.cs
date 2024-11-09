@@ -6,9 +6,11 @@ using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
 using DetravRecipeCalculator.Views;
 using Nodify;
+using org.matheval.Functions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -59,12 +61,7 @@ namespace DetravRecipeCalculator.ViewModels
         /// </summary>
         [ObservableProperty]
         private bool isConnected;
-
-        /// <summary>
-        /// Is input or output
-        /// </summary>
-        [ObservableProperty]
-        private bool isInput;
+        public bool IsInput { get; }
 
         /// <summary>
         /// Is unknonwn, means not in the recipe, mb deleted
@@ -213,15 +210,16 @@ namespace DetravRecipeCalculator.ViewModels
 
         public NodeVM Parent { get; }
 
-        public ConnectorVM(NodeVM node)
+        public ConnectorVM(NodeVM node, bool isInput)
         {
-
+            this.IsInput = isInput;
+            TimeType = node.TimeType;
             Parent = node;
             UpdateDisplayValuePersecond();
         }
 
-        public ConnectorVM(NodeVM node, string? name)
-            : this(node)
+        public ConnectorVM(NodeVM node, string? name, bool isInput)
+            : this(node, isInput)
         {
             this.Name = name;
             AssignIcon();
@@ -290,5 +288,7 @@ namespace DetravRecipeCalculator.ViewModels
                 values[name] = value;
             RefreshValue();
         }
+
+
     }
 }

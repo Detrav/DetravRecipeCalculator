@@ -4,6 +4,7 @@ using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Threading;
 using DetravRecipeCalculator.Utils;
 using DetravRecipeCalculator.ViewModels;
 using Nodify;
@@ -85,6 +86,7 @@ public partial class ResultTableView : UserControl
         }
 
         base.OnDataContextChanged(e);
+        Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
     }
 
     private int CompareColumnDescending(ResultTableRow? x, ResultTableRow? y, int index)

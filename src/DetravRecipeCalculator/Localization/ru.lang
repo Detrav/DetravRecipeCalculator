@@ -59,7 +59,7 @@ __Recipe_OpenIcon=Открыть значок с диска
 __Recipe_DeleteIcon=Удалить значок
 __Recipe_PasteIcon=Воставить значок из буфера обмена
 __Recipe_Variables=Переменные
-__Recipe_VariablesTip=Переменные, разделённые пробелом. Переменная Number=1 добавляется автоматически в любом случае.\nТакже можно использовать символ = для установки значения по умолчанию, смотрите пример в placeholder.
+__Recipe_VariablesTip=Переменные, разделённые пробелом.\nТакже можно использовать символ = для установки значения по умолчанию, смотрите пример в placeholder.
 
 __Recipe_Note=Заметка:
 __Recipe_NoteTip=Заметки, которые будут отображаться на узле.
@@ -134,16 +134,19 @@ __Enum_TimeType_Year=Год (365 дней)
 __Enum_TimeType_Year_v=г
 
 __Expressions_Title=Помощь по выражениям
-__Expressions_Help=Математические операции: + (Сложение), - (Вычитание), * (Умножение), / (Деление), % (Остаток от деления), ^ (Степень)\nФункции: SIN(число), COS(число) и другие функции\nПолная документация доступна здесь https://github.com/matheval/expression-evaluator-c-sharp\nТакже доступны переменные.\nПример: 177 * 2 ^ Tier\nПеременная Number используется автоматически: value * Number.
+__Expressions_Help=Математические операции: + (Сложение), - (Вычитание), * (Умножение), / (Деление), % (Остаток от деления), ^ (Степень)\nФункции: SIN(число), COS(число) и другие функции\nПолная документация доступна здесь https://github.com/matheval/expression-evaluator-c-sharp\nТакже доступны переменные.\nПример: 177 * 2 ^ Tier.
 
 __ResultTable_Title=Таблица результатов
 __ResultTable_Table_Name=Имя
-__ResultTable_Table_Input=Вход
-__ResultTable_Table_Output=Выход
-__ResultTable_Table_Shortage=Дефицит
-__ResultTable_Table_Surplus=Избыток
+__ResultTable_Table_Input=Вх
+__ResultTable_Table_Output=Вых
+__ResultTable_Table_Total=Итого
 
+__ResultTable_TitleRecipes_Number=Количество
 __ResultTable_TitleRecipes=Рецепты (Узлы, Машины)
 __ResultTable_TitleOutput=Сводка по выходным данным
 __ResultTable_TitleInput=Сводка по входным данным
 __ResultTable_TitleResources=Сводка по ресурсам (Этапы)
+
+__SelectTemplateWindow_Title=Выберите шаблон для создания
+__SelectTemplateWindow_Empty=Пустой

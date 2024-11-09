@@ -74,11 +74,10 @@ namespace DetravRecipeCalculator.ViewModels
 
                 foreach (var kv in ExpressionUtils.Split(recipe.Variables))
                 {
-                    Variables.Add(new VariableVM(Parent, this)
-                    {
-                        Name = kv.Key,
-                        Value = kv.Value,
-                    });
+                    var v1 = new VariableVM(Parent, this);
+                    Variables.Add(v1);
+                    v1.Name = kv.Key;
+                    v1.Value = kv.Value;
                 }
 
             }
@@ -145,12 +144,6 @@ namespace DetravRecipeCalculator.ViewModels
                 Name = "EU",
                 ValueExpression = "2000",
                 ConnectorCollor = Colors.Wheat
-            });
-
-            result.Variables.Add(new VariableVM(result.Parent, result)
-            {
-                Name = "Number",
-                Value = 1
             });
 
             result.Variables.Add(new VariableVM(result.Parent, result)

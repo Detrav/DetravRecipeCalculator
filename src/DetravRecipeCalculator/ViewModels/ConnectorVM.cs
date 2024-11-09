@@ -202,12 +202,6 @@ namespace DetravRecipeCalculator.ViewModels
         private void RefreshValue()
         {
             var newValue = ExpressionUtils.GetValue(ValueExpression, values);
-
-            if (values.TryGetValue("Number", out var number))
-            {
-                newValue *= Math.Round(number);
-            }
-
             Value = newValue;
         }
 
@@ -257,25 +251,25 @@ namespace DetravRecipeCalculator.ViewModels
         public static string GetFormated(double v)
         {
 
-            if (v >= 100)
+            if ( Math.Abs(v) >= 100)
             {
                 return string.Format("{0:0}", v);
             }
-            else if (v >= 10)
+            else if (Math.Abs(v) >= 10)
             {
                 return string.Format("{0:0.#}", v);
             }
-            else if (v >= 1)
+            else if (Math.Abs(v) >= 1)
             {
                 return string.Format("{0:0.##}", v);
             }
-            else if (v >= 0.1)
+            else if (Math.Abs(v) >= 0.1)
             {
                 return string.Format("{0:0.###}", v);
             }
             else
             {
-                return string.Format("~{0:0.####}", v);
+                return string.Format("{0:0.####}", v);
             }
         }
 

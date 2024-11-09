@@ -1,4 +1,5 @@
-﻿using org.matheval;
+﻿using DetravRecipeCalculator.ViewModels;
+using org.matheval;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -33,11 +34,6 @@ namespace DetravRecipeCalculator.Utils
                 }
             }
 
-            if (!result.ContainsKey("Number"))
-            {
-                result["Number"] = 1;
-            }
-
             return result;
         }
 
@@ -51,7 +47,7 @@ namespace DetravRecipeCalculator.Utils
 
                     foreach (var kv in values)
                     {
-                        expression.Bind(kv.Key, kv.Value);  
+                        expression.Bind(kv.Key, kv.Value);
                     }
 
                     var result = expression.Eval();

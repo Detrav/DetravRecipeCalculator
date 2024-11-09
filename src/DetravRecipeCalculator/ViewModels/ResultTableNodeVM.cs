@@ -1,14 +1,17 @@
 ﻿using Avalonia;
 using Avalonia.Animation.Easings;
+using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
 using Nodify;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
+using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -20,6 +23,7 @@ namespace DetravRecipeCalculator.ViewModels
 
         [ObservableProperty]
         private ConnectorVM? inputPin;
+
         public ResultTableNodeVM(GraphEditorVM parent) : base(parent)
         {
             Title = Xloc.Get("__ResultTable_Title");
@@ -59,7 +63,6 @@ namespace DetravRecipeCalculator.ViewModels
         {
             List<NodeHelper> nodes = new List<NodeHelper>();
             var thisNode = AddNodeToList(nodes, this);
-            List<NodeHelper> firstNodes = new List<NodeHelper>();
 
             var totalRecipes = new ResultDataTable(Xloc.Get("__ResultTable_TitleRecipes"), TotalRecipes?.IsVisible);
             var totalInput = new ResultDataTable(Xloc.Get("__ResultTable_TitleInput"), TotalInput?.IsVisible);
@@ -67,6 +70,7 @@ namespace DetravRecipeCalculator.ViewModels
             var totalResources = new ResultDataTable(Xloc.Get("__ResultTable_TitleResources"), TotalResources?.IsVisible);
 
             totalRecipes.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+            totalRecipes.AddOrUpdateColumn("Number", Xloc.Get("__ResultTable_TitleRecipes_Number"));
 
             totalInput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
             totalInput.AddOrUpdateColumn("Input", Xloc.Get("__ResultTable_Table_Input") + " /" + TimeType.GetLocalizedShortValue());
@@ -92,9 +96,71 @@ namespace DetravRecipeCalculator.ViewModels
 
                     if (node.Input.Sum(m => m.Connections.Count) == 0)
                     {
-                        firstNodes.Add(node);
-                        SetupFirstNode(node);
+                        SetNodeGeneration(node, 1);
                     }
+                }
+
+                // push steps table
+                totalResources.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+
+                for (int i = 1; i < generationCount; i++)
+                {
+                    totalResources.AddOrUpdateColumn("Input" + i, Xloc.Get("__ResultTable_Table_Input") + "#" + i + "/" + TimeType.GetLocalizedShortValue());
+                    totalResources.AddOrUpdateColumn("Output" + i, Xloc.Get("__ResultTable_Table_Output") + "#" + i + "/" + TimeType.GetLocalizedShortValue());
+                }
+
+                totalResources.AddOrUpdateColumn("Total", Xloc.Get("__ResultTable_Table_Total"));
+                //Begin calculate
+
+                foreach (var pinInput in thisNode.Input)
+                {
+                    foreach (var pinOutput in pinInput.Connections)
+                    {
+                        pinOutput.Request = pinOutput.Connector.ValuePerSecond;
+                    }
+                }
+
+                foreach (var pinInput in thisNode.Input)
+                {
+                    foreach (var pinOut in pinInput.Connections)
+                    {
+                        CalculateRequest(pinOut.Node);
+                    }
+                }
+
+                //End calculate
+
+                foreach (var node in nodes)
+                {
+                    if (node == thisNode) continue;
+
+                    foreach (var pin in node.Input)
+                    {
+                        if (pin.Connections.Count == 0)
+                        {
+                            totalInput.AddtToCellWithFindRow(pin, "Input", pin.CurrentValue);
+                        }
+
+                        totalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.CurrentValue);
+                        totalResources.AddtToCellWithFindRow(pin, "Total", -pin.CurrentValue);
+                    }
+
+                    foreach (var pin in node.Output)
+                    {
+                        if (pin.Connections.Count == 0 || pin.Connections.All(m => m.Node == thisNode))
+                        {
+                            totalOutput.AddtToCellWithFindRow(pin, "Output", pin.CurrentValue);
+                        }
+
+                        totalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.CurrentValue);
+                        totalResources.AddtToCellWithFindRow(pin, "Total", pin.CurrentValue);
+                    }
+                }
+
+
+                foreach (var node in nodes)
+                {
+                    if (node == thisNode) continue;
 
                     if (node.Node is RecipeNodeVM recipeNode)
                     {
@@ -109,6 +175,8 @@ namespace DetravRecipeCalculator.ViewModels
 
                         totalRecipes.SetCell("Name", row, rowNameModel);
 
+                        totalRecipes.AddToCell("Number", row, node.Number);
+
                         foreach (var parameter in recipeNode.Variables)
                         {
                             if (parameter.Name != null)
@@ -118,126 +186,6 @@ namespace DetravRecipeCalculator.ViewModels
                     }
                 }
 
-
-                // push steps table
-                totalResources.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
-
-                for (int i = 1; i < generationCount; i++)
-                {
-                    totalResources.AddOrUpdateColumn("Input" + i, Xloc.Get("__ResultTable_Table_Input") + " #" + i + " /" + TimeType.GetLocalizedShortValue());
-                    totalResources.AddOrUpdateColumn("Shortage" + i, Xloc.Get("__ResultTable_Table_Shortage") + " #" + i + " /" + TimeType.GetLocalizedShortValue());
-                    totalResources.AddOrUpdateColumn("Output" + i, Xloc.Get("__ResultTable_Table_Output") + " #" + i + " /" + TimeType.GetLocalizedShortValue());
-                    totalResources.AddOrUpdateColumn("Surplus" + i, Xloc.Get("__ResultTable_Table_Surplus") + " #" + i + " /" + TimeType.GetLocalizedShortValue());
-                }
-
-                // calculate all values with generation
-
-                for (int i = 2; i < generationCount; i++)
-                {
-                    bool stop = true;
-                    foreach (var node in nodes.Where(m => m.Generation == i))
-                    {
-                        stop = false;
-                        double percentage = 1;
-
-                        foreach (var pin in node.Input)
-                        {
-                            if (node == thisNode) continue;
-
-                            var request = pin.Connector.ValuePerSecond;
-
-                            if (request > 0 && pin.Connections.Count > 0)
-                            {
-                                foreach (var connection in pin.Connections)
-                                {
-                                    request -= connection.ValuePerSecondResult;
-                                    if (request <= 0)
-                                        break;
-                                }
-
-                                if (request > 0)
-                                {
-                                    percentage = Math.Min(percentage, (pin.Connector.ValuePerSecond - request) / pin.Connector.ValuePerSecond);
-                                }
-                            }
-                        }
-
-                        foreach (var pin in node.Input)
-                        {
-                            if (node == thisNode) continue;
-
-                            pin.ValuePerSecondLeft = pin.Connector.ValuePerSecond;
-                            pin.ValuePerSecondResult = percentage * pin.Connector.ValuePerSecond;
-
-                            var request = pin.ValuePerSecondResult;
-
-                            if (pin.Connections.Count == 0)
-                            {
-                                pin.ValuePerSecondLeft = 0;
-                            }
-                            else
-                            if (request > 0)
-                            {
-
-                                foreach (var connection in pin.Connections)
-                                {
-                                    if (request > connection.ValuePerSecondLeft)
-                                    {
-                                        connection.ValuePerSecondLeft = 0;
-                                        request -= connection.ValuePerSecondLeft;
-                                    }
-                                    else
-                                    {
-                                        connection.ValuePerSecondLeft -= request;
-                                        break;
-                                    }
-                                }
-                                pin.ValuePerSecondLeft -= pin.ValuePerSecondResult;
-                            }
-
-                        }
-
-                        foreach (var pin in node.Output)
-                        {
-                            pin.ValuePerSecondLeft = pin.ValuePerSecondResult = percentage * pin.Connector.ValuePerSecond;
-                        }
-                    }
-                    if (stop)
-                        break;
-                }
-
-                //push all inputs
-
-                foreach (var node in nodes)
-                {
-                    if (node == thisNode) continue;
-
-                    foreach (var pin in node.Input)
-                    {
-                        if (pin.Connections.Count == 0)
-                        {
-                            totalInput.AddtToCellWithFindRow(pin, "Input", pin.ValuePerSecondResult);
-                            //totalResources.AddtToCellWithFindRow(pin, "Input", pin.ValuePerSecondResult);
-                        }
-
-                        totalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.ValuePerSecondResult);
-                        totalResources.AddtToCellWithFindRow(pin, "Shortage" + node.Generation, pin.ValuePerSecondLeft);
-                    }
-
-                    foreach (var pin in node.Output)
-                    {
-                        if (pin.Connections.Count == 0 || pin.Connections.All(m => m.Node == thisNode))
-                        {
-                            totalOutput.AddtToCellWithFindRow(pin, "Output", pin.ValuePerSecondResult);
-                            //totalResources.AddtToCellWithFindRow(pin, "Output", pin.ValuePerSecondResult);
-                        }
-
-                        totalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.ValuePerSecondResult);
-                        totalResources.AddtToCellWithFindRow(pin, "Surplus" + node.Generation, pin.ValuePerSecondLeft);
-                    }
-
-
-                }
             }
             catch (Exception ex)
             {
@@ -251,24 +199,40 @@ namespace DetravRecipeCalculator.ViewModels
             TotalRecipes = totalRecipes;
         }
 
-
-
-        private void SetupFirstNode(NodeHelper node)
+        private void CalculateRequest(NodeHelper node)
         {
-            foreach (var pin in node.Input)
-            {
-                pin.ValuePerSecondResult = pin.Connector.ValuePerSecond;
-                pin.ValuePerSecondLeft = 0;
+            double requestPercentage = 0;
 
+            foreach (var pinOut in node.Output)
+            {
+                requestPercentage = Math.Max(requestPercentage, pinOut.Request / pinOut.Connector.ValuePerSecond);
             }
 
-            foreach (var pin in node.Output)
-            {
-                pin.ValuePerSecondLeft = pin.ValuePerSecondResult = pin.Connector.ValuePerSecond;
+            node.Number = requestPercentage;
 
+            foreach (var pinOut in node.Output)
+            {
+                pinOut.CurrentValue = requestPercentage * pinOut.Connector.ValuePerSecond;
             }
 
-            SetNodeGeneration(node, 1);
+            foreach (var pinIn in node.Input)
+            {
+                pinIn.CurrentValue = requestPercentage * pinIn.Connector.ValuePerSecond;
+
+                foreach (var pinOut in pinIn.Connections)
+                {
+                    pinOut.Request += pinIn.CurrentValue;
+                }
+            }
+
+            foreach (var pinin in node.Input)
+            {
+                foreach (var pinOut in pinin.Connections)
+                {
+                    CalculateRequest(pinOut.Node);
+                }
+            }
+
         }
 
         private void SetNodeGeneration(NodeHelper node, int generation)
@@ -373,6 +337,7 @@ namespace DetravRecipeCalculator.ViewModels
         public List<PinHelper> Input { get; } = new List<PinHelper>();
         public List<PinHelper> Output { get; } = new List<PinHelper>();
         public int Generation { get; set; }
+        public double Number { get; set; }
 
         public NodeHelper(NodeVM node)
         {
@@ -385,16 +350,13 @@ namespace DetravRecipeCalculator.ViewModels
         public NodeHelper Node { get; }
         public ConnectorVM Connector { get; }
 
-        /// <summary>
-        /// The value that real consumes or produces
-        /// </summary>
-        public double ValuePerSecondResult { get; set; }
-        /// <summary>
-        /// The value that left from produces
-        /// </summary>
-        public double ValuePerSecondLeft { get; set; }
+
+        public double CurrentValue { get; set; }
+
+        public double Request { get; set; }
 
         public List<PinHelper> Connections { get; } = new List<PinHelper>();
+
 
         public PinHelper(NodeHelper node, ConnectorVM connector)
         {

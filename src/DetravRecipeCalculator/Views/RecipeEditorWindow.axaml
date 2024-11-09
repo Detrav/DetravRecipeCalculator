@@ -83,7 +83,7 @@
                         Text="{Binding Variables}"
                         ToolTip.ShowDelay="100"
                         ToolTip.Tip="{Binding Loc.VariablesTip.Text}"
-                        Watermark="Number=1 Tier Module1=1.25" />
+                        Watermark="Tier Speed=1.25" />
                     <TextBlock Margin="3" Text="{Binding Loc.TimeToCraft.Text}" />
                     <DockPanel Margin="3">
                         <Button

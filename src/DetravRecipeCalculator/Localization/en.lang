@@ -59,7 +59,7 @@ __Recipe_OpenIcon=Open icon from drive
 __Recipe_DeleteIcon=Delete icon
 __Recipe_PasteIcon=Paste icon from clipboard
 __Recipe_Variables=Variables
-__Recipe_VariablesTip=Variables separated by space. The variable Number=1 is added automatically in any case.\nYou can also use the = symbol to set a default value, see placeholder for example.
+__Recipe_VariablesTip=Variables separated by space.\nYou can also use the = symbol to set a default value, see placeholder for example.
 
 
 __Recipe_Note=Note:
@@ -137,20 +137,20 @@ __Enum_TimeType_Year=Year (365 days)
 __Enum_TimeType_Year_v=y
 
 __Expressions_Title=Expression Help
-__Expressions_Help=Math + (Add), - (Subtract), * (Multiply), / (Divide), % (Modulo), ^ (Power)\nFunctions: SIN(number), COS(number) and other functions\nFull documentation available here https://github.com/matheval/expression-evaluator-c-sharp\nAlso available is the ability to define variables.\nExample: 177 * 2 ^ Tier\nThe variable Number is used automatically: value * Number.
+__Expressions_Help=Math + (Add), - (Subtract), * (Multiply), / (Divide), % (Modulo), ^ (Power)\nFunctions: SIN(number), COS(number) and other functions\nFull documentation available here https://github.com/matheval/expression-evaluator-c-sharp\nAlso available is the ability to define variables.\nExample: 177 * 2 ^ Tier.
 
 __ResultTable_Title=Result Table
 __ResultTable_Table_Name=Name
-__ResultTable_Table_Input=Input
-__ResultTable_Table_Output=Output
-__ResultTable_Table_Shortage=Shortage
-__ResultTable_Table_Surplus=Surplus
+__ResultTable_Table_Input=In
+__ResultTable_Table_Output=Out
+__ResultTable_Table_Total=Total
 
+__ResultTable_TitleRecipes_Number=Quantity
 __ResultTable_TitleRecipes=Recipes (Nodes, Machines)
 __ResultTable_TitleOutput=Output Summary
 __ResultTable_TitleInput=Input Summary
 __ResultTable_TitleResources=Resources Summary (Steps)
 
 
-__SelectTemplateWindow_Title=Select template for creating
-__SelectTemplateWindow_Empty=Пустой
+__SelectTemplateWindow_Title=Select Template for Creating
+__SelectTemplateWindow_Empty=Empty

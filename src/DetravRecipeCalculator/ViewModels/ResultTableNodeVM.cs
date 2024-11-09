@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -29,14 +30,11 @@ namespace DetravRecipeCalculator.ViewModels
             Title = Xloc.Get("__ResultTable_Title");
         }
 
-        [ObservableProperty]
-        private ResultDataTable? totalInput;
-        [ObservableProperty]
-        private ResultDataTable? totalOutput;
-        [ObservableProperty]
-        private ResultDataTable? totalResources;
-        [ObservableProperty]
-        private ResultDataTable? totalRecipes;
+
+        public ResultDataTable TotalInput { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleInput"), true);
+        public ResultDataTable TotalOutput { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleOutput"), true);
+        public ResultDataTable TotalResources { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleResources"), false);
+        public ResultDataTable TotalRecipes { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleRecipes"), false);
 
         [ObservableProperty]
         private Exception? error;
@@ -64,19 +62,19 @@ namespace DetravRecipeCalculator.ViewModels
             List<NodeHelper> nodes = new List<NodeHelper>();
             var thisNode = AddNodeToList(nodes, this);
 
-            var totalRecipes = new ResultDataTable(Xloc.Get("__ResultTable_TitleRecipes"), TotalRecipes?.IsVisible);
-            var totalInput = new ResultDataTable(Xloc.Get("__ResultTable_TitleInput"), TotalInput?.IsVisible);
-            var totalOutput = new ResultDataTable(Xloc.Get("__ResultTable_TitleOutput"), TotalOutput?.IsVisible);
-            var totalResources = new ResultDataTable(Xloc.Get("__ResultTable_TitleResources"), TotalResources?.IsVisible);
+            TotalInput.Clear();
+            TotalOutput.Clear();
+            TotalResources.Clear();
+            TotalRecipes.Clear();
 
-            totalRecipes.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
-            totalRecipes.AddOrUpdateColumn("Number", Xloc.Get("__ResultTable_TitleRecipes_Number"));
+            TotalRecipes.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+            TotalRecipes.AddOrUpdateColumn("Number", Xloc.Get("__ResultTable_TitleRecipes_Number"));
 
-            totalInput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
-            totalInput.AddOrUpdateColumn("Input", Xloc.Get("__ResultTable_Table_Input") + " /" + TimeType.GetLocalizedShortValue());
+            TotalInput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+            TotalInput.AddOrUpdateColumn("Input", Xloc.Get("__ResultTable_Table_Input") + " /" + TimeType.GetLocalizedShortValue());
 
-            totalOutput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
-            totalOutput.AddOrUpdateColumn("Output", Xloc.Get("__ResultTable_Table_Output") + " /" + TimeType.GetLocalizedShortValue());
+            TotalResources.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+            TotalResources.AddOrUpdateColumn("Output", Xloc.Get("__ResultTable_Table_Output") + " /" + TimeType.GetLocalizedShortValue());
 
 
             generationCount = 0;
@@ -101,15 +99,15 @@ namespace DetravRecipeCalculator.ViewModels
                 }
 
                 // push steps table
-                totalResources.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+                TotalResources.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
 
                 for (int i = 1; i < generationCount; i++)
                 {
-                    totalResources.AddOrUpdateColumn("Input" + i, Xloc.Get("__ResultTable_Table_Input") + "#" + i + "/" + TimeType.GetLocalizedShortValue());
-                    totalResources.AddOrUpdateColumn("Output" + i, Xloc.Get("__ResultTable_Table_Output") + "#" + i + "/" + TimeType.GetLocalizedShortValue());
+                    TotalResources.AddOrUpdateColumn("Input" + i, Xloc.Get("__ResultTable_Table_Input") + "#" + i + "/" + TimeType.GetLocalizedShortValue());
+                    TotalResources.AddOrUpdateColumn("Output" + i, Xloc.Get("__ResultTable_Table_Output") + "#" + i + "/" + TimeType.GetLocalizedShortValue());
                 }
 
-                totalResources.AddOrUpdateColumn("Total", Xloc.Get("__ResultTable_Table_Total"));
+                TotalResources.AddOrUpdateColumn("Total", Xloc.Get("__ResultTable_Table_Total"));
                 //Begin calculate
 
                 foreach (var pinInput in thisNode.Input)
@@ -136,27 +134,20 @@ namespace DetravRecipeCalculator.ViewModels
 
                     foreach (var pin in node.Input)
                     {
-                        if (pin.Connections.Count == 0)
-                        {
-                            totalInput.AddtToCellWithFindRow(pin, "Input", pin.CurrentValue);
-                        }
 
-                        totalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.CurrentValue);
-                        totalResources.AddtToCellWithFindRow(pin, "Total", -pin.CurrentValue);
+                        TotalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.CurrentValue);
+                        TotalResources.AddtToCellWithFindRow(pin, "Total", -pin.CurrentValue);
                     }
 
                     foreach (var pin in node.Output)
                     {
-                        if (pin.Connections.Count == 0 || pin.Connections.All(m => m.Node == thisNode))
-                        {
-                            totalOutput.AddtToCellWithFindRow(pin, "Output", pin.CurrentValue);
-                        }
 
-                        totalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.CurrentValue);
-                        totalResources.AddtToCellWithFindRow(pin, "Total", pin.CurrentValue);
+                        TotalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.CurrentValue);
+                        TotalResources.AddtToCellWithFindRow(pin, "Total", pin.CurrentValue);
                     }
                 }
 
+                FillInputOutputTables(TotalInput, TotalOutput, TotalResources);
 
                 foreach (var node in nodes)
                 {
@@ -173,16 +164,16 @@ namespace DetravRecipeCalculator.ViewModels
                             Name = recipeNode.Title
                         };
 
-                        totalRecipes.SetCell("Name", row, rowNameModel);
+                        TotalRecipes.SetCell("Name", row, rowNameModel);
 
-                        totalRecipes.AddToCell("Number", row, node.Number);
+                        TotalRecipes.AddToCell("Number", row, node.Number);
 
                         foreach (var parameter in recipeNode.Variables)
                         {
                             if (parameter.Name != null)
-                                totalRecipes.AddToCell(parameter.Name, row, parameter.Value);
+                                TotalRecipes.AddToCell(parameter.Name, row, parameter.Value);
                         }
-                        totalRecipes.Rows.Add(row);
+                        TotalRecipes.Rows.Add(row);
                     }
                 }
 
@@ -193,10 +184,65 @@ namespace DetravRecipeCalculator.ViewModels
             }
 
 
-            TotalResources = totalResources;
-            TotalInput = totalInput;
-            TotalOutput = totalOutput;
-            TotalRecipes = totalRecipes;
+            OnPropertyChanged(nameof(TotalResources));
+            OnPropertyChanged(nameof(TotalInput));
+            OnPropertyChanged(nameof(TotalOutput));
+            OnPropertyChanged(nameof(TotalRecipes));
+        }
+
+        public override NodeModel SaveState()
+        {
+            var model = base.SaveState();
+
+
+            model.Parameters["IsTotalInputVisibile"] = TotalInput.IsVisible ? "t" : "f";
+            model.Parameters["IsTotalOutputVisibile"] = TotalOutput.IsVisible ? "t" : "f";
+            model.Parameters["IsTotalRecipesVisibile"] = TotalRecipes.IsVisible ? "t" : "f";
+            model.Parameters["IsTotalResourcesVisibile"] = TotalResources.IsVisible ? "t" : "f";
+
+            return model;
+        }
+
+        public override void RestoreState(NodeModel model)
+        {
+            string? strValue;
+            if (model.Parameters.TryGetValue("IsTotalInputVisibile", out strValue)) TotalInput.IsVisible = strValue == "t";
+            if (model.Parameters.TryGetValue("IsTotalOutputVisibile", out strValue)) TotalOutput.IsVisible = strValue == "t";
+            if (model.Parameters.TryGetValue("IsTotalRecipesVisibile", out strValue)) TotalRecipes.IsVisible = strValue == "t";
+            if (model.Parameters.TryGetValue("IsTotalResourcesVisibile", out strValue)) TotalResources.IsVisible = strValue == "t";
+            base.RestoreState(model);
+        }
+
+        private static void FillInputOutputTables(ResultDataTable totalInput, ResultDataTable totalOutput, ResultDataTable totalResources)
+        {
+            var column = totalResources.Columns.FirstOrDefault(m => m.Name == "Total");
+
+            if (column == null)
+                return;
+
+
+
+            foreach (var row in totalResources.Rows)
+            {
+                string id = row.Id ?? "Unk";
+                if (row.GetValue(column.Index) is ResultTableCellDouble cell && row.GetValue(0) is ResultTableCellName cellName)
+                {
+                    if (cell.Value < -0.000000000001)
+                    {
+                        var newRow = new ResultTableRow(id);
+                        totalInput.SetCell("Name", newRow, cellName);
+                        totalInput.AddToCell("Input", newRow, -cell.Value);
+                        totalInput.Rows.Add(newRow);
+                    }
+                    else if (cell.Value > 0.000000000001)
+                    {
+                        var newRow = new ResultTableRow(id);
+                        totalOutput.SetCell("Name", newRow, cellName);
+                        totalOutput.AddToCell("Output", newRow, cell.Value);
+                        totalOutput.Rows.Add(newRow);
+                    }
+                }
+            }
         }
 
         private void CalculateRequest(NodeHelper node)
@@ -375,14 +421,12 @@ namespace DetravRecipeCalculator.ViewModels
 
         public string Title { get; }
 
-        public ResultDataTable(string title, bool? isVisible)
+        public ResultDataTable(string title, bool isVisible)
         {
             this.Title = title;
 
-            if (isVisible.HasValue)
-            {
-                IsVisible = isVisible.Value;
-            }
+            IsVisible = isVisible;
+
         }
 
         public List<ResultTableColumn> Columns { get; } = new List<ResultTableColumn>();
@@ -441,6 +485,15 @@ namespace DetravRecipeCalculator.ViewModels
             }
 
             AddToCell(columnName, row, value);
+        }
+
+        public void Clear()
+        {
+            Columns.Clear();
+            Rows.Clear();
+
+            OnPropertyChanged(nameof(Columns));
+            OnPropertyChanged(nameof(Rows));
         }
     }
 

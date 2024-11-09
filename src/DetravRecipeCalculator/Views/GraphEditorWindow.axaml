@@ -126,14 +126,22 @@
                 </nodify:NodifyEditor.PendingConnectionTemplate>
                 <nodify:NodifyEditor.ConnectionTemplate>
                     <DataTemplate DataType="vm:ConnectionVM">
-                        <nodify:LineConnection
+                        <nodify:Connection
+                            Disconnect="LineConnection_Disconnect"
+                            Source="{Binding Output.Anchor}"
+                            Target="{Binding Input.Anchor}">
+                            <nodify:Connection.Stroke>
+                                <SolidColorBrush Color="{Binding Output.ConnectorCollor}" />
+                            </nodify:Connection.Stroke>
+                        </nodify:Connection>
+                        <!--<nodify:LineConnection
                             Disconnect="LineConnection_Disconnect"
                             Source="{Binding Output.Anchor}"
                             Target="{Binding Input.Anchor}">
                             <nodify:LineConnection.Stroke>
                                 <SolidColorBrush Color="{Binding Output.ConnectorCollor}" />
                             </nodify:LineConnection.Stroke>
-                        </nodify:LineConnection>
+                        </nodify:LineConnection>-->
                     </DataTemplate>
                 </nodify:NodifyEditor.ConnectionTemplate>
                 <nodify:NodifyEditor.DataTemplates>

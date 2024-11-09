@@ -32,5 +32,8 @@ namespace DetravRecipeCalculator.Models
 
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public Dictionary<string, double> Variables { get; } = new Dictionary<string, double>();
+
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
+        public Dictionary<string, string?> Parameters { get; } = new Dictionary<string, string?>();
     }
 }

@@ -402,7 +402,7 @@ public partial class GraphEditorWindow : Window
         NodifyEditor editor = Editor;
         var zoom = editor.ViewportZoom;
         var location = editor.ViewportLocation;
-
+        
         var extent = editor.ItemsExtent;
         editor.ViewportZoom = 1;
         editor.ViewportLocation = extent.Position - new Point(15, 15);

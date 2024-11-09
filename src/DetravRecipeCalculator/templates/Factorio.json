@@ -1,0 +1,173 @@
+{
+  "Recipes": [
+    {
+      "BackgroundColor": null,
+      "ForegroundColor": null,
+      "Icon": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAACs9JREFUWEflV2lsFIcZfXPt7H15d40NNjZgiB3jmIYACk1JSoFAmjaiIhGVWqVNmqZJGpQqqfqzqtQ0qZRKISLN2RSFFlSqpCIpKSSEAnXCEQQGu4TLjm9717vr2WP2mtnp2wlGUdU//dUfndV6ZjUz3/G+973vM/D/fghfBODXTz+9etGiRdvyui5UDcOqmgb0UhGP/HjbossXLhT2HzgwNr+lRbjnnnvm7N9/YLL3+FGxs6O9Krr9llkuwRIFuFQXoCjQNA0ul8v+SoKAYDiM+PAw9u3b99SO118fmvUrz15s3rx53sb1a48ODg2Lzz3zS8Ri9fhsZBT33Xuv/Uhbezu28Tt71NfX44UXtiMWDUNQPMjrBfpVIPJaN2S0hoCYU0Bf0kAqOYX7NnwF9z/2BE709q5btWpV4/Hjxws1W+KsweZI+IFofYM4cPkSUDVx4Mgx/OWdd/GLZ561Hznf34/XX34ZPT099u+bb+7GG7v+iJd+vxsPbrkL/sIQYqqOBnEEC+XziAl5yJUCGkqXIGYncOjIUWRS06irqwt2LFny1Vm/swgIjqrxk4mxYRQLJZTKFTy/fTu2Pf64/dwPHn4Yb/7uNQjVKoqmhbs2bsS7+/djw113w+D93oN78eITD8EVDKMuKqPv47dx9jNWN9CC1aEikp1B9Goq8rStulX0nj3zFF/7a822jcCWLVtaJFXx954+A4/bjcGxUezetat2yz7e3rsXpYoJt9dn/97/3nvX7gAdN3bjp08/T7wXImU6kBRieO+8ip3vn8ev/rAfzx68gszUDJa0tcETCGFseAwQrDVdXV2emhE7gIZo3X15w4DP78XpM2exYd1GHD958rqTN3ftRufiNgQcIjqa6/HqS7+9fu9S/1l8beMm7GXJnI3zMTqmY/2t7bhtcRgLYy58Z10bGuZ6MBGfQi6VQDjohSA5MH9O9I6aEbsEmYnxhzx0vmLVKpy7NIDBQ4ew7bFHcfrkKex56y1s3LieX3LjC0eN5T978gmsW7sOpuDGxaERGIUC1MwQuhuL+NL9d6OcTyHc2IpX3z+ByngWJXZUoC6I+FQCk9PWkzT3rrgFkGSnI2ARjNHxSTTNbcT5i5exY8eL6Dl1Cjt37rTdjoyMYM+ePddD+NFDD+Kl197At7Z+G9rUZ/jho4+wZYG6tmVICfVI5PJgI2KYNmdML0zySs/kkRjVUSoWUUgl1tCYIO7lX0UiEKICnRlU5ADZXEFzUIHA/j1x9Ai2/+Y5dHW0Y+vWrVixrBt/3rMbI4ODUBUBTj6TzczAnB5FhC6riStIio3I+TugRVfA9LngFzIkZB18DgFSPm7X/ZoACXYJFKuKyZkZFEsVCA4VPiewul7ElbSK0yd6cPDw3+FSRDQGVPT3n8MD938PAY+CBr+KkFSCNnQZr+x4Dl+/ZQFh15AH8aw6YeQtwExiRg4iHF0Cb6wBplKFYVRgmKaNph1AguTwx5rRTPhHk5dhSH7cfset+PnyW/DMGwfwygcnEAr5EZAtOIhW2hCguAKIOsr47qbV6Fq0FIm4Bq9PhsdnwF2YgsSPZs2FkJfR8+lZ9A1dRCmXpnA1IJcv0WfyegAWrcHpkFFhJ2h6mVFZJEYM5eANePj7PrgiYRw+fR63r1iOO1Z24aNjx/DOByfR6JPQFFmCG5ffhot951CuWghH3MhhNSJeEYHcJEoj45DJB9PhIUmJViKJMrXEo0g1CbFsBKqVqigrMryBAFSTTDLJVv0KhgcW4ezgRXS3t6KzsxtdERMLggaW3tmJzTd5cfDDHkjpPly92IZxQUVj0xwMDSfQ7B7BR/2TqAhO3D1Pg8mihBo64W9ogm6ZLAF9CzXiweaAMLc+VJ2YmEBvz2HUOVg/dxAas7n8jz0YzPgxTQO+YgEr1rZQpEpwyypubF+Gc4PjJBmR8oUQc0RhZpLwlaYw0fcWzmkL+V4TKsNnoHhdSMXHcbX3FCr5HAwGwSyvlwDZUgmVIrWbNZpOZ6E6vRjJqzjRdwVjyQouTJhYvKARm0w/ilYGlinh4uWrSCGGoBxCOBRARvWgnMshtmApdn24F3s/PoSCLuAgE/rm2i/DH4pCLGhwsgVkJl/SPw/AVsKcYVHlHGhtqmdGYWjTA1AnhxF1zUO8UIXLqWBlSxgZyYuycy7ykS5InLra0AWMHT8A659/Q3H4HKoaxWjqAtqWb6Di+e0c17fXoyEIxC0vIq1LEfAH2PwijKoNgN0Flp+tVzVKqBKeZc1RdC24Aapfw6YlQbTdvBw+L9tNTONUSoJcg29qBMGAE4H6CLK6gZ5LF2CUPoVKFAbYKWpwHh75xp1IcixH1TSmKkygcxla58c4UwxYhkkdYO/PknBiYgoNYS+OfdIDR/wqbor4kCFrB/vyUBbKSKQrmLyawpxWFaqhwRBdmNYciHiiSHu8GDIbEDEGYIwmIIbq4TXLMEcHOKDa0J8KYW5jDI1GHPv+dBjJDEWJ415RZBt9m4ShIAcT6/724Y+RTo7AlAKQnB5SVIE6fgRFLcFrJ/rjk5BqCFhlGOSMlmVNCamnrpW/K6jSsDicZBPNUPfLtDwGZyiEE2c4xnNZ+H1uCGxBjn5Q8mr+P1fCaCiILHu0Uqmie+lqIBRjScrw1ZEDA+cwqGdR39KBFrZiNp2GWCmiKks43/MBZVzFyu5uVPmZIdNV1cv27Uc6HseijsXwzWtFoUBtIcecegpnPzmDnGXxaarkNQRQpJYnEymSRqJhBQ7ZAZfXg2KeDZgtEic3dV+BVzQxw5ehsBSCyedplEiVyR8zn0cxlYYcqMLhDFBhchQmw9Z9s1KGR2LmbF9JFiBXBZRI/NkArGJRr2az0+C4hylKKGWmUcpKMLkBlSs60TDZOgbLk0JR1wFOsxJ3IYNawRucIWUozMhJISvKXl7l2GYaCnmD5yLTosMiNy2KXCTExFIF6OXPA7CJIDhcXJdyCPoYOWuka2k6N1HX2MyXKsiVclw0BczkdXvPcwrsGAYFS4fBIWZxiKV5drqc8Pp9MDlocnxWI+SKkx3GkASeyRBeGeykcq0AdhfU9gEhkYhzFyQtKBCalkG+ZMESFGZWgJbK2HCJksj6urhWhWGpfg6dkE2oIlc1PadxlLMMTh+c7AqR67mocrYw62I+Yysf13w43LUV3U9E6Msq21NZjq9ZIzSRtUa5AIfXz7nEjiD0dfMaEedanifhPDX5IsyC4kCOamfV6ifTKE+SwwvJG4KTvIlz0MQkpZYYb4isFKcAE/LVRVEochGZ0WwEXJ4q3GXJBt8eRpniFUgSW8Q/hzBKMCoVZLi9JMnk2uwOuIJwUiEzyQSR0hGK1KPCkulEyKtoJCFpQYGp1XtycADZmWmWpYyUkUaBpZTyBZKZSGZypK1OVPKUAkfNdU0HjiCdkR2yHCY0BWbnRz5FAmVSNBinI25JgghtcozMpoazPVXCa9AY/3FCkavWzNQ4ExDs2mdKVDpCXuvyCgNMpbJMyEKpUITCka+RwwWWuFrO2Byw1WBlk9zr8sW6OIW4cDjJAQZCNSvpM0hkdAoH4GHAVSf1vdaFXMMYGRJaGQ6XSvL6qe80yuleNvg821Kr6QoDdPsj1DgfBYzeaNc0sgyWRPQGXzx9YfLRa6vZ7Ipmo/LfHrM2/tN7/37P/t3R0SF6vV7nyZMnqcv/4+NfVm4gqKrau6AAAAAASUVORK5CYII=",
+      "Id": "3d5a22f3-2a57-4a1f-97c6-7b497ea8c8ed",
+      "Input": [
+        {
+          "Name": "Iron Plate",
+          "Value": "2"
+        },
+        {
+          "Name": "kJ",
+          "Value": "77.5*Number"
+        }
+      ],
+      "IsEnabled": true,
+      "Name": "Craft (Gear)",
+      "Note": null,
+      "Output": [
+        {
+          "Name": "Gear",
+          "Value": "1"
+        }
+      ],
+      "TimeToCraft": "1",
+      "Variables": null
+    },
+    {
+      "BackgroundColor": null,
+      "ForegroundColor": null,
+      "Icon": "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",
+      "Id": "3fc738a0-8e1c-4c03-af10-87fc33632920",
+      "Input": [
+        {
+          "Name": "Copper Plate",
+          "Value": "1"
+        },
+        {
+          "Name": "Gear",
+          "Value": "1"
+        },
+        {
+          "Name": "kJ",
+          "Value": "775"
+        }
+      ],
+      "IsEnabled": true,
+      "Name": "Craft (Pack)",
+      "Note": null,
+      "Output": [
+        {
+          "Name": "Pack",
+          "Value": "1"
+        }
+      ],
+      "TimeToCraft": "10",
+      "Variables": null
+    }
+  ],
+  "Resources": [
+    {
+      "BackgroundColor": null,
+      "ConnectorColor": "#FF9060",
+      "ForegroundColor": null,
+      "Icon": "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",
+      "IsEnabled": true,
+      "Name": "Copper Plate"
+    },
+    {
+      "BackgroundColor": null,
+      "ConnectorColor": "#AAAAAA",
+      "ForegroundColor": null,
+      "Icon": "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",
+      "IsEnabled": true,
+      "Name": "Iron Plate"
+    },
+    {
+      "BackgroundColor": null,
+      "ConnectorColor": "#9999AA",
+      "ForegroundColor": null,
+      "Icon": "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",
+      "IsEnabled": true,
+      "Name": "Gear"
+    },
+    {
+      "BackgroundColor": null,
+      "ConnectorColor": "#EE3030",
+      "ForegroundColor": null,
+      "Icon": "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",
+      "IsEnabled": true,
+      "Name": "Pack"
+    },
+    {
+      "BackgroundColor": null,
+      "ConnectorColor": "",
+      "ForegroundColor": null,
+      "Icon": "",
+      "IsEnabled": true,
+      "Name": "kJ"
+    }
+  ],
+  "Graph": {
+    "Connections": [
+      {
+        "InputId": "2a6eb3b1-d6d3-41ea-af3c-0cf6ceb516d6",
+        "OutputId": "1f72acae-fe45-4e83-a576-0c2687a19ffb"
+      },
+      {
+        "InputId": "f7195131-4b00-449c-bf2e-8a5b9eecedaf",
+        "OutputId": "dd944048-cf6a-437e-a614-e548ae8adeb1"
+      }
+    ],
+    "Nodes": [
+      {
+        "Comment": null,
+        "Input": [
+          {
+            "Id": "2a6eb3b1-d6d3-41ea-af3c-0cf6ceb516d6",
+            "Name": null
+          }
+        ],
+        "Location": "1350, 285",
+        "Output": [],
+        "RecipeId": null,
+        "Size": "0, 0",
+        "Type": "ResultTableNodeVM",
+        "Variables": {}
+      },
+      {
+        "Comment": null,
+        "Input": [],
+        "Location": "210, 405",
+        "Output": [
+          {
+            "Id": "dd944048-cf6a-437e-a614-e548ae8adeb1",
+            "Name": "Gear"
+          }
+        ],
+        "RecipeId": "3d5a22f3-2a57-4a1f-97c6-7b497ea8c8ed",
+        "Size": "0, 0",
+        "Type": "RecipeNodeVM",
+        "Variables": {
+          "Number": 1
+        }
+      },
+      {
+        "Comment": null,
+        "Input": [
+          {
+            "Id": "f7195131-4b00-449c-bf2e-8a5b9eecedaf",
+            "Name": "Gear"
+          }
+        ],
+        "Location": "750, 345",
+        "Output": [
+          {
+            "Id": "1f72acae-fe45-4e83-a576-0c2687a19ffb",
+            "Name": "Pack"
+          }
+        ],
+        "RecipeId": "3fc738a0-8e1c-4c03-af10-87fc33632920",
+        "Size": "0, 0",
+        "Type": "RecipeNodeVM",
+        "Variables": {
+          "Number": 10
+        }
+      }
+    ],
+    "TimeType": 0
+  }
+}

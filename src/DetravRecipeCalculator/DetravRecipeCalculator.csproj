@@ -43,4 +43,14 @@
       <DependentUpon>RecipeEditorWindow.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
+
+
+  <ItemGroup>
+    <None Update="templates\Factorio.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="templates\Minecraft.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

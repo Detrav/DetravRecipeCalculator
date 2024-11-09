@@ -318,6 +318,7 @@ namespace DetravRecipeCalculator.ViewModels
             public XLocItem TimeType_Week { get; } = new XLocItem("__Enum_TimeType_Week");
             public XLocItem TimeType_Month { get; } = new XLocItem("__Enum_TimeType_Month");
             public XLocItem TimeType_Year { get; } = new XLocItem("__Enum_TimeType_Year");
+            public XLocItem MenuExportPng { get; } = new XLocItem("__GraphEditor_MenuExportPng");
 
         }
     }

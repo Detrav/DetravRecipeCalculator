@@ -336,7 +336,26 @@ Detrav Recipe Calculator
 
             if (canCreate)
             {
-                vm.Pipeline = new PipelineVM();
+                if (TopLevel.GetTopLevel(this) is Window owner)
+                {
+                    var wnd = new SelectTemplateWindow();
+                    if (await wnd.ShowDialog<bool>(owner) && wnd.JsonValue != null)
+                    {
+                        try
+                        {
+                            vm.Pipeline = PipelineVM.LoadFromJson(wnd.JsonValue);
+                        }
+                        catch (Exception ex)
+                        {
+                            await MessageBoxExtentions.ShowErrorAsync(ex, this);
+                        }
+
+                    }
+                }
+                else
+                {
+                    vm.Pipeline = new PipelineVM();
+                }
             }
         }
     }

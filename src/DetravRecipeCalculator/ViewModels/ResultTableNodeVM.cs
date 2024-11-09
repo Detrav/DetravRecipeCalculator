@@ -171,6 +171,11 @@ namespace DetravRecipeCalculator.ViewModels
 
                             var request = pin.ValuePerSecondResult;
 
+                            if (pin.Connections.Count == 0)
+                            {
+                                pin.ValuePerSecondLeft = 0;
+                            }
+                            else
                             if (request > 0)
                             {
 
@@ -180,19 +185,16 @@ namespace DetravRecipeCalculator.ViewModels
                                     {
                                         connection.ValuePerSecondLeft = 0;
                                         request -= connection.ValuePerSecondLeft;
-                                        pin.ValuePerSecondLeft -= connection.ValuePerSecondLeft;
                                     }
                                     else
                                     {
                                         connection.ValuePerSecondLeft -= request;
-                                        pin.ValuePerSecondLeft -= request;
-                                        //request = 0;
                                         break;
                                     }
                                 }
-
-                                pin.ValuePerSecondLeft = request;
+                                pin.ValuePerSecondLeft -= pin.ValuePerSecondResult;
                             }
+
                         }
 
                         foreach (var pin in node.Output)

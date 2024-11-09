@@ -1,14 +1,23 @@
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Input;
 using DetravRecipeCalculator.Utils;
 using DetravRecipeCalculator.ViewModels;
+using Nodify;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.VisualTree;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using System.Windows.Markup;
+using System.Xml.Linq;
+using Avalonia.Platform.Storage;
 
 namespace DetravRecipeCalculator.Views;
 
@@ -357,6 +366,119 @@ public partial class GraphEditorWindow : Window
         if (DataContext is GraphEditorVM vm)
             vm.TimeType = TimeType.Year;
     }
+
+
+
+
+    private void ExportToPNG(string fileName)
+    {
+        //LineConnection
+        //ItemContainer
+
+        //NodifyEditor editor = Editor;
+        //editor.ClipToBounds = false;
+
+        //var zoom = editor.ViewportZoom;
+        //var location = editor.ViewportLocation;
+
+        //var extent = editor.ItemsExtent;
+        //editor.ViewportZoom = 0.1;
+        //editor.ViewportLocation = extent.Position - new Point(15, 15);
+
+        //using var bitmap = new RenderTargetBitmap(new PixelSize((int)(extent.Width + 30), (int)(extent.Height + 30)), new Vector(96, 96) * 10);
+
+
+        //renderElement.Measure
+
+        //bitmap.Render(renderElement);
+        //bitmap.Save("test.png");
+
+
+        //editor.ViewportZoom = zoom;
+        //editor.ViewportLocation = location;
+
+        //Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
+
+        NodifyEditor editor = Editor;
+        var zoom = editor.ViewportZoom;
+        var location = editor.ViewportLocation;
+
+        var extent = editor.ItemsExtent;
+        editor.ViewportZoom = 1;
+        editor.ViewportLocation = extent.Position - new Point(15, 15);
+
+        var savedBounds = renderElement.Bounds;
+
+        renderElement.Measure(new Size(extent.Width + 200, extent.Height + 200));
+        renderElement.Arrange(new Rect(0, 0, extent.Width + 200, extent.Height + 200));
+
+        using var bitmap = new RenderTargetBitmap(new PixelSize((int)(extent.Width + 30), (int)(extent.Height + 30)));
+        bitmap.Render(renderElement);
+        bitmap.Save(fileName);
+
+        editor.ViewportZoom = zoom;
+        editor.ViewportLocation = location;
+        renderElement.Arrange(savedBounds);
+        Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
+    }
+
+    private async void MenuItem_ExportPng_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+
+        var fpso = new FilePickerSaveOptions()
+        {
+            DefaultExtension = ".png",
+            FileTypeChoices = new[] { FilePickerFileTypes.ImagePng },
+            ShowOverwritePrompt = true,
+            SuggestedFileName = "pipeline",
+            Title = Xloc.Get("__Window_File_SaveAsTitle")
+        };
+
+        var tl = TopLevel.GetTopLevel(this);
+
+        if (tl != null)
+        {
+            //fpso.SuggestedStartLocation = await tl.StorageProvider.TryGetFolderFromPathAsync(lastFolder ?? "");
+
+            var file = await tl.StorageProvider.SaveFilePickerAsync(fpso);
+
+            if (file != null)
+            {
+                try
+                {
+
+                    var path = file.TryGetLocalPath();
+                    ExportToPNG(path!);
+                }
+                catch (Exception ex)
+                {
+                    await MessageBoxExtentions.ShowErrorAsync(ex, this);
+                }
+            }
+        }
+
+    }
+
+
+
+
+
+    //private IEnumerable<T> GetChildren<T>(IAvaloniaList<Visual> visualChildren)
+    //    where T : Visual
+    //{
+    //    foreach (var ch in visualChildren)
+    //    {
+    //        if (ch is T tReuslt)
+    //        {
+    //            yield return tReuslt;
+    //        }
+    //        else
+    //        {
+    //            foreach(var chch in GetChildren(ch.VisualChildren))
+    //        }
+
+    //    }
+    //}
 
     //private void LineConnection_Disconnect(object? sender, Nodify.ConnectionEventArgs e)
     //{

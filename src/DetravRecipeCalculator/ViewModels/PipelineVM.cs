@@ -63,13 +63,18 @@ namespace DetravRecipeCalculator.ViewModels
 
         public static PipelineVM Load(string path)
         {
+            return LoadFromJson(File.ReadAllText(path), path);
+        }
+
+        public static PipelineVM LoadFromJson(string json, string? path = null)
+        {
             var result = new PipelineVM();
-            var mdl = System.Text.Json.JsonSerializer.Deserialize<PipelineModel>(File.ReadAllText(path), SourceGenerationContext.Default.PipelineModel);
+            var mdl = System.Text.Json.JsonSerializer.Deserialize<PipelineModel>(json, SourceGenerationContext.Default.PipelineModel);
             if (mdl == null)
                 throw new Exception(Xloc.Get("__Errors_CantLoadFile"));
             result.RestoreState(mdl);
             result.FilePath = path;
-            result.Saved = true;
+            result.Saved = path != null;
             result.RefreshRecipesFilters();
             result.RefreshResourcesFilters();
             result.UndoRedo.Reset();

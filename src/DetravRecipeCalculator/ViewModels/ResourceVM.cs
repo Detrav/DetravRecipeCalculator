@@ -46,7 +46,7 @@ namespace DetravRecipeCalculator.ViewModels
         private string? backgroundColor;
 
         [ObservableProperty]
-        private Color backgroundColorValue = Colors.DarkGray;
+        private Color backgroundColorValue = new Color(0x10, 0, 0, 0);
 
         [ObservableProperty]
         private string? connectorColor;
@@ -111,7 +111,7 @@ namespace DetravRecipeCalculator.ViewModels
 
         partial void OnBackgroundColorChanged(string? value)
         {
-            BackgroundColorValue = DetravColorHelper.GetColorFormString(BackgroundColor, Colors.DarkGray);
+            BackgroundColorValue = DetravColorHelper.GetColorFormString(BackgroundColor, new Color(0x10, 0, 0, 0));
         }
 
         partial void OnConnectorColorChanged(string? value)

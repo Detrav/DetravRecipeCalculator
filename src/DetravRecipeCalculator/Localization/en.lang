@@ -115,6 +115,7 @@ __GraphEditor_MenuDelete=Delete
 __GraphEditor_NodeCommentTitle=Comment
 __GraphEditor_NodeCommentPlaceholder=Click this to edit
 __GraphEditor_TimeType_Title=Switch Time Type
+__GraphEditor_MenuExportPng=Export to PNG
 
 __Enum_TimeType_Auto=Auto (currently is seconds)
 __Enum_TimeType_Auto_v=s
@@ -149,3 +150,7 @@ __ResultTable_TitleRecipes=Recipes (Nodes, Machines)
 __ResultTable_TitleOutput=Output Summary
 __ResultTable_TitleInput=Input Summary
 __ResultTable_TitleResources=Resources Summary (Steps)
+
+
+__SelectTemplateWindow_Title=Select template for creating
+__SelectTemplateWindow_Empty=Пустой

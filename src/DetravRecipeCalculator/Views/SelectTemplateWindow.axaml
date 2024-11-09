@@ -1,0 +1,31 @@
+<Window
+    x:Class="DetravRecipeCalculator.Views.SelectTemplateWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="SelectTemplateWindow"
+    Width="400"
+    Height="400"
+    CanResize="False"
+    mc:Ignorable="d">
+    <DockPanel>
+        <UniformGrid Columns="2" DockPanel.Dock="Bottom">
+            <Button
+                Margin="3"
+                HorizontalAlignment="Stretch"
+                Background="LightGreen"
+                Click="Button_Ok_Click">
+                <TextBlock x:Name="tbOk" HorizontalAlignment="Center" />
+            </Button>
+            <Button
+                Margin="3"
+                HorizontalAlignment="Stretch"
+                Background="LightCoral"
+                Click="Button_Cancel_Click">
+                <TextBlock x:Name="tbCancel" HorizontalAlignment="Center" />
+            </Button>
+        </UniformGrid>
+        <ListBox x:Name="tamplates" SelectionMode="AlwaysSelected" />
+    </DockPanel>
+</Window>

@@ -40,6 +40,9 @@ namespace DetravRecipeCalculator.Utils
                 {
                     for (var x = header.biWidth - 1; x >= 0; x--)
                     {
+                        if (pos >= bitmapInfoData.Length)
+                            goto exit;
+
                         var b = bitmapInfoData[pos++];
                         var g = bitmapInfoData[pos++];
                         var r = bitmapInfoData[pos++];
@@ -54,6 +57,8 @@ namespace DetravRecipeCalculator.Utils
                         }
                     }
                 }
+
+                exit:
 
                 using var bitmap = new SKBitmap(new SKImageInfo(header.biWidth, header.biHeight));
                 bitmap.Pixels = pixels;

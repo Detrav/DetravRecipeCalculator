@@ -112,6 +112,7 @@ __GraphEditor_MenuDelete=Удалить
 __GraphEditor_NodeCommentTitle=Комментарий
 __GraphEditor_NodeCommentPlaceholder=Нажмите, чтобы редактировать
 __GraphEditor_TimeType_Title=Переключить тип времени
+__GraphEditor_MenuExportPng=Экспорт в PNG
 
 __Enum_TimeType_Auto=Авто (по умолчанию в секундах)
 __Enum_TimeType_Auto_v=с

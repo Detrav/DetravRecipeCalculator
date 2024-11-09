@@ -2,6 +2,13 @@
 
 **Detrav Recipe Calculator** is a tool designed to streamline complex crafting calculations by providing a structured, visual, and customizable approach. It guides users through all necessary steps to accurately plan and manage resources across various crafting tiers. Perfect for gamers, modders, and developers working on resource management, Detrav Recipe Calculator supports desktop platforms including **Windows**, **Linux**, and **macOS**.
 
+## Screenshots
+
+[![](screenshots/screen01_t.png)](screenshots/screen01.png)
+[![](screenshots/screen02_t.png)](screenshots/screen02.png)
+[![](screenshots/screen03_t.png)](screenshots/screen03.png)
+[![](screenshots/screen04_t.png)](screenshots/screen04.png)
+
 ## Key Features
 
 1. **Recipe Creation and Customization**
@@ -82,10 +89,7 @@ Thank you to these resources for providing high-quality icons that enhance the u
 
 ## ToDo
 
-
-
-23. project templates for new (create)
-24. Save render of graph
+Not plans.
 
 ## Changelog
 
@@ -146,9 +150,13 @@ Version 0.4
 * Changed node parameters, now custom parameters can be set and used in the editor.
 * Switched localization to invariant, now decimal separator is always a dot, not a comma in some languages.
 
-Current Version
+Version 0.5
 ---------------
 
 + Added "Total Node" with four output tables. Tables can be toggled on or off. Usability is still under review, but they are structured similarly to tables I previously created in Excel, so I kept this layout.
++ Added rendering (export) of completed graph (pipeline) to a PNG file.
++ Added project templates for new project creation.
++ Added scripts for publishing.
++ Added screenshots.
 ```
 

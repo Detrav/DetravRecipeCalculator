@@ -1,17 +1,14 @@
 ﻿using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+
 using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
-using MsBox.Avalonia.Enums;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+
 
 namespace DetravRecipeCalculator.ViewModels
 {
@@ -45,18 +42,14 @@ namespace DetravRecipeCalculator.ViewModels
 
         }
 
-        public static RecipeNodeVM DebugInstance { get; } = CreateDebugInstance();
-
-
-        public override void RefreshValues(RecipeVM? recipe = null)
+        public RecipeNodeVM(GraphEditorVM parent, RecipeVM? recipe = null) : this(parent)
         {
-            if (recipe == null)
-            {
-                recipe = Parent.Pipeline.Recipes.FirstOrDefault(m => m.Id == RecipeId);
-            }
+            AssignRecipe(recipe);
 
-            Variables.Clear();
+        }
 
+        private void AssignRecipe(RecipeVM? recipe)
+        {
             if (recipe != null)
             {
                 RecipeId = recipe.Id;
@@ -70,17 +63,14 @@ namespace DetravRecipeCalculator.ViewModels
                 SyncItems(Output, recipe.Output, false);
                 IsUnknown = false;
 
-
-
                 foreach (var kv in ExpressionUtils.Split(recipe.Variables))
                 {
-                    
+
                     var v1 = new VariableVM(Parent, this);
                     Variables.Add(v1);
                     v1.Name = kv.Key;
                     v1.Value = kv.Value;
                 }
-
             }
             else
             {
@@ -91,11 +81,19 @@ namespace DetravRecipeCalculator.ViewModels
             }
         }
 
+        public static RecipeNodeVM DebugInstance { get; } = CreateDebugInstance();
+
+
+
         public override void RestoreState(NodeModel model)
         {
             RecipeId = model.RecipeId;
 
             base.RestoreState(model);
+
+            var recipe = Parent.Pipeline.Recipes.FirstOrDefault(m => m.Id == RecipeId);
+
+            AssignRecipe(recipe);
 
             foreach (var kv in model.Variables)
             {
@@ -131,7 +129,7 @@ namespace DetravRecipeCalculator.ViewModels
                 TimeToCraftExpression = "10",
             };
 
-            result.Input.Add(new ConnectorVM()
+            result.Input.Add(new ConnectorVM(result)
             {
                 IsInput = true,
                 Name = "Coal",
@@ -139,7 +137,7 @@ namespace DetravRecipeCalculator.ViewModels
                 ConnectorCollor = Colors.Black
             });
 
-            result.Output.Add(new ConnectorVM()
+            result.Output.Add(new ConnectorVM(result)
             {
                 IsInput = false,
                 Name = "EU",
@@ -186,15 +184,14 @@ namespace DetravRecipeCalculator.ViewModels
             {
                 var pin = oldList.FirstOrDefault(m => m.Name == item.Name);
                 if (pin == null)
-                    pin = new ConnectorVM();
+                    pin = new ConnectorVM(this, item.Name);
                 else
                     oldList.Remove(pin);
 
-                var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == item.Name);
                 pin.TimeType = TimeType;
                 pin.IsInput = input;
-                pin.RefreshValues(this, item, resource);
-
+                pin.TimeToCraft = TimeToCraft;
+                pin.ValueExpression = item.Value;
                 pins.Add(pin);
             }
 
@@ -203,8 +200,8 @@ namespace DetravRecipeCalculator.ViewModels
                 var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == pin.Name);
                 pin.TimeType = TimeType;
                 pin.IsInput = input;
-                pin.RefreshValues(this, null, resource);
-
+                pin.TimeToCraft = TimeToCraft;
+                pin.IsUnknown = true;
                 pins.Add(pin);
             }
         }

@@ -123,9 +123,10 @@ namespace DetravRecipeCalculator.ViewModels
         }
 
 
-
+        
         public void AddConnection(ConnectionVM connetion)
         {
+
             connetion.Input.ConnectionsNumber++;
             connetion.Output.ConnectionsNumber++;
 

@@ -30,6 +30,20 @@ namespace DetravRecipeCalculator.ViewModels
             Title = Xloc.Get("__ResultTable_Title");
         }
 
+        public ResultTableNodeVM(GraphEditorVM parent, bool generate)
+            : this(parent)
+        {
+            if (generate)
+            {
+                InputPin = new ConnectorVM(this);
+                InputPin.IsInput = true;
+                InputPin.ConnectorCollor = Colors.Gray;
+                InputPin.IsAny = true;
+                InputPin.Name = null;
+                Input.Add(InputPin);
+            }
+        }
+
 
         public ResultDataTable TotalInput { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleInput"), true);
         public ResultDataTable TotalOutput { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleOutput"), true);
@@ -41,21 +55,6 @@ namespace DetravRecipeCalculator.ViewModels
 
         private const int MAX_GENERATION = 100;
         private int generationCount;
-
-        public override void RefreshValues(RecipeVM? recipe = null)
-        {
-            base.RefreshValues(recipe);
-
-            if (Input.Count < 1)
-                Input.Add(new ConnectorVM());
-
-            InputPin = Input[0];
-
-            InputPin.IsInput = true;
-            InputPin.ConnectorCollor = Avalonia.Media.Colors.Gray;
-            InputPin.IsAny = true;
-            InputPin.Name = null;
-        }
 
         public void Rebuild()
         {
@@ -210,7 +209,26 @@ namespace DetravRecipeCalculator.ViewModels
             if (model.Parameters.TryGetValue("IsTotalOutputVisibile", out strValue)) TotalOutput.IsVisible = strValue == "t";
             if (model.Parameters.TryGetValue("IsTotalRecipesVisibile", out strValue)) TotalRecipes.IsVisible = strValue == "t";
             if (model.Parameters.TryGetValue("IsTotalResourcesVisibile", out strValue)) TotalResources.IsVisible = strValue == "t";
+
             base.RestoreState(model);
+
+            InputPin = null;
+            foreach (var pin in Input)
+            {
+                if (pin.IsAny)
+                {
+                    InputPin = pin;
+                    break;
+                }
+            }
+
+            if (InputPin == null)
+                Input.Insert(0, InputPin = new ConnectorVM(this));
+
+            InputPin.IsInput = true;
+            InputPin.ConnectorCollor = Colors.Gray;
+            InputPin.IsAny = true;
+            InputPin.Name = null;
         }
 
         private static void FillInputOutputTables(ResultDataTable totalInput, ResultDataTable totalOutput, ResultDataTable totalResources)

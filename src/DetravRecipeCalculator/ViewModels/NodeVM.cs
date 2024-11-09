@@ -33,7 +33,6 @@ namespace DetravRecipeCalculator.ViewModels
         public ObservableCollection<ConnectorVM> Output { get; } = new ObservableCollection<ConnectorVM>();
         public GraphEditorVM Parent { get; }
 
-
         partial void OnTimeTypeChanged(TimeType value)
         {
             foreach (var item in Input)
@@ -42,10 +41,6 @@ namespace DetravRecipeCalculator.ViewModels
                 item.TimeType = TimeType;
         }
 
-        public virtual void RefreshValues(RecipeVM? recipe = null)
-        {
-
-        }
 
         public virtual void RestoreState(NodeModel model)
         {
@@ -54,23 +49,21 @@ namespace DetravRecipeCalculator.ViewModels
             Input.Clear();
             foreach (var itemModel in model.Input)
             {
-                var item = new ConnectorVM();
-                item.TimeType = TimeType;
+                var item = new ConnectorVM(this);
                 item.RestoreState(itemModel);
+                item.TimeType = TimeType;
                 item.IsInput = true;
                 Input.Add(item);
             }
             Output.Clear();
             foreach (var itemModel in model.Output)
             {
-                var item = new ConnectorVM();
-                item.TimeType = TimeType;
+                var item = new ConnectorVM(this);
                 item.RestoreState(itemModel);
+                item.TimeType = TimeType;
                 item.IsInput = false;
                 Output.Add(item);
             }
-
-            RefreshValues();
         }
 
         public virtual NodeModel SaveState()

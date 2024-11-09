@@ -40,7 +40,7 @@ namespace DetravRecipeCalculator.ViewModels
         /// Collor of pin
         /// </summary>
         [ObservableProperty]
-        private Color connectorCollor;
+        private Color connectorCollor = Colors.Black;
 
         /// <summary>
         /// Current icon
@@ -132,45 +132,39 @@ namespace DetravRecipeCalculator.ViewModels
         public void RestoreState(PinModel model)
         {
             Id = model.Id;
+            IsAny = model.IsAny;
             Name = model.Name;
+            AssignIcon();
+
         }
 
-        public PinModel SaveState()
+        private void AssignIcon()
         {
-            var model = new PinModel();
-            model.Id = Id = Guid.NewGuid().ToString();
-            model.Name = Name;
-            return model;
-        }
+            var pipeline = Parent.Parent.Pipeline;
 
-        internal void RefreshValues(NodeVM nodeVM, ResourceValueVM? item, ResourceVM? resource)
-        {
-            if (item != null)
-            {
-                Name = item.Name;
-                ValueExpression = item.Value;
-            }
-            else
-            {
-                IsUnknown = true;
-            }
+            var resource = pipeline.Resources.FirstOrDefault(m => m.Name == Name);
 
             if (resource != null)
             {
-                Name = resource.Name;
                 Icon = resource.IconFiltered;
                 ConnectorCollor = resource.ConnectorColorValue;
                 BackgroundColor = resource.BackgroundColorValue;
+                IsUnknown = false;
             }
             else
             {
                 ConnectorCollor = DetravColorHelper.GetRandomColor(Name);
                 IsUnknown = true;
             }
-            if (nodeVM is RecipeNodeVM recipeNode)
-            {
-                TimeToCraft = recipeNode.TimeToCraft;
-            }
+        }
+
+        public PinModel SaveState()
+        {
+            var model = new PinModel();
+            model.Id = Id = Guid.NewGuid().ToString();
+            model.IsAny = IsAny;
+            model.Name = Name;
+            return model;
         }
 
         partial void OnConnectionsNumberChanged(int value)
@@ -217,9 +211,20 @@ namespace DetravRecipeCalculator.ViewModels
             ValuePerSecond = Value / time * TimeType.GetTimeInSeconds();
         }
 
-        public ConnectorVM()
+        public NodeVM Parent { get; }
+
+        public ConnectorVM(NodeVM node)
         {
+
+            Parent = node;
             UpdateDisplayValuePersecond();
+        }
+
+        public ConnectorVM(NodeVM node, string? name)
+            : this(node)
+        {
+            this.Name = name;
+            AssignIcon();
         }
 
         private void UpdateDisplayValuePersecond()
@@ -251,7 +256,7 @@ namespace DetravRecipeCalculator.ViewModels
         public static string GetFormated(double v)
         {
 
-            if ( Math.Abs(v) >= 100)
+            if (Math.Abs(v) >= 100)
             {
                 return string.Format("{0:0}", v);
             }

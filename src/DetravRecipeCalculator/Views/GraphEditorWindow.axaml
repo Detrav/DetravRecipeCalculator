@@ -15,7 +15,7 @@
     x:DataType="vm:GraphEditorVM"
     mc:Ignorable="d">
     <Window.Styles>
-        <Style Selector="nodify|LineConnection:pointerover">
+        <Style Selector="nodify|Connection:pointerover">
             <Setter Property="StrokeThickness" Value="5" />
         </Style>
     </Window.Styles>

@@ -49,9 +49,8 @@ public partial class GraphEditorWindow : Window
     {
         if (DataContext is GraphEditorVM vm)
         {
-            var node = new ResultTableNodeVM(vm);
+            var node = new ResultTableNodeVM(vm, true);
             node.Location = lastClick;
-            node.RefreshValues();
             vm.Nodes.Add(node);
             vm.UndoRedo.PushState("Add comment");
         }
@@ -188,9 +187,8 @@ public partial class GraphEditorWindow : Window
                     Header = therecipe.Name ?? "Unknown",
                     Command = new RelayCommand(() =>
                     {
-                        var node = new RecipeNodeVM(vm);
+                        var node = new RecipeNodeVM(vm, therecipe);
                         node.Location = lastClick;
-                        node.RefreshValues(therecipe);
                         vm.Nodes.Add(node);
                         vm.UndoRedo.PushState("Add node " + therecipe.Name);
                     })
@@ -402,7 +400,7 @@ public partial class GraphEditorWindow : Window
         NodifyEditor editor = Editor;
         var zoom = editor.ViewportZoom;
         var location = editor.ViewportLocation;
-        
+
         var extent = editor.ItemsExtent;
         editor.ViewportZoom = 1;
         editor.ViewportLocation = extent.Position - new Point(15, 15);

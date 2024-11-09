@@ -91,8 +91,7 @@ namespace DetravRecipeCalculator.ViewModels
 
             var editor = new GraphEditorVM(this);
 
-            RecipeNodePreview = new RecipeNodeVM(editor);
-            RecipeNodePreview.RefreshValues(SelectedRecipe);
+            RecipeNodePreview = new RecipeNodeVM(editor, SelectedRecipe);
         }
 
         public void RestoreState(object state)

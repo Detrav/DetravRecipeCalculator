@@ -406,7 +406,6 @@ public partial class GraphEditorWindow : Window
         var extent = editor.ItemsExtent;
         editor.ViewportZoom = 1;
         editor.ViewportLocation = extent.Position - new Point(15, 15);
-
         var savedBounds = renderElement.Bounds;
 
         renderElement.Measure(new Size(extent.Width + 200, extent.Height + 200));

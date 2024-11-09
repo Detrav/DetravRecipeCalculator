@@ -221,8 +221,10 @@ namespace DetravRecipeCalculator.ViewModels
 
                 foreach (var pinOut in pinIn.Connections)
                 {
+                    pinOut.Request -= pinIn.Request;
                     pinOut.Request += pinIn.CurrentValue;
                 }
+                pinIn.Request = pinIn.CurrentValue;
             }
 
             foreach (var pinin in node.Input)

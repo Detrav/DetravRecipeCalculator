@@ -18,12 +18,17 @@ namespace DetravRecipeCalculator.Utils
 
             if (variables != null)
             {
-                foreach (var kv in variables.Split(' '))
+                foreach (var kv in variables.Split(' ', ','))
                 {
+                    if (string.IsNullOrWhiteSpace(kv))
+                        continue;
+
                     var arr2 = kv.Split('=');
 
                     if (arr2.Length == 2)
                     {
+                        if (string.IsNullOrWhiteSpace(arr2[0]))
+                            continue;
                         double.TryParse(arr2[1], out var value);
                         result[arr2[0]] = value;
                     }

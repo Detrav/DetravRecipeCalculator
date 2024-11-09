@@ -1,4 +1,4 @@
-﻿    using Avalonia.Media;
+﻿using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DetravRecipeCalculator.Models;
@@ -74,6 +74,7 @@ namespace DetravRecipeCalculator.ViewModels
 
                 foreach (var kv in ExpressionUtils.Split(recipe.Variables))
                 {
+                    
                     var v1 = new VariableVM(Parent, this);
                     Variables.Add(v1);
                     v1.Name = kv.Key;

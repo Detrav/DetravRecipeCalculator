@@ -15,8 +15,8 @@
     <ProjectReference Include="..\DetravRecipeCalculator\DetravRecipeCalculator.csproj" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+<!--  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <PublishAot>true</PublishAot>
-  </PropertyGroup>
+  </PropertyGroup>-->
 
 </Project>

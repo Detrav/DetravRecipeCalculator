@@ -1,0 +1,50 @@
+<UserControl
+    x:Class="DetravRecipeCalculator.Views.ResultTableView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:nodify="clr-namespace:Nodify;assembly=Nodify"
+    xmlns:system="using:System"
+    xmlns:utils="using:DetravRecipeCalculator.Utils"
+    xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+    xmlns:vm="using:DetravRecipeCalculator.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:ResultTableNodeVM"
+    mc:Ignorable="d">
+    <UserControl.DataTemplates>
+        <DataTemplate x:DataType="system:Double">
+            <TextBlock Margin="4,2" Text="{Binding}" />
+        </DataTemplate>
+        <DataTemplate x:DataType="vm:RowNameVM">
+            <DockPanel Margin="4,2">
+                <Border
+                    Margin="0,0,3,0"
+                    VerticalAlignment="Center"
+                    CornerRadius="3"
+                    DockPanel.Dock="Left"
+                    IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <Border.Background>
+                        <SolidColorBrush Color="{Binding IconBackground}" />
+                    </Border.Background>
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Source="{Binding Icon, Converter={x:Static utils:ByteToBitmapConverter.Instance}}" />
+                </Border>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    LineHeight="16"
+                    Text="{Binding Name}" />
+            </DockPanel>
+        </DataTemplate>
+    </UserControl.DataTemplates>
+
+
+    <TreeDataGrid
+        x:Name="dbGrid"
+        CanUserResizeColumns="True"
+        CanUserSortColumns="True"
+        Foreground="Black" />
+</UserControl>

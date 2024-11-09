@@ -104,6 +104,7 @@ __SelectIcon_DownloadText=Icon pack not found. Do you want to download the icon 
 __GraphEditor_WindowTitle=Graph Editor
 __GraphEditor_MenuAddNode=Add Node
 __GraphEditor_MenuAddComment=Add Comment
+__GraphEditor_MenuAddResultTable=Add Result Table
 __GraphEditor_MenuEdit=Edit
 __GraphEditor_MenuUndo=Undo
 __GraphEditor_MenuRedo=Redo
@@ -136,3 +137,5 @@ __Enum_TimeType_Year_v=y
 
 __Expressions_Title=Expression Help
 __Expressions_Help=Math + (Add), - (Subtract), * (Multiply), / (Divide), % (Modulo), ^ (Power)\nFunctions: SIN(number), COS(number) and other functions\nFull documentation available here https://github.com/matheval/expression-evaluator-c-sharp\nAlso available is the ability to define variables.\nExample: 177 * 2 ^ Tier\nThe variable Number is used automatically: value * Number.
+
+__ResultTable_Title=Result Table

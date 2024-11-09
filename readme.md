@@ -78,7 +78,6 @@ Thank you to these resources for providing high-quality icons that enhance the u
 
 
 
-17. add total node
 23. project templates for new (create)
 24. Save render of graph
 
@@ -143,6 +142,8 @@ Version 0.4
 
 Current Version
 ---------------
+
++ added total node... still in process...
 
 ```
 

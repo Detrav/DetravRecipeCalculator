@@ -14,6 +14,7 @@ namespace DetravRecipeCalculator.Utils
             Register<CommentNodeVM>(parent => new CommentNodeVM(parent));
             Register<RecipeNodeVM>(parent => new RecipeNodeVM(parent));
             Register<DebugNodeVM>(parent => new DebugNodeVM(parent));
+            Register<ResultTableNodeVM>(parent => new ResultTableNodeVM(parent));
         }
 
         public delegate NodeVM NodeVMActivator(GraphEditorVM parent);

@@ -33,6 +33,19 @@ public partial class GraphEditorWindow : Window
         miUndo.Click += MiUndo_Click;
 
         DataContextChanged += GraphEditorWindow_DataContextChanged;
+        miAddResultTable.Click += MiAddResultTable_Click;
+    }
+
+    private void MiAddResultTable_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+        {
+            var node = new ResultTableNodeVM(vm);
+            node.Location = lastClick;
+            node.RefreshValues();
+            vm.Nodes.Add(node);
+            vm.UndoRedo.PushState("Add comment");
+        }
     }
 
     protected override void OnClosing(WindowClosingEventArgs e)

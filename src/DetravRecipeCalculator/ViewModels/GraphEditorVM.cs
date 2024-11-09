@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -120,6 +121,8 @@ namespace DetravRecipeCalculator.ViewModels
                 }
             }
         }
+
+
 
         public void AddConnection(ConnectionVM connetion)
         {
@@ -240,10 +243,23 @@ namespace DetravRecipeCalculator.ViewModels
 
         public object SaveState()
         {
+            Build();
+
             GraphModel model = new GraphModel();
             model.TimeType = TimeType;
             SaveState(model, Nodes, Connections);
             return model;
+        }
+
+        private void Build()
+        {
+            foreach (var node in Nodes)
+            {
+                if (node is ResultTableNodeVM resultTableNode)
+                {
+                    resultTableNode.Rebuild();
+                }
+            }
         }
 
         private bool DeleteConnectionFor(ConnectorVM? model)
@@ -265,7 +281,7 @@ namespace DetravRecipeCalculator.ViewModels
 
         partial void OnTimeTypeChanged(TimeType value)
         {
-            foreach(var node in Nodes)
+            foreach (var node in Nodes)
             {
                 node.TimeType = TimeType;
             }
@@ -276,6 +292,7 @@ namespace DetravRecipeCalculator.ViewModels
             public static GraphEditorVMLoc Instance { get; } = new GraphEditorVMLoc();
 
             public XLocItem MenuAddComment { get; } = new XLocItem("__GraphEditor_MenuAddComment");
+            public XLocItem MenuAddResultTable { get; } = new XLocItem("__GraphEditor_MenuAddResultTable");
             public XLocItem MenuAddNode { get; } = new XLocItem("__GraphEditor_MenuAddNode");
             public XLocItem MenuCopy { get; } = new XLocItem("__GraphEditor_MenuCopy");
             public XLocItem MenuCut { get; } = new XLocItem("__GraphEditor_MenuCut");

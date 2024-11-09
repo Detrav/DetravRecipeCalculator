@@ -1,4 +1,4 @@
-﻿using Avalonia.Media;
+﻿    using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DetravRecipeCalculator.Models;

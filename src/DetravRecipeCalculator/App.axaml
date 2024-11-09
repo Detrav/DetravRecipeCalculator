@@ -15,7 +15,9 @@
     </Application.Resources>
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
         <!--<StyleInclude Source="avares://MsBox.Avalonia.Markdown/Controls/MarkdownView.axaml" />-->
+        <StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml" />
         <Style Selector="nodify|Node">
             <Setter Property="Background" Value="#e4cdd3df" />
             <Setter Property="ContentBrush" Value="Transparent" />

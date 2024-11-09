@@ -23,7 +23,7 @@ namespace DetravRecipeCalculator.ViewModels
             StartCommand = new RelayCommand<ConnectorVM>(value => source = value);
             FinishCommand = new RelayCommand<ConnectorVM>(target =>
             {
-                if (target != null && Source != null && Source.Name == target.Name && Source != target)
+                if (target != null && Source != null && (Source.Name == target.Name || Source.IsAny || target.IsAny) && Source != target)
                 {
                     if (!editor.Connections.Any(m => m.Output == Source && m.Input == target))
                     {

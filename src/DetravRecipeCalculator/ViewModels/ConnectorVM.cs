@@ -102,12 +102,6 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private double valuePerSecond;
 
-        /// <summary>
-        /// Abount per second (real value usage), means you can take only 1 coal but value per seconds need 2 coal... this value will be 1 coal only
-        /// </summary>
-        [ObservableProperty]
-        private double valuePerSecondResult;
-
         // time time, seconds, ticks or other
         [ObservableProperty]
         private TimeType timeType;
@@ -135,6 +129,9 @@ namespace DetravRecipeCalculator.ViewModels
         /// </summary>
         [ObservableProperty]
         private bool hasCalculationWarning;
+
+        [ObservableProperty]
+        private bool isAny;
 
         private readonly Dictionary<string, double> values = new Dictionary<string, double>();
 
@@ -233,11 +230,6 @@ namespace DetravRecipeCalculator.ViewModels
             ValuePerSecond = Value / time * TimeType.GetTimeInSeconds();
         }
 
-        partial void OnValuePerSecondResultChanged(double value)
-        {
-            UpdateDisplayValuePersecond();
-        }
-
         public ConnectorVM()
         {
             UpdateDisplayValuePersecond();
@@ -249,9 +241,8 @@ namespace DetravRecipeCalculator.ViewModels
 
             AppendNumber2Format(sb, ValuePerSecond);
 
-            sb.Append(" [");
-            AppendNumber2Format(sb, ValuePerSecondResult);
-            sb.Append("] ");
+            sb.Append(' ');
+
             sb.Append(string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName);
             sb.Append('/');
             sb.Append(TimeType.GetLocalizedShortValue());
@@ -265,12 +256,7 @@ namespace DetravRecipeCalculator.ViewModels
             sb.Append(string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName);
             sb.Append('/');
             sb.Append(TimeType.GetLocalizedShortValue());
-            sb.Append('\n');
 
-            sb.Append(ValuePerSecondResult).Append(' ');
-            sb.Append(string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName);
-            sb.Append('/');
-            sb.Append(TimeType.GetLocalizedShortValue());
 
             DisplayValuePersecondTip = sb.ToString();
 
@@ -311,11 +297,16 @@ namespace DetravRecipeCalculator.ViewModels
             UpdateDisplayValuePersecond();
         }
 
-        internal void SetParameter(string? name, double value)
+        public void SetParameter(string? name, double value)
         {
             if (!String.IsNullOrEmpty(name))
                 values[name] = value;
             RefreshValue();
+        }
+
+        public string GetUnit()
+        {
+            return (string.IsNullOrEmpty(ShortResourceName) ? "q" : ShortResourceName) + "/" + TimeType.GetLocalizedShortValue();
         }
     }
 }

@@ -158,5 +158,13 @@ Version 0.5
 + Added project templates for new project creation.
 + Added scripts for publishing.
 + Added screenshots.
+
+Version 0.6
+---------------
+* Revised calculation approach: it’s no longer possible to set the number of machines or nodes manually. The calculator now determines the required resources and the parallel crafting needed.
+- Fixed calculation errors.
+* Removed the "Number" variable; to limit load, an intermediate recipe should now be added.
+* Updated output table: now shows input and output for each resource, with an added "Total" column. Negative values indicate resource consumption or deficiency, while positive values indicate surplus.
+- Discontinued NativeAOT compilation; now using a standard .NET application. This increased file size from 20MB to 40MB per operating system.
 ```
 

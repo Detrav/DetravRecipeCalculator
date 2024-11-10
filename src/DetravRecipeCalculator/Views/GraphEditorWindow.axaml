@@ -163,6 +163,7 @@
                                 Background="Transparent"
                                 BorderBrush="Transparent"
                                 BorderThickness="0"
+                                FontSize="24"
                                 GotFocus="TextBox_Comment_GotFocus"
                                 LostFocus="TextBox_Comment_LostFocus"
                                 Watermark="{Binding Loc.NodeCommentPlaceholder.Text}" />

@@ -184,5 +184,24 @@ Version 0.7
 Version 0.8
 + Added documentation, accessible within the repository and also via the F1 key in certain windows.
 * Adjusted comment text size: now larger and more readable when zoomed.
+- Fixed several bugs with the screen-edge panning feature.
+- Fixed an issue where splitter did not update the result table.
+- Fixed a bug preventing updates in the result table.
+- Fixed a calculation issue with looped nodes.
++ Added error display for calculation errors.
+- Fixed column display in the output total table.
+- Fixed request handling in result nodes; nodes can now use default or custom-set request values.
+* Updated connection storage; pins now track all link associations.
+& Critical change: each pin now accepts only one incoming connection.
+* Separated some information from models, significantly boosting application speed.
++ Added display of current consumption levels on each connection.
+- Fixed bug where expressions failed to evaluate when building the graph.
++ Added craft count display on nodes, including a tooltip with more details.
++ Added request editing; result nodes can now adjust requests dynamically.
++ Introduced a new `\s` escape character for translations, rendering as a non-breaking space.
++ Introduced a new node addition menu with search and double-click selection.
++ Added drag-to-connector functionality to open the contextual node addition menu directly.
++ Enabled double-click selection for new file templates.
++ Enabled double-click editing for recipes and resources.
 ```
 

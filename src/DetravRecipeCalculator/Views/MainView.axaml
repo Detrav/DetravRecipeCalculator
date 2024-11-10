@@ -62,6 +62,7 @@
                 <MenuItem x:Name="miLanguages" Header="{Binding Menu.Tools_Language.Text}" />
             </MenuItem>
             <MenuItem Header="{Binding Menu.Help.Text}">
+                <MenuItem Click="MenuItem_Help_Click" Header="{Binding Menu.Help.Text}" />
                 <MenuItem Click="MenuItem_About_Click" Header="{Binding Menu.Help_About.Text}" />
             </MenuItem>
 

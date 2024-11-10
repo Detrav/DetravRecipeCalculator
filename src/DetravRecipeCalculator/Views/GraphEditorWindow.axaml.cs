@@ -143,6 +143,11 @@ public partial class GraphEditorWindow : Window
             MiCut_Click(miCut, e);
             e.Handled = true;
         }
+        else if (e.Key == Key.F1)
+        {
+            var url = Xloc.Get("__LanguageHelpUrl");
+            Utils.ExpressionUtils.ShowDocumentation(url);
+        }
         base.OnKeyUp(e);
     }
 
@@ -502,7 +507,7 @@ public partial class GraphEditorWindow : Window
                     graph.AddConnection(connection1);
                     graph.AddConnection(connection2);
 
-                    if(graph.SelectedNodes!=null)
+                    if (graph.SelectedNodes != null)
                     {
                         graph.SelectedNodes.Clear();
                         graph.SelectedNodes.Add(middleNode);

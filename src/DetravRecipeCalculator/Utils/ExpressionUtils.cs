@@ -2,6 +2,7 @@
 using org.matheval;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,23 @@ namespace DetravRecipeCalculator.Utils
 {
     public static class ExpressionUtils
     {
+        private static DateTime lastTime;
 
+        public static void ShowDocumentation(string url)
+        {
+            if (DateTime.Now - lastTime > TimeSpan.FromSeconds(5))
+            {
+                lastTime = DateTime.Now;
+                if (url.StartsWith("https://") || url.StartsWith("http://"))
+                {
+                    Process.Start(new ProcessStartInfo(url)
+                    {
+                        UseShellExecute = true,
+                        Verb = "open"
+                    });
+                }
+            }
+        }
         public static Dictionary<string, double> Split(string? variables)
         {
             Dictionary<string, double> result = new Dictionary<string, double>();

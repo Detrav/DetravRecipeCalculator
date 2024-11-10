@@ -316,6 +316,12 @@ Detrav Recipe Calculator
 
 {Xloc.Get("__Window_About_Author")}: Detrav / Witaly Ezepchuk / Vitaliy Ezepchuk
 ", MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Info).ShowDialogAsync(this);
+    } 
+    
+    private void MenuItem_Help_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var url = Xloc.Get("__LanguageHelpUrl");
+        Utils.ExpressionUtils.ShowDocumentation(url);
     }
 
     private void MenuItem_Exit_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

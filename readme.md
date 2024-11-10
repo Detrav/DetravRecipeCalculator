@@ -87,9 +87,11 @@ Detrav Recipe Calculator is designed to simplify and elevate the process of craf
 
 Thank you to these resources for providing high-quality icons that enhance the usability and aesthetics of Detrav Recipe Calculator!
 
-## ToDo
+## Help
 
-Not plans.
+Documentation is available [here](docs/en/readme.md), as well as the built-in application menu. Just press F1.
+
+[Russian](docs/ru/readme.md) documentation is also available.
 
 ## Changelog
 
@@ -178,5 +180,9 @@ Version 0.7
 * Pins with unknown types are now auto-converted to specified types; connecting unknown pins to each other is no longer allowed.
 + Added split pins, allowing multi-connection lines from a single pin.
 - Fixed a bug where viewport movement caused focus loss; a partial fix has been applied, though the issue may still occur in some cases.
+
+Version 0.8
++ Added documentation, accessible within the repository and also via the F1 key in certain windows.
+* Adjusted comment text size: now larger and more readable when zoomed.
 ```
 

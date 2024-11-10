@@ -10,6 +10,7 @@ using SkiaSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -60,9 +61,10 @@ public partial class RecipeEditorWindow : Window
         Close(false);
     }
 
-    private async void Button_ExpressionHelp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Button_ExpressionHelp_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        await MessageBoxManager.GetMessageBoxStandard(Xloc.Get("__Expressions_Title"), Xloc.Get("__Expressions_Help"), MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Question).ShowDialogAsync(this);
+        var url = Xloc.Get("__Expressions_Help");
+        Utils.ExpressionUtils.ShowDocumentation(url);
     }
 
     private void Button_IconDelete_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

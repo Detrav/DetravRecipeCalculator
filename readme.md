@@ -203,5 +203,8 @@ Version 0.8
 + Added drag-to-connector functionality to open the contextual node addition menu directly.
 + Enabled double-click selection for new file templates.
 + Enabled double-click editing for recipes and resources.
+
+Version 0.9
+* updated logic of result steps table
 ```
 

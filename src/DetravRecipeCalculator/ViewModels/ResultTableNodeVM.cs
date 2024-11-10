@@ -114,16 +114,11 @@ namespace DetravRecipeCalculator.ViewModels
 
                 // first is total recipes, that table contains all parameters of machines and list of machines
 
+                ApplyGeneration(thisNode, 1);
+
                 foreach (var node in nodes)
                 {
-                    if (node == thisNode) continue;
-
-                    //LoopProtectForward(node, Array.Empty<NodeVM>());
-
-                    if (node.Input.All(m => m.Connection == null))
-                    {
-                        SetNodeGeneration(node, 1, nodes);
-                    }
+                    node.Generation = generationCount - node.Generation + 1;
                 }
 
                 // push steps table
@@ -230,6 +225,23 @@ namespace DetravRecipeCalculator.ViewModels
             TotalRecipes.Container = new ResultDataTableContainer(TotalRecipes);//OnPropertyChanged(nameof(TotalRecipes));
         }
 
+        private void ApplyGeneration(NodeVM node, int generation)
+        {
+            if (generation > node.Generation)
+                node.Generation = generation;
+
+            foreach (var pin in node.Input)
+            {
+                if (pin.Connection != null)
+                    ApplyGeneration(pin.Connection.Parent, generation + 1);
+            }
+
+            if (generation > generationCount)
+            {
+                generationCount = generation;
+            }
+        }
+
         public override NodeModel SaveState()
         {
             var model = base.SaveState();
@@ -332,28 +344,28 @@ namespace DetravRecipeCalculator.ViewModels
         }
 
 
-        private void SetNodeGeneration(NodeVM node, int generation, List<NodeVM> nodes)
-        {
+        //private void SetNodeGeneration(NodeVM node, int generation, List<NodeVM> nodes)
+        //{
 
-            if (generation > node.Generation)
-            {
-                node.Generation = generation;
+        //    if (generation > node.Generation)
+        //    {
+        //        node.Generation = generation;
 
-                foreach (var item in node.Output)
-                {
-                    foreach (var connection in item.Connections)
-                    {
-                        if (nodes.Contains(connection.Parent))
-                            SetNodeGeneration(connection.Parent, generation + 1, nodes);
-                    }
-                }
-            }
+        //        foreach (var item in node.Output)
+        //        {
+        //            foreach (var connection in item.Connections)
+        //            {
+        //                if (nodes.Contains(connection.Parent))
+        //                    SetNodeGeneration(connection.Parent, generation + 1, nodes);
+        //            }
+        //        }
+        //    }
 
-            if (generation > generationCount)
-            {
-                generationCount = generation;
-            }
-        }
+        //    if (generation > generationCount)
+        //    {
+        //        generationCount = generation;
+        //    }
+        //}
 
         private NodeVM AddNodeToList(List<NodeVM> nodes, NodeVM node)
         {

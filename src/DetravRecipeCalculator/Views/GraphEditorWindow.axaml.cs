@@ -70,13 +70,13 @@ public partial class GraphEditorWindow : Window
 
     protected override void OnClosing(WindowClosingEventArgs e)
     {
-        Config.Instance.SaveSate(this);
+        Config.Instance.SaveState(this);
         base.OnClosing(e);
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
     {
-        Config.Instance.LoadSate(this);
+        Config.Instance.LoadState(this);
         base.OnLoaded(e);
     }
 
@@ -349,50 +349,77 @@ public partial class GraphEditorWindow : Window
     private void MenuItem_TimeType_Auto_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
+        {
             vm.TimeType = TimeType.Auto;
+            vm.UndoRedo.PushState("Update time");
+        }
 
     }
     private void MenuItem_TimeType_Tick_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
+        {
             vm.TimeType = TimeType.Tick;
+            vm.UndoRedo.PushState("Update time");
+        }
     }
     private void MenuItem_TimeType_Second_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
+        {
             vm.TimeType = TimeType.Second;
+            vm.UndoRedo.PushState("Update time");
+        }
     }
     private void MenuItem_TimeType_Minute_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
+        {
             vm.TimeType = TimeType.Minute;
+            vm.UndoRedo.PushState("Update time");
+        }
     }
     private void MenuItem_TimeType_Hour_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
+        {
             vm.TimeType = TimeType.Hour;
+            vm.UndoRedo.PushState("Update time");
+        }
     }
     private void MenuItem_TimeType_Day_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
+        {
             vm.TimeType = TimeType.Day;
+            vm.UndoRedo.PushState("Update time");
+        }
     }
     private void MenuItem_TimeType_Week_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
+        {
             vm.TimeType = TimeType.Week;
+            vm.UndoRedo.PushState("Update time");
+        }
     }
 
     private void MenuItem_TimeType_Month_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
+        {
             vm.TimeType = TimeType.Month;
+            vm.UndoRedo.PushState("Update time");
+        }
     }
 
     private void MenuItem_TimeType_Year_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is GraphEditorVM vm)
+        {
             vm.TimeType = TimeType.Year;
+            vm.UndoRedo.PushState("Update time");
+        }
     }
 
 
@@ -517,7 +544,7 @@ public partial class GraphEditorWindow : Window
                         // i hate components
 
 
-                       FixPan();
+                        FixPan();
                     }
 
                     graph.UndoRedo.PushState("Add split");

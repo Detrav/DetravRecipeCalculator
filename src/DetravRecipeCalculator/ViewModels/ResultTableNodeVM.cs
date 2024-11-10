@@ -1,22 +1,10 @@
-﻿using Avalonia;
-using Avalonia.Animation.Easings;
-using Avalonia.Controls.Models.TreeDataGrid;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
-using MsBox.Avalonia.Base;
-using Nodify;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace DetravRecipeCalculator.ViewModels
 {
@@ -28,14 +16,16 @@ namespace DetravRecipeCalculator.ViewModels
         public ResultTableNodeVM(GraphEditorVM parent) : base(parent)
         {
             Title = Xloc.Get("__ResultTable_Title");
+            TimeToCraft = 1;
         }
 
         public ResultTableNodeVM(GraphEditorVM parent, bool generate)
             : this(parent)
         {
+            TimeToCraft = 1;
             if (generate)
             {
-                var inputPin = new ConnectorVM(this, true);
+                var inputPin = new ConnectorInVM(this);
                 inputPin.ConnectorCollor = Colors.Gray;
                 inputPin.IsAny = true;
                 inputPin.Name = null;
@@ -55,27 +45,21 @@ namespace DetravRecipeCalculator.ViewModels
         private const int MAX_GENERATION = 100;
         private int generationCount;
 
-        public override ConnectorVM GetReplacementFor(ConnectorVM self, ConnectorVM other)
-        {
-            if (self.IsInput)
-            {
-                var pin = Input.FirstOrDefault(m => m.Name == other.Name);
-                if (pin != null)
-                    return pin;
 
-                pin = new ConnectorVM(this, other.Name, true);
-                Input.Add(pin);
+        public override ConnectorInVM GetReplacementFor(ConnectorInVM self, ConnectorOutVM other)
+        {
+            var pin = Input.FirstOrDefault(m => m.Name == other.Name);
+            if (pin != null)
                 return pin;
-            }
-            else
-            {
-                return base.GetReplacementFor(self, other);
-            }
+
+            pin = new ConnectorInVM(this, other.Name);
+            Input.Add(pin);
+            return pin;
         }
 
-        public void Rebuild()
-        {
 
+        public override void Build()
+        {
 
             TotalInput.Clear();
             TotalOutput.Clear();
@@ -86,10 +70,10 @@ namespace DetravRecipeCalculator.ViewModels
             TotalRecipes.AddOrUpdateColumn("Number", Xloc.Get("__ResultTable_TitleRecipes_Number"));
 
             TotalInput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
-            TotalInput.AddOrUpdateColumn("Input", Xloc.Get("__ResultTable_Table_Input") + " /" + TimeType.GetLocalizedShortValue());
+            TotalInput.AddOrUpdateColumn("Input", Xloc.Get("__ResultTable_Table_Input") + " /" + Parent.TimeType.GetLocalizedShortValue());
 
             TotalOutput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
-            TotalOutput.AddOrUpdateColumn("Output", Xloc.Get("__ResultTable_Table_Output") + " /" + TimeType.GetLocalizedShortValue());
+            TotalOutput.AddOrUpdateColumn("Output", Xloc.Get("__ResultTable_Table_Output") + " /" + Parent.TimeType.GetLocalizedShortValue());
 
 
             generationCount = 0;
@@ -104,12 +88,15 @@ namespace DetravRecipeCalculator.ViewModels
                 List<NodeVM> nodes = new List<NodeVM>();
                 var thisNode = AddNodeToList(nodes, this);
 
+                LoopProtectBackward(this, Array.Empty<NodeVM>());
+
                 //reset nodes
 
                 foreach (var node in nodes)
                 {
-                    node.Number = 0;
+                    node.Number = 1;
                     node.Generation = 0;
+
 
                     foreach (var pin in node.Input)
                     {
@@ -131,9 +118,11 @@ namespace DetravRecipeCalculator.ViewModels
                 {
                     if (node == thisNode) continue;
 
-                    if (node.Input.Sum(m => m.Connections.Count) == 0)
+                    //LoopProtectForward(node, Array.Empty<NodeVM>());
+
+                    if (node.Input.All(m => m.Connection == null))
                     {
-                        SetNodeGeneration(node, 1);
+                        SetNodeGeneration(node, 1, nodes);
                     }
                 }
 
@@ -142,26 +131,35 @@ namespace DetravRecipeCalculator.ViewModels
 
                 for (int i = 1; i < generationCount; i++)
                 {
-                    TotalResources.AddOrUpdateColumn("Input" + i, Xloc.Get("__ResultTable_Table_Input") + "#" + i + "/" + TimeType.GetLocalizedShortValue());
-                    TotalResources.AddOrUpdateColumn("Output" + i, Xloc.Get("__ResultTable_Table_Output") + "#" + i + "/" + TimeType.GetLocalizedShortValue());
+                    TotalResources.AddOrUpdateColumn("Input" + i, Xloc.Get("__ResultTable_Table_Input") + "#" + i + "/" + Parent.TimeType.GetLocalizedShortValue());
+                    TotalResources.AddOrUpdateColumn("Output" + i, Xloc.Get("__ResultTable_Table_Output") + "#" + i + "/" + Parent.TimeType.GetLocalizedShortValue());
                 }
 
                 TotalResources.AddOrUpdateColumn("Total", Xloc.Get("__ResultTable_Table_Total"));
                 //Begin calculate
 
-                foreach (var pinInput in thisNode.Input)
+                foreach (var pin in Input)
                 {
-                    double requestPerSecond = 0;
-                    foreach (var pinOutput in pinInput.Connections)
+                    if (!pin.IsSet)
                     {
-                        requestPerSecond += pinOutput.ValuePerSecond;
-                    }
 
-                    if (!pinInput.IsSet)
-                    {
-                        pinInput.ValuePerSecond = requestPerSecond;
+                        if (pin.Connection == null)
+                        {
+                            pin.Value = 0;
+
+                        }
+                        else
+                        {
+                            if (pin.Connection.Parent is IntermediateNode intermediate)
+                            {
+                                pin.Value = intermediate.ProviderRequests();
+                            }
+                            else
+                            {
+                                pin.Value = pin.Connection.GetValuePerSecond();
+                            }
+                        }
                     }
-                    pinInput.TimeToCraft = 1;
                 }
 
                 base.Build();
@@ -170,20 +168,21 @@ namespace DetravRecipeCalculator.ViewModels
 
                 foreach (var node in nodes)
                 {
-                    if (node == thisNode) continue;
+                    if (node == thisNode || node is IntermediateNode)
+                        continue;
 
                     foreach (var pin in node.Input)
                     {
 
-                        TotalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.TempCurrentValue * TimeType.GetTimeInSeconds());
-                        TotalResources.AddtToCellWithFindRow(pin, "Total", -pin.TempCurrentValue * TimeType.GetTimeInSeconds());
+                        TotalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                        TotalResources.AddtToCellWithFindRow(pin, "Total", -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                     }
 
                     foreach (var pin in node.Output)
                     {
 
-                        TotalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.TempCurrentValue * TimeType.GetTimeInSeconds());
-                        TotalResources.AddtToCellWithFindRow(pin, "Total", pin.TempCurrentValue * TimeType.GetTimeInSeconds());
+                        TotalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                        TotalResources.AddtToCellWithFindRow(pin, "Total", pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                     }
                 }
 
@@ -191,7 +190,8 @@ namespace DetravRecipeCalculator.ViewModels
 
                 foreach (var node in nodes)
                 {
-                    if (node == thisNode) continue;
+                    if (node == thisNode || node is IntermediateNode)
+                        continue;
 
                     if (node is RecipeNodeVM recipeNode)
                     {
@@ -253,7 +253,7 @@ namespace DetravRecipeCalculator.ViewModels
 
             base.RestoreState(model);
 
-            ConnectorVM? inputPin = null;
+            ConnectorInVM? inputPin = null;
             foreach (var pin in Input)
             {
                 if (pin.IsAny)
@@ -264,7 +264,7 @@ namespace DetravRecipeCalculator.ViewModels
             }
 
             if (inputPin == null)
-                Input.Insert(0, inputPin = new ConnectorVM(this, true));
+                Input.Insert(0, inputPin = new ConnectorInVM(this));
 
             inputPin.ConnectorCollor = Colors.Gray;
             inputPin.IsAny = true;
@@ -303,13 +303,37 @@ namespace DetravRecipeCalculator.ViewModels
             }
         }
 
+        //private void LoopProtectForward(NodeVM node, IEnumerable<NodeVM> loopProtect)
+        //{
+        //    if (loopProtect.Contains(node)) throw new NotSupportedException("Loops is not supported!");
 
-        private void SetNodeGeneration(NodeVM node, int generation, IEnumerable<NodeVM>? tempList = null)
+        //    loopProtect = loopProtect.Append(node);
+
+        //    foreach (var pin in node.Output)
+        //    {
+        //        foreach (var connection in pin.Connections)
+        //        {
+        //            LoopProtectForward(connection.Parent, loopProtect);
+        //        }
+        //    }
+        //}
+
+        private void LoopProtectBackward(NodeVM node, IEnumerable<NodeVM> loopProtect)
         {
-            if (tempList == null) tempList = Array.Empty<NodeVM>();
-            else if (tempList.Contains(node)) return;
-            tempList = tempList.Append(node);
+            if (loopProtect.Contains(node)) throw new NotSupportedException("Loops is not supported!");
 
+            loopProtect = loopProtect.Append(node);
+
+            foreach (var pin in node.Input)
+            {
+                if (pin.Connection != null)
+                    LoopProtectBackward(pin.Connection.Parent, loopProtect);
+            }
+        }
+
+
+        private void SetNodeGeneration(NodeVM node, int generation, List<NodeVM> nodes)
+        {
 
             if (generation > node.Generation)
             {
@@ -319,7 +343,8 @@ namespace DetravRecipeCalculator.ViewModels
                 {
                     foreach (var connection in item.Connections)
                     {
-                        SetNodeGeneration(connection.Parent, generation + 1, tempList);
+                        if (nodes.Contains(connection.Parent))
+                            SetNodeGeneration(connection.Parent, generation + 1, nodes);
                     }
                 }
             }
@@ -339,7 +364,8 @@ namespace DetravRecipeCalculator.ViewModels
 
             foreach (var pin in node.Input)
             {
-                AddNodeToList(nodes, pin.Parent);
+                if (pin.Connection != null)
+                    AddNodeToList(nodes, pin.Connection.Parent);
             }
 
 

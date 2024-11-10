@@ -46,7 +46,7 @@ namespace DetravRecipeCalculator.Utils
                 Directory.CreateDirectory(AppDataDirectory);
         }
 
-        public void LoadSate(Window window, string? customName = null)
+        public void LoadState(Window window, string? customName = null)
         {
             string name = customName ?? window.GetType().Name;
 
@@ -64,7 +64,7 @@ namespace DetravRecipeCalculator.Utils
             File.WriteAllText(Path.Combine(AppDataDirectory, "config.json"), text);
         }
 
-        public void SaveSate(Window window, string? customName = null)
+        public void SaveState(Window window, string? customName = null)
         {
             var state = new WindowSavedState();
 

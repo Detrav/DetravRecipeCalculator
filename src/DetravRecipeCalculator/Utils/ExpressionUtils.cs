@@ -2,6 +2,7 @@
 using org.matheval;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -70,6 +71,36 @@ namespace DetravRecipeCalculator.Utils
                     foreach (var kv in values)
                     {
                         expression.Bind(kv.Key, kv.Value);
+                    }
+
+                    var result = expression.Eval();
+
+                    if (result is IConvertible convertible)
+                    {
+                        var result2 = convertible.ToDouble(CultureInfo.InvariantCulture);
+                        return result2;
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+            return 0;
+        }
+
+        public static double GetValue(string? valueExpression, IEnumerable<VariableVM> variables)
+        {
+            if (!String.IsNullOrWhiteSpace(valueExpression))
+            {
+                try
+                {
+                    Expression expression = new Expression(valueExpression);
+
+                    foreach (var kv in variables)
+                    {
+                        if (!string.IsNullOrWhiteSpace(kv.Name))
+                            expression.Bind(kv.Name, kv.Value);
                     }
 
                     var result = expression.Eval();

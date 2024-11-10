@@ -163,5 +163,11 @@ __EditResultTableSettingsWindow_Warning=Note that all values are set in the curr
 
 
 __ConnectorTip_Name=Name: {0}
-__ConnectorTip_ValuePerSecond=Value per second: {0} {1}
-__ConnectorTip_ValuePerTime=Value per time: {0} {1}
+__ConnectorTip_ValuePerSecond=Standard value per second: {0} /{1}
+__ConnectorTip_ValuePerTime=Standard value: {0} /{1}
+__ConnectorTip_RequestValue=Total value required for operation: {0} /{1}
+__ConnectorTip_SurplussValue=Surplus: {0} /{1}
+__ConnectorTip_CurrentValue=Total value: {0} /{1}
+
+__NodeTip_Quantity=Quantity: {0}
+__NodeTip_TimeToCraft=Time to craft: {0}{1}

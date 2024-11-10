@@ -19,14 +19,14 @@ public partial class MainWindow : Window
 
     protected override void OnClosing(WindowClosingEventArgs e)
     {
-        Config.Instance.SaveSate(this);
+        Config.Instance.SaveState(this);
         Config.Instance.Save();
         base.OnClosing(e);
     }
 
     protected override void OnOpened(EventArgs e)
     {
-        Config.Instance.LoadSate(this);
+        Config.Instance.LoadState(this);
         base.OnOpened(e);
     }
 

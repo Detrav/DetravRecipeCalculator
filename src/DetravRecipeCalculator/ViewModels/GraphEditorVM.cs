@@ -3,9 +3,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
+using Nodify;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -78,14 +80,17 @@ namespace DetravRecipeCalculator.ViewModels
 
             foreach (var connectionModel in model.Connections)
             {
+
+
                 var input = nodes.SelectMany(x => x.Input).FirstOrDefault(m => m.Id == connectionModel.InputId);
                 var output = nodes.SelectMany(x => x.Output).FirstOrDefault(m => m.Id == connectionModel.OutputId);
 
-                if (input != null && output != null && !input.IsAny && !output.IsAny)
+                var connection = PendingConnectionVM.CanAddConnectionWithCheck(input, output, connections);
+                if (connection != null)
                 {
-                    input.Connections.Add(output);
-                    output.Connections.Add(input);
-                    connections.Add(new ConnectionVM(output, input));
+                    connection.Input.Connection = connection.Output;
+                    connection.Output.Connections.Add(connection.Input);
+                    connections.Add(connection);
                 }
             }
 
@@ -127,7 +132,7 @@ namespace DetravRecipeCalculator.ViewModels
         public void AddConnection(ConnectionVM connetion)
         {
 
-            connetion.Input.Connections.Add(connetion.Output);
+            connetion.Input.Connection = connetion.Output;
             connetion.Output.Connections.Add(connetion.Input);
 
             _connections.Add(connetion);
@@ -176,9 +181,8 @@ namespace DetravRecipeCalculator.ViewModels
 
         public void DeleteConnetion(ConnectionVM connetion)
         {
-            connetion.Input.Connections.Remove(connetion.Output);
+            connetion.Input.Connection = null;
             connetion.Output.Connections.Remove(connetion.Input);
-
             _connections.Remove(connetion);
         }
 
@@ -220,6 +224,7 @@ namespace DetravRecipeCalculator.ViewModels
 
                 SelectedNodes = new ObservableCollection<NodeVM>(nodesList);
             }
+            
         }
 
         public void RestoreState(object state)
@@ -240,6 +245,8 @@ namespace DetravRecipeCalculator.ViewModels
                 foreach (var item in connectionsList)
                     _connections.Add(item);
             }
+
+            Build();
         }
 
         public object SaveState()
@@ -254,12 +261,22 @@ namespace DetravRecipeCalculator.ViewModels
 
         private void Build()
         {
+            foreach(var node in Nodes)
+            {
+                node.UpdateExpressions();
+            }
+
             foreach (var node in Nodes)
             {
                 if (node is ResultTableNodeVM resultTableNode)
                 {
-                    resultTableNode.Rebuild();
+                    resultTableNode.Build();
                 }
+            }
+
+            foreach(var node in Nodes)
+            {
+                node.UpdateToolTips();
             }
         }
 
@@ -278,14 +295,6 @@ namespace DetravRecipeCalculator.ViewModels
                 }
             }
             return hasResult;
-        }
-
-        partial void OnTimeTypeChanged(TimeType value)
-        {
-            foreach (var node in Nodes)
-            {
-                node.TimeType = TimeType;
-            }
         }
 
         public class GraphEditorVMLoc

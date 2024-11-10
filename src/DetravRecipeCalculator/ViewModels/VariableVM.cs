@@ -16,19 +16,23 @@ namespace DetravRecipeCalculator.ViewModels
         private string? name;
         [ObservableProperty]
         private double value;
-        private readonly RecipeNodeVM parent;
+
         [ObservableProperty]
         private bool isEditing;
         [ObservableProperty]
         private string? editValue;
 
+        [ObservableProperty]
+        private string? valueFormated;
+
+        public RecipeNodeVM Parent { get; }
         public ICommand UpCommand { get; }
         public ICommand DownCommand { get; }
         public ICommand EditCommand { get; }
 
         public VariableVM(GraphEditorVM graphEditor, RecipeNodeVM node)
         {
-            this.parent = node;
+            this.Parent = node;
             UpCommand = new RelayCommand(() =>
             {
                 Value += 1;
@@ -41,9 +45,9 @@ namespace DetravRecipeCalculator.ViewModels
                 graphEditor.UndoRedo.PushState("Set variables");
             });
 
-            EditCommand = new RelayCommand<bool?>(cancel =>
+            EditCommand = new RelayCommand<bool?>(isCompleted =>
             {
-                if (cancel.GetValueOrDefault())
+                if (isCompleted.GetValueOrDefault())
                 {
                     IsEditing = false;
                     if (double.TryParse(EditValue, CultureInfo.InvariantCulture, out var v))
@@ -60,15 +64,5 @@ namespace DetravRecipeCalculator.ViewModels
                 }
             });
         }
-
-        partial void OnValueChanged(double value)
-        {
-            parent.RefreshTimeToCraft();
-            foreach (var item in parent.Input)
-                item.SetParameter(Name, Value);
-            foreach (var item in parent.Output)
-                item.SetParameter(Name, Value);
-        }
-
     }
 }

@@ -1,0 +1,64 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:nodify="clr-namespace:Nodify;assembly=Nodify"
+    xmlns:utils="using:DetravRecipeCalculator.Utils"
+    xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+    xmlns:vm="using:DetravRecipeCalculator.ViewModels">
+    <DataTemplate x:Key="ConnectorPreview" DataType="vm:ConnectorVM">
+        <StackPanel IsVisible="{Binding !IsAny}" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Border
+                    Margin="0,0,3,0"
+                    VerticalAlignment="Center"
+                    CornerRadius="3"
+                    IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <Border.Background>
+                        <SolidColorBrush Color="{Binding BackgroundColor}" />
+                    </Border.Background>
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Source="{Binding Icon, Converter={x:Static utils:ByteToBitmapConverter.Instance}}" />
+                </Border>
+
+                <TextBlock xml:space="preserve"><Run Text="{Binding Name}" /><Run Text=": " /><Run Text="{Binding Value, StringFormat=0.##}" /></TextBlock>
+            </StackPanel>
+            <TextBlock xml:space="preserve" Text="{Binding DisplayValuePerTime}"></TextBlock>
+            <Border
+                Height="3"
+                Background="Orange"
+                IsVisible="{Binding HasCalculationWarning}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ConnectorInputPreview" DataType="vm:ConnectorVM">
+        <nodify:NodeInput
+            Anchor="{Binding Anchor, Mode=OneWayToSource}"
+            Header="{Binding}"
+            HeaderTemplate="{StaticResource ResourceKey=ConnectorPreview}"
+            IsConnected="{Binding IsConnected}"
+            ToolTip.ShowDelay="100"
+            ToolTip.Tip="{Binding DisplayValuePerTimeTip}">
+
+            <nodify:NodeInput.BorderBrush>
+                <SolidColorBrush Color="{Binding ConnectorCollor}" />
+            </nodify:NodeInput.BorderBrush>
+        </nodify:NodeInput>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ConnectorOutputPreview" DataType="vm:ConnectorVM">
+        <nodify:NodeOutput
+            Anchor="{Binding Anchor, Mode=OneWayToSource}"
+            Header="{Binding}"
+            HeaderTemplate="{StaticResource ResourceKey=ConnectorPreview}"
+            IsConnected="{Binding IsConnected}"
+            ToolTip.ShowDelay="100"
+            ToolTip.Tip="{Binding DisplayValuePerTimeTip}">
+
+            <nodify:NodeOutput.BorderBrush>
+                <SolidColorBrush Color="{Binding ConnectorCollor}" />
+            </nodify:NodeOutput.BorderBrush>
+        </nodify:NodeOutput>
+    </DataTemplate>
+</ResourceDictionary>

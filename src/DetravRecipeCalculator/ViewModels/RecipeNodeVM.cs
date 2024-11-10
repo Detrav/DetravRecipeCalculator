@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 
 
 namespace DetravRecipeCalculator.ViewModels
@@ -25,9 +26,6 @@ namespace DetravRecipeCalculator.ViewModels
 
         [ObservableProperty]
         private string? recipeId;
-
-        [ObservableProperty]
-        private double timeToCraft;
 
         [ObservableProperty]
         private string? timeToCraftExpression;
@@ -59,8 +57,8 @@ namespace DetravRecipeCalculator.ViewModels
                 BackgroundColor = recipe.BackgroundColorValue;
                 Note = recipe.Note;
 
-                SyncItems(Input, recipe.Input, true);
-                SyncItems(Output, recipe.Output, false);
+                SyncItems(Input, recipe.Input);
+                SyncItems(Output, recipe.Output);
                 IsUnknown = false;
 
                 foreach (var kv in ExpressionUtils.Split(recipe.Variables))
@@ -75,8 +73,8 @@ namespace DetravRecipeCalculator.ViewModels
             else
             {
                 Title = RecipeId;
-                SyncItems(Input, Array.Empty<ResourceValueVM>(), true);
-                SyncItems(Output, Array.Empty<ResourceValueVM>(), false);
+                SyncItems(Input, Array.Empty<ResourceValueVM>());
+                SyncItems(Output, Array.Empty<ResourceValueVM>());
                 IsUnknown = true;
             }
         }
@@ -129,14 +127,14 @@ namespace DetravRecipeCalculator.ViewModels
                 TimeToCraftExpression = "10",
             };
 
-            result.Input.Add(new ConnectorVM(result, true)
+            result.Input.Add(new ConnectorInVM(result)
             {
                 Name = "Coal",
                 ValueExpression = "1",
                 ConnectorCollor = Colors.Black
             });
 
-            result.Output.Add(new ConnectorVM(result, false)
+            result.Output.Add(new ConnectorOutVM(result)
             {
                 Name = "EU",
                 ValueExpression = "2000",
@@ -152,28 +150,7 @@ namespace DetravRecipeCalculator.ViewModels
             return result;
         }
 
-
-        partial void OnTimeToCraftChanged(double value)
-        {
-            foreach (var item in Input)
-                item.TimeToCraft = TimeToCraft;
-
-            foreach (var item in Output)
-                item.TimeToCraft = TimeToCraft;
-        }
-
-        partial void OnTimeToCraftExpressionChanged(string? value)
-        {
-            RefreshTimeToCraft();
-        }
-
-        public void RefreshTimeToCraft()
-        {
-
-            TimeToCraft = ExpressionUtils.GetValue(TimeToCraftExpression, Variables.Where(m => m.Name != null).ToDictionary(m => m.Name!, m => m.Value));
-        }
-
-        private void SyncItems(ObservableCollection<ConnectorVM> pins, IEnumerable<ResourceValueVM> recipe, bool input)
+        private void SyncItems(ObservableCollection<ConnectorOutVM> pins, IEnumerable<ResourceValueVM> recipe)
         {
             var oldList = pins.ToList();
             pins.Clear();
@@ -182,21 +159,78 @@ namespace DetravRecipeCalculator.ViewModels
             {
                 var pin = oldList.FirstOrDefault(m => m.Name == item.Name);
                 if (pin == null)
-                    pin = new ConnectorVM(this, item.Name, input);
+                    pin = new ConnectorOutVM(this, item.Name);
                 else
                     oldList.Remove(pin);
 
-                pin.TimeToCraft = TimeToCraft;
+                pin.ValueExpression = item.Value;
+                pins.Add(pin);
+            }
+        }
+
+        private void SyncItems(ObservableCollection<ConnectorInVM> pins, IEnumerable<ResourceValueVM> recipe)
+        {
+            var oldList = pins.ToList();
+            pins.Clear();
+
+            foreach (var item in recipe)
+            {
+                var pin = oldList.FirstOrDefault(m => m.Name == item.Name);
+                if (pin == null)
+                    pin = new ConnectorInVM(this, item.Name);
+                else
+                    oldList.Remove(pin);
+
                 pin.ValueExpression = item.Value;
                 pins.Add(pin);
             }
 
-            //foreach (var pin in oldList)
-            //{
-            //    var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == pin.Name);
-            //    pin.TimeToCraft = TimeToCraft;
-            //    pins.Add(pin);
-            //}
+        }
+
+
+        public override void UpdateExpressions()
+        {
+            base.UpdateExpressions();
+
+            TimeToCraft = ExpressionUtils.GetValue(TimeToCraftExpression, Variables);
+
+            foreach (var pin in Input)
+                pin.UpdateExpressions(Variables);
+
+            foreach (var pin in Output)
+                pin.UpdateExpressions(Variables);
+        }
+
+        public override void UpdateToolTips()
+        {
+            var sb = new StringBuilder();
+
+
+
+
+            foreach (var variable in Variables)
+            {
+                variable.ValueFormated = variable.Name + ": " + ConnectorVM.GetFormated(variable.Value);
+
+                sb.Append(variable.Name).Append(": ").Append(variable.Value).AppendLine();
+            }
+
+            sb.AppendLine();
+
+            var qf = Xloc.Get("__NodeTip_Quantity");
+            var tf = Xloc.Get("__NodeTip_TimeToCraft");
+
+            TimeToCraftTitle = string.Format(tf, ConnectorVM.GetFormated(TimeToCraft), TimeType.Second.GetLocalizedShortValue());
+            QuantityTitle = string.Format(qf, ConnectorVM.GetFormated(Number));
+
+
+            sb.AppendLine(string.Format(tf, TimeToCraft, TimeType.Second.GetLocalizedShortValue()));
+            sb.AppendLine(string.Format(qf, Number));
+
+            ParametersToolTip = sb.ToString();
+
+
+            base.UpdateToolTips();
         }
     }
 }

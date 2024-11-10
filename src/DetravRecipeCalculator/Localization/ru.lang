@@ -158,5 +158,11 @@ __EditResultTableSettingsWindow_Title=Редактировать запросы
 __EditResultTableSettingsWindow_Warning=Обратите внимание, все значения задаются в текущем времени, сейчас это:
 
 __ConnectorTip_Name=Имя: {0}
-__ConnectorTip_ValuePerSecond=Значение в секунду: {0} {1}
-__ConnectorTip_ValuePerTime=Значение за время: {0} {1}
+__ConnectorTip_ValuePerSecond=Стандартное значение в секунду: {0} /{1}
+__ConnectorTip_ValuePerTime=Стандартное значение: {0} /{1}
+__ConnectorTip_RequestValue=Итоговое значение, необходимое для работы: {0} /{1}
+__ConnectorTip_SurplussValue=Излишки: {0} /{1}
+__ConnectorTip_CurrentValue=Итоговое значение: {0} /{1}
+
+__NodeTip_Quantity=Количество: {0}
+__NodeTip_TimeToCraft=Время на создание: {0}{1}

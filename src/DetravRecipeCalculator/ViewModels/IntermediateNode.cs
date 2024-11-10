@@ -42,8 +42,8 @@ namespace DetravRecipeCalculator.ViewModels
                 Input.Clear();
                 Output.Clear();
 
-                Input.Add(new ConnectorVM(this, true));
-                Output.Add(new ConnectorVM(this, false));
+                Input.Add(new ConnectorInVM(this));
+                Output.Add(new ConnectorOutVM(this));
             }
             else
             {
@@ -62,31 +62,51 @@ namespace DetravRecipeCalculator.ViewModels
                     }
 
                 if (Input.Count == 0)
-                    Input.Add(new ConnectorVM(this, ResourceName, true));
+                    Input.Add(new ConnectorInVM(this, ResourceName));
                 if (Output.Count == 0)
-                    Output.Add(new ConnectorVM(this, ResourceName, false));
+                    Output.Add(new ConnectorOutVM(this, ResourceName));
 
             }
         }
 
-        public override ConnectorVM GetReplacementFor(ConnectorVM self, ConnectorVM other)
+        public override ConnectorInVM GetReplacementFor(ConnectorInVM self, ConnectorOutVM other)
         {
-            if (self.IsAny && !other.IsAny)
+            if (Input.Contains(self) && self.IsAny && !other.IsAny)
             {
-                ResourceName = other.Name;
-
-                var state = other.SaveState();
-
-                foreach (var pin in Input)
-                    pin.RestoreState(state);
-                foreach (var pin in Output)
-                    pin.RestoreState(state);
-
+                Setup(self, other);
                 return self;
             }
-
             return base.GetReplacementFor(self, other);
         }
+
+        private void Setup(ConnectorVM self, ConnectorVM other)
+        {
+            ResourceName = other.Name;
+
+            var state = other.SaveState();
+
+            foreach (var pin in Input)
+                pin.RestoreState(state);
+            foreach (var pin in Output)
+                pin.RestoreState(state);
+        }
+
+        public override ConnectorOutVM GetReplacementFor(ConnectorOutVM self, ConnectorInVM other)
+        {
+            if (Output.Contains(self) && self.IsAny && !other.IsAny)
+            {
+                Setup(self, other);
+                return self;
+            }
+            return base.GetReplacementFor(self, other);
+        }
+
+        /// <summary>
+        /// calculate own logic
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public abstract double ProviderRequests();
     }
 }
 

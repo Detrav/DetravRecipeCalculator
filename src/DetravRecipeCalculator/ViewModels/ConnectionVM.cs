@@ -10,14 +10,14 @@ namespace DetravRecipeCalculator.ViewModels
 {
     public partial class ConnectionVM : ViewModelBase
     {
-        public ConnectionVM(ConnectorVM output, ConnectorVM input)
+        public ConnectionVM(ConnectorOutVM output, ConnectorInVM input)
         {
             this.Output = output;
             this.Input = input;
         }
 
-        public ConnectorVM Input { get; }
-        public ConnectorVM Output { get; }
+        public ConnectorInVM Input { get; }
+        public ConnectorOutVM Output { get; }
 
         public ConnectionModel SaveState()
         {

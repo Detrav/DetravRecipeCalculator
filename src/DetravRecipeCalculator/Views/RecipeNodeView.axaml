@@ -20,7 +20,12 @@
         Output="{Binding Output}"
         OutputConnectorTemplate="{StaticResource ConnectorOutputPreview}">
 
-        <Grid ColumnDefinitions="auto,*" RowDefinitions="auto,*">
+        <Grid
+            Background="Transparent"
+            ColumnDefinitions="auto,*"
+            RowDefinitions="auto,*"
+            ToolTip.ShowDelay="100"
+            ToolTip.Tip="{Binding ParametersToolTip}">
             <Border
                 Grid.RowSpan="2"
                 Grid.Column="2"
@@ -95,20 +100,18 @@
                                     <Image Source="/Assets/icons/icons8-left-32.png" />
                                 </Button>
                                 <TextBlock
+                                    MinWidth="60"
                                     Margin="3"
                                     xml:space="preserve"
-                                    IsVisible="{Binding !IsEditing}"><Run Text="{Binding Name}" /><Run Text=": " /><Run Text="{Binding Value, StringFormat=0.##}" /></TextBlock>
+                                    IsVisible="{Binding !IsEditing}"><Run Text="{Binding ValueFormated}" /></TextBlock>
                             </DockPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
 
-                <TextBlock Margin="3">
-                    <Run Text="Time: " />
-                    <Run Text="{Binding TimeToCraft}" />
-                    <Run Text="s" />
-                </TextBlock>
+                <TextBlock Margin="3" Text="{Binding TimeToCraftTitle}" />
+                <TextBlock Margin="3" Text="{Binding QuantityTitle}" />
             </StackPanel>
             <TextBlock
                 Grid.Row="1"

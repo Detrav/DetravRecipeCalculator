@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿
+using CommunityToolkit.Mvvm.ComponentModel;
 using DetravRecipeCalculator.Utils;
 using System;
 using System.Collections.Generic;
@@ -16,5 +17,12 @@ namespace DetravRecipeCalculator.ViewModels
         private string? name;
         [ObservableProperty]
         private string? valueInCurrentTime;
+
+        public ResourceRequestEditorVM(ConnectorInVM pin)
+        {
+            this.Pin = pin;
+        }
+
+        public ConnectorInVM Pin { get; }
     }
 }

@@ -11,7 +11,7 @@ namespace DetravRecipeCalculator.Views;
 public partial class EditResultTableSettingsView : Window
 {
     List<ResourceRequestEditorVM> items = new List<ResourceRequestEditorVM>();
-    public ResultTableNodeVM? Model { get; }
+    public ResultTableNodeVM Model { get; }
 
     public EditResultTableSettingsView()
     {
@@ -30,18 +30,18 @@ public partial class EditResultTableSettingsView : Window
         : this()
     {
         this.Model = model;
-        tbCurrenTime.Text = model.TimeType.GetLocalizedName();
+        tbCurrenTime.Text = model.Parent.TimeType.GetLocalizedName();
 
         foreach (var input in model.Input)
         {
             if (input.IsAny || string.IsNullOrWhiteSpace(input.Name))
                 continue;
 
-            var m = new ResourceRequestEditorVM()
+            var m = new ResourceRequestEditorVM(input)
             {
                 Name = input.Name,
                 IsSet = input.IsSet,
-                ValueInCurrentTime = input.ValuePerTime.ToString(CultureInfo.InvariantCulture)
+                ValueInCurrentTime = (input.Value * model.Parent.TimeType.GetTimeInSeconds()).ToString(CultureInfo.InvariantCulture)
             };
 
             items.Add(m);
@@ -57,5 +57,24 @@ public partial class EditResultTableSettingsView : Window
 
     private void Button_Ok_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        foreach (var item in items)
+        {
+            item.Pin.IsSet = item.IsSet;
+
+            if (item.IsSet)
+            {
+                double value;
+
+                double.TryParse(item.ValueInCurrentTime, CultureInfo.InvariantCulture, out value);
+
+                value /= Model.Parent.TimeType.GetTimeInSeconds();
+
+                item.Pin.Value = value;
+            }
+        }
+
+        Close();
+
+        Model.Parent.UndoRedo.PushState("Update requests");
     }
 }

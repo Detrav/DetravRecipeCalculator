@@ -21,13 +21,13 @@ public partial class Resource2EditorWindow : Window
 
     protected override void OnClosing(WindowClosingEventArgs e)
     {
-        Config.Instance.SaveSate(this);
+        Config.Instance.SaveState(this);
         base.OnClosing(e);
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
     {
-        Config.Instance.LoadSate(this);
+        Config.Instance.LoadState(this);
         base.OnLoaded(e);
     }
 

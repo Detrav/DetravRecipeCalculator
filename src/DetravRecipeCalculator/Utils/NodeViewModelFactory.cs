@@ -41,5 +41,45 @@ namespace DetravRecipeCalculator.Utils
         {
             Factory[typeof(T).Name] = activator;
         }
+
+        public static IEnumerable<PinDiscriminator> GetPinDiscrimantors<T>(RecipeVM? therecipe = null)
+        {
+            List<PinDiscriminator> result = new List<PinDiscriminator>();
+            switch (typeof(T).Name)
+            {
+                case nameof(CommentNodeVM):
+                    break;
+
+                case nameof(ResultTableNodeVM):
+                    result.Add(new PinDiscriminator() { IsAny = true, IsInput = true });
+                    break;
+
+                case nameof(SplitConnectorNodeVM):
+                    result.Add(new PinDiscriminator() { IsAny = true, IsInput = true });
+                    result.Add(new PinDiscriminator() { IsAny = true, IsInput = false });
+                    break;
+                case nameof(RecipeNodeVM):
+
+                    if (therecipe != null)
+                    {
+                        foreach (var item in therecipe.Input)
+                            result.Add(new PinDiscriminator() { Name = item.Name, IsInput = true });
+
+                        foreach (var item in therecipe.Output)
+                            result.Add(new PinDiscriminator() { Name = item.Name, IsInput = false });
+                    }
+
+                    break;
+            }
+            return result;
+        }
+
+        public class PinDiscriminator
+        {
+            public bool IsInput { get; set; }
+            public string? Name { get; set; }
+            public bool IsAny { get; set; }
+        }
     }
 }
+

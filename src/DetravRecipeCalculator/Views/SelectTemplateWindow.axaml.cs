@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using DetravRecipeCalculator.Utils;
 using System;
@@ -32,6 +33,16 @@ public partial class SelectTemplateWindow : Window
             AddTemplate(File.ReadAllText(json), Path.GetFileNameWithoutExtension(json));
         }
 
+    }
+
+    private void Grid_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    {
+        base.OnPointerPressed(e);
+
+        if (e.ClickCount > 1)
+        {
+            Button_Ok_Click(null, e);
+        }
     }
 
     private void AddTemplate(string json, string name)

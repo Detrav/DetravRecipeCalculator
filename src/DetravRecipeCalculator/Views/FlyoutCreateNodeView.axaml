@@ -1,0 +1,58 @@
+<UserControl
+    x:Class="DetravRecipeCalculator.Views.FlyoutCreateNodeView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="using:DetravRecipeCalculator.Utils"
+    xmlns:views="clr-namespace:DetravRecipeCalculator.Views"
+    xmlns:vm="using:DetravRecipeCalculator.ViewModels"
+    Width="400"
+    Height="400"
+    mc:Ignorable="d">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <CheckBox
+                x:Name="cbContextFilter"
+                Margin="3,3,6,3"
+                Content="Context filter"
+                DockPanel.Dock="Right" />
+            <TextBox
+                x:Name="tbFilter"
+                Margin="3"
+                Watermark="Node name filter" />
+        </DockPanel>
+        <ListBox
+            x:Name="lbNodes"
+            Margin="3"
+            HorizontalAlignment="Stretch"
+            Background="Black"
+            SelectionMode="AlwaysSelected">
+			<ListBox.Styles>
+				<Style Selector="ListBoxItem">
+					<Setter Property="Padding" Value="0" />
+					<Setter Property="BorderThickness" Value="0" />
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+				</Style>
+			</ListBox.Styles>
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="vm:FlyoutCreateNodeItemVM">
+                    <Grid
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent"
+                        PointerPressed="Grid_PointerPressed">
+                        <TextBlock
+                            Margin="12,9,12,12"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="{Binding Title}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+        </ListBox>
+
+
+    </DockPanel>
+</UserControl>

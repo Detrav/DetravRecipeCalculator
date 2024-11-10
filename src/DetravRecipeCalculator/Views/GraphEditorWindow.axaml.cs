@@ -18,6 +18,7 @@ using Avalonia.Threading;
 using System.Windows.Markup;
 using System.Xml.Linq;
 using Avalonia.Platform.Storage;
+using org.matheval.Implements;
 
 namespace DetravRecipeCalculator.Views;
 
@@ -32,7 +33,6 @@ public partial class GraphEditorWindow : Window
         InitializeComponent();
         ContextFlyout!.Opened += ContextFlyout_Opened;
 
-        miAddComment.Click += MiAddComment_Click;
         PointerMoved += GraphEditorWindow_PointerMoved;
         miDelete.Click += MiDelete_Click;
         miCopy.Click += MiCopy_Click;
@@ -42,31 +42,9 @@ public partial class GraphEditorWindow : Window
         miUndo.Click += MiUndo_Click;
 
         DataContextChanged += GraphEditorWindow_DataContextChanged;
-        miAddResultTable.Click += MiAddResultTable_Click;
-        miAddSplit.Click += MiAddSplit_Click;
     }
 
-    private void MiAddSplit_Click(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is GraphEditorVM vm)
-        {
-            var node = new SplitConnectorNodeVM(vm, null);
-            node.Location = lastClick;
-            vm.Nodes.Add(node);
-            vm.UndoRedo.PushState("Add split");
-        }
-    }
 
-    private void MiAddResultTable_Click(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is GraphEditorVM vm)
-        {
-            var node = new ResultTableNodeVM(vm, true);
-            node.Location = lastClick;
-            vm.Nodes.Add(node);
-            vm.UndoRedo.PushState("Add comment");
-        }
-    }
 
     protected override void OnClosing(WindowClosingEventArgs e)
     {
@@ -200,10 +178,47 @@ public partial class GraphEditorWindow : Window
 
     private void GraphEditorWindow_DataContextChanged(object? sender, EventArgs e)
     {
-        miAddNode.Items.Clear();
+        foCreateNode.ClearNodes();
 
         if (DataContext is GraphEditorVM vm)
         {
+
+            vm.PendingConnection.ShowFlyoutMenu = model =>
+            {
+                if (ContextFlyout is Flyout flyout)
+                {
+                    foCreateNode.ConnectorContext = model.Source;
+                    flyout.ShowAt(this, true);
+                }
+
+            };
+
+            foCreateNode.RegisterNode(Xloc.Get("__CreateNode_Splitter"), () =>
+            {
+                var node = new SplitConnectorNodeVM(vm, null);
+                node.Location = lastClick;
+                vm.Nodes.Add(node);
+                vm.UndoRedo.PushState("Add split");
+                return node;
+            }, NodeViewModelFactory.GetPinDiscrimantors<SplitConnectorNodeVM>() );
+            foCreateNode.RegisterNode(Xloc.Get("__CreateNode_ResultTable"), () =>
+            {
+                var node = new ResultTableNodeVM(vm, true);
+                node.Location = lastClick;
+                vm.Nodes.Add(node);
+                vm.UndoRedo.PushState("Add Result table");
+                return node;
+            }, NodeViewModelFactory.GetPinDiscrimantors<ResultTableNodeVM>());
+
+            foCreateNode.RegisterNode(Xloc.Get("__CreateNode_Comment"), () =>
+            {
+                var comment = new CommentNodeVM(vm);
+                comment.Location = lastClick;
+                vm.Nodes.Add(comment);
+                vm.UndoRedo.PushState("Add comment");
+                return comment;
+            }, NodeViewModelFactory.GetPinDiscrimantors<CommentNodeVM>());
+
             foreach (var recipe in vm.Pipeline.Recipes)
             {
                 if (recipe.Id == null)
@@ -212,24 +227,23 @@ public partial class GraphEditorWindow : Window
                 }
 
                 var therecipe = recipe;
-                miAddNode.Items.Add(new MenuItem()
+
+                foCreateNode.RegisterNode(Xloc.Get("__CreateNode_Recipe") + therecipe.Name, () =>
                 {
-                    Header = therecipe.Name ?? "Unknown",
-                    Command = new RelayCommand(() =>
-                    {
-                        var node = new RecipeNodeVM(vm, therecipe);
-                        node.Location = lastClick;
-                        vm.Nodes.Add(node);
-                        vm.UndoRedo.PushState("Add node " + therecipe.Name);
-                    })
-                });
+                    var node = new RecipeNodeVM(vm, therecipe);
+                    node.Location = lastClick;
+                    vm.Nodes.Add(node);
+                    vm.UndoRedo.PushState("Add node " + therecipe.Name);
+                    return node;
+                }, NodeViewModelFactory.GetPinDiscrimantors<RecipeNodeVM>(therecipe));
             }
         }
     }
 
     private void GraphEditorWindow_PointerMoved(object? sender, PointerEventArgs e)
     {
-        lastClick = Editor.DpiScaledViewportTransform.Value.Invert().Transform(e.GetPosition(Editor));
+        if (ContextFlyout == null || !ContextFlyout.IsOpen)
+            lastClick = Editor.DpiScaledViewportTransform.Value.Invert().Transform(e.GetPosition(Editor));
     }
 
     private void LineConnection_Disconnect(object? sender, RoutedEventArgs e)
@@ -239,17 +253,6 @@ public partial class GraphEditorWindow : Window
             vm.Disconnect(connectionVM);
             vm.UndoRedo.PushState("Disconnect");
             e.Handled = true;
-        }
-    }
-
-    private void MiAddComment_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is GraphEditorVM vm)
-        {
-            var comment = new CommentNodeVM(vm);
-            comment.Location = lastClick;
-            vm.Nodes.Add(comment);
-            vm.UndoRedo.PushState("Add comment");
         }
     }
 
@@ -562,6 +565,11 @@ public partial class GraphEditorWindow : Window
         Editor.GetType().GetProperty(nameof(NodifyEditor.IsMouseCaptureWithin))!.SetValue(Editor, false);
     }
 
+    private void Flyout_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        e.Cancel = true;
+    }
+
 
 
 
@@ -594,7 +602,8 @@ public partial class GraphEditorWindow : Window
 
     //private void Binding_1(object? sender, Nodify.ConnectionEventArgs e)
     //{
-    //}
+    //}\
+
 
     //private void LineConnection_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     //{

@@ -101,10 +101,6 @@ __SelectIcon_DownloadPrompt=Загрузить иконки
 __SelectIcon_DownloadText=Набор иконок не найден. Хотите скачать набор иконок?
 
 __GraphEditor_WindowTitle=Редактор графов
-__GraphEditor_MenuAddNode=Добавить узел
-__GraphEditor_MenuAddComment=Добавить комментарий
-__GraphEditor_MenuAddResultTable=Добавить таблицу результатов
-__GraphEditor_MenuAddSplit=Добавить разделитель
 __GraphEditor_MenuEdit=Редактировать
 __GraphEditor_MenuUndo=Отменить
 __GraphEditor_MenuRedo=Повторить
@@ -166,3 +162,8 @@ __ConnectorTip_CurrentValue=Итоговое значение: {0} /{1}
 
 __NodeTip_Quantity=Количество: {0}
 __NodeTip_TimeToCraft=Время на создание: {0}{1}
+
+__CreateNode_ResultTable=Общие > Таблица результатов
+__CreateNode_Splitter=Общие > Разделитель
+__CreateNode_Comment=Общие > Комментарий
+__CreateNode_Recipe=Рецепт >\s

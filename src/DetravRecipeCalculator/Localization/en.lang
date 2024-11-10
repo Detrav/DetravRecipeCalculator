@@ -104,10 +104,6 @@ __SelectIcon_DownloadText=Icon pack not found. Do you want to download the icon 
 
 
 __GraphEditor_WindowTitle=Graph Editor
-__GraphEditor_MenuAddNode=Add Node
-__GraphEditor_MenuAddComment=Add Comment
-__GraphEditor_MenuAddResultTable=Add Result Table
-__GraphEditor_MenuAddSplit=Add splitter
 __GraphEditor_MenuEdit=Edit
 __GraphEditor_MenuUndo=Undo
 __GraphEditor_MenuRedo=Redo
@@ -171,3 +167,8 @@ __ConnectorTip_CurrentValue=Total value: {0} /{1}
 
 __NodeTip_Quantity=Quantity: {0}
 __NodeTip_TimeToCraft=Time to craft: {0}{1}
+
+__CreateNode_ResultTable=Common > Result Table
+__CreateNode_Splitter=Common > Splitter
+__CreateNode_Comment=Common > Comment
+__CreateNode_Recipe=Recipe >\s

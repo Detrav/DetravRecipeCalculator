@@ -19,6 +19,8 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private ConnectorVM? source;
 
+        public Action<PendingConnectionVM>? ShowFlyoutMenu { get; set; }
+
         public PendingConnectionVM(GraphEditorVM editor)
         {
             _editor = editor;
@@ -26,10 +28,15 @@ namespace DetravRecipeCalculator.ViewModels
             StartCommand = new RelayCommand<ConnectorVM>(value => source = value);
             FinishCommand = new RelayCommand<ConnectorVM>(FinishConnect);
         }
-        private void FinishConnect(ConnectorVM? target)
+        private void FinishConnect(object? target)
         {
+            if (target == null)
+            {
+                ShowFlyoutMenu?.Invoke(this);
+                return;
+            }
 
-            var connection = CanAddConnectionWithCheck(Source, target, _editor.Connections);
+            var connection = CanAddConnectionWithCheck(Source, target as ConnectorVM, _editor.Connections);
 
             if (connection != null)
             {
@@ -72,6 +79,39 @@ namespace DetravRecipeCalculator.ViewModels
             }
 
             return null;
+        }
+
+        internal void TryConnect(ConnectorVM? connectorContext, NodeVM? node)
+        {
+            if (node == null)
+                return;
+
+            if(connectorContext is ConnectorInVM input)
+            {
+                foreach(var pin in node.Output)
+                {
+                    var connect = Connect(pin, input, _editor.Connections);
+                    if(connect!=null)
+                    {
+                        _editor.AddConnection(connect);
+                        return;
+                    }
+
+                }
+            }
+            else if(connectorContext is ConnectorOutVM output)
+            {
+                foreach (var pin in node.Input)
+                {
+                    var connect = Connect(output, pin, _editor.Connections);
+                    if (connect != null)
+                    {
+                        _editor.AddConnection(connect);
+                        return;
+                    }
+
+                }
+            }
         }
 
         public ICommand FinishCommand { get; }

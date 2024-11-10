@@ -59,12 +59,12 @@
     </Window.Resources>
 
     <Window.ContextFlyout>
-        <MenuFlyout>
-            <MenuItem x:Name="miAddNode" Header="{Binding Loc.MenuAddNode.Text}" />
-            <MenuItem x:Name="miAddComment" Header="{Binding Loc.MenuAddComment.Text}" />
-            <MenuItem x:Name="miAddResultTable" Header="{Binding Loc.MenuAddResultTable.Text}" />
-            <MenuItem x:Name="miAddSplit" Header="{Binding Loc.MenuAddSplit.Text}" />
-            <Separator />
+        <Flyout OverlayDismissEventPassThrough="False">
+            <views:FlyoutCreateNodeView x:Name="foCreateNode" />
+        </Flyout>
+    </Window.ContextFlyout>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
             <MenuItem Header="{Binding Loc.MenuEdit.Text}">
                 <MenuItem x:Name="miUndo" Header="{Binding Loc.MenuUndo.Text}" />
                 <MenuItem x:Name="miRedo" Header="{Binding Loc.MenuRedo.Text}" />
@@ -87,9 +87,7 @@
                 <MenuItem Click="MenuItem_TimeType_Year_Click" Header="{Binding Loc.TimeType_Year.Text}" />
             </MenuItem>
             <MenuItem Click="MenuItem_ExportPng_Click" Header="{Binding Loc.MenuExportPng.Text}" />
-        </MenuFlyout>
-    </Window.ContextFlyout>
-    <DockPanel>
+        </Menu>
         <UniformGrid Columns="2" DockPanel.Dock="Bottom">
             <Button
                 Margin="3"

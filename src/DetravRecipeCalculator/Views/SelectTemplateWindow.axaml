@@ -26,6 +26,29 @@
                 <TextBlock x:Name="tbCancel" HorizontalAlignment="Center" />
             </Button>
         </UniformGrid>
-        <ListBox x:Name="tamplates" SelectionMode="AlwaysSelected" />
+        <ListBox x:Name="tamplates" SelectionMode="AlwaysSelected">
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+            </ListBox.Styles>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent"
+                        PointerPressed="Grid_PointerPressed">
+                        <TextBlock
+                            Margin="12,9,12,12"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Text="{Binding}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </DockPanel>
 </Window>

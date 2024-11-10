@@ -132,14 +132,9 @@ namespace DetravRecipeCalculator.Utils
                 var c = value[i];
                 if (escape)
                 {
-                    if (c == 'n')
-                    {
-                        sb.Append('\n');
-                    }
-                    else
-                    {
-                        sb.Append(c);
-                    }
+                    if (c == 'n') sb.Append('\n');
+                    else if (c == 's') sb.Append(' ');
+                    else sb.Append(c);
                     escape = false;
                 }
                 else

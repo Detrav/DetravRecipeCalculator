@@ -1,5 +1,7 @@
 ﻿__LanguageName=English
 __LanguageCulture=en-US
+__LanguageHelpUrl=https://github.com/Detrav/DetravRecipeCalculator/blob/master/docs/en/readme.md
+
 __Main_Menu_File=File
 __Main_Menu_File_New=New
 __Main_Menu_File_Open=Open
@@ -138,7 +140,7 @@ __Enum_TimeType_Year=Year (365 days)
 __Enum_TimeType_Year_v=y
 
 __Expressions_Title=Expression Help
-__Expressions_Help=Math + (Add), - (Subtract), * (Multiply), / (Divide), % (Modulo), ^ (Power)\nFunctions: SIN(number), COS(number) and other functions\nFull documentation available here https://github.com/matheval/expression-evaluator-c-sharp\nAlso available is the ability to define variables.\nExample: 177 * 2 ^ Tier.
+__Expressions_Help=https://github.com/Detrav/DetravRecipeCalculator/blob/master/docs/en/expressions.md
 
 __ResultTable_Title=Result Table
 __ResultTable_Table_Name=Name

@@ -1,5 +1,7 @@
 ﻿__LanguageName=Русский язык
 __LanguageCulture=ru-RU
+__LanguageHelpUrl=https://github.com/Detrav/DetravRecipeCalculator/blob/master/docs/ru/readme.md
+
 __Main_Menu_File=Файл
 __Main_Menu_File_New=Создать
 __Main_Menu_File_Open=Открыть
@@ -135,7 +137,7 @@ __Enum_TimeType_Year=Год (365 дней)
 __Enum_TimeType_Year_v=г
 
 __Expressions_Title=Помощь по выражениям
-__Expressions_Help=Математические операции: + (Сложение), - (Вычитание), * (Умножение), / (Деление), % (Остаток от деления), ^ (Степень)\nФункции: SIN(число), COS(число) и другие функции\nПолная документация доступна здесь https://github.com/matheval/expression-evaluator-c-sharp\nТакже доступны переменные.\nПример: 177 * 2 ^ Tier.
+__Expressions_Help=https://github.com/Detrav/DetravRecipeCalculator/blob/master/docs/ru/expressions.md
 
 __ResultTable_Title=Таблица результатов
 __ResultTable_Table_Name=Имя

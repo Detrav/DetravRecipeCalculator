@@ -37,8 +37,7 @@ namespace DetravRecipeCalculator.ViewModels
         /// <summary>
         /// Number of connections
         /// </summary>
-        [ObservableProperty]
-        private int connectionsNumber;
+        public ObservableCollection<ConnectorVM> Connections { get; } = new ObservableCollection<ConnectorVM>();
 
         /// <summary>
         /// Collor of pin
@@ -131,6 +130,17 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private bool isSet;
 
+        /// <summary>
+        /// For caluclation
+        /// </summary>
+        [ObservableProperty]
+        private double tempRequest;
+        /// <summary>
+        /// For caluclation
+        /// </summary>
+        [ObservableProperty]
+        private double tempCurrentValue;
+
         public ConnectorVM(NodeVM node, bool isInput)
         {
             this.IsInput = isInput;
@@ -138,6 +148,13 @@ namespace DetravRecipeCalculator.ViewModels
             Parent = node;
             IsAny = true;
             UpdateDisplayValuePerTime();
+
+            Connections.CollectionChanged += Connections_CollectionChanged;
+        }
+
+        private void Connections_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            IsConnected = Connections.Count != 0;
         }
 
         public ConnectorVM(NodeVM node, string? name, bool isInput)
@@ -149,7 +166,7 @@ namespace DetravRecipeCalculator.ViewModels
 
         public bool IsInput { get; }
         public NodeVM Parent { get; }
-        
+
 
         public static string GetFormated(double v)
         {
@@ -222,11 +239,6 @@ namespace DetravRecipeCalculator.ViewModels
                 ConnectorCollor = DetravColorHelper.GetRandomColor(Name);
                 IsAny = true;
             }
-        }
-
-        partial void OnConnectionsNumberChanged(int value)
-        {
-            IsConnected = value != 0;
         }
 
         partial void OnTimeToCraftChanged(double value)

@@ -83,8 +83,8 @@ namespace DetravRecipeCalculator.ViewModels
 
                 if (input != null && output != null && !input.IsAny && !output.IsAny)
                 {
-                    input.ConnectionsNumber++;
-                    output.ConnectionsNumber++;
+                    input.Connections.Add(output);
+                    output.Connections.Add(input);
                     connections.Add(new ConnectionVM(output, input));
                 }
             }
@@ -127,8 +127,8 @@ namespace DetravRecipeCalculator.ViewModels
         public void AddConnection(ConnectionVM connetion)
         {
 
-            connetion.Input.ConnectionsNumber++;
-            connetion.Output.ConnectionsNumber++;
+            connetion.Input.Connections.Add(connetion.Output);
+            connetion.Output.Connections.Add(connetion.Input);
 
             _connections.Add(connetion);
         }
@@ -176,8 +176,8 @@ namespace DetravRecipeCalculator.ViewModels
 
         public void DeleteConnetion(ConnectionVM connetion)
         {
-            connetion.Input.ConnectionsNumber--;
-            connetion.Output.ConnectionsNumber--;
+            connetion.Input.Connections.Remove(connetion.Output);
+            connetion.Output.Connections.Remove(connetion.Input);
 
             _connections.Remove(connetion);
         }

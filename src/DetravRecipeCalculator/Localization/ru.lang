@@ -153,3 +153,10 @@ __ResultTable_TitleResources=Сводка по ресурсам (Этапы)
 
 __SelectTemplateWindow_Title=Выберите шаблон для создания
 __SelectTemplateWindow_Empty=Пустой
+
+__EditResultTableSettingsWindow_Title=Редактировать запросы
+__EditResultTableSettingsWindow_Warning=Обратите внимание, все значения задаются в текущем времени, сейчас это:
+
+__ConnectorTip_Name=Имя: {0}
+__ConnectorTip_ValuePerSecond=Значение в секунду: {0} {1}
+__ConnectorTip_ValuePerTime=Значение за время: {0} {1}

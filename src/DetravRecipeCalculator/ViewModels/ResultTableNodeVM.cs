@@ -5,6 +5,7 @@ using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
+using MsBox.Avalonia.Base;
 using Nodify;
 using System;
 using System.Collections.Generic;
@@ -74,8 +75,7 @@ namespace DetravRecipeCalculator.ViewModels
 
         public void Rebuild()
         {
-            List<NodeHelper> nodes = new List<NodeHelper>();
-            var thisNode = AddNodeToList(nodes, this);
+
 
             TotalInput.Clear();
             TotalOutput.Clear();
@@ -88,8 +88,8 @@ namespace DetravRecipeCalculator.ViewModels
             TotalInput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
             TotalInput.AddOrUpdateColumn("Input", Xloc.Get("__ResultTable_Table_Input") + " /" + TimeType.GetLocalizedShortValue());
 
-            TotalResources.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
-            TotalResources.AddOrUpdateColumn("Output", Xloc.Get("__ResultTable_Table_Output") + " /" + TimeType.GetLocalizedShortValue());
+            TotalOutput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+            TotalOutput.AddOrUpdateColumn("Output", Xloc.Get("__ResultTable_Table_Output") + " /" + TimeType.GetLocalizedShortValue());
 
 
             generationCount = 0;
@@ -100,6 +100,10 @@ namespace DetravRecipeCalculator.ViewModels
 
             try
             {
+
+                List<NodeHelper> nodes = new List<NodeHelper>();
+                var thisNode = AddNodeToList(nodes, this, 0);
+
 
                 // first is total recipes, that table contains all parameters of machines and list of machines
 
@@ -127,19 +131,20 @@ namespace DetravRecipeCalculator.ViewModels
 
                 foreach (var pinInput in thisNode.Input)
                 {
+                    double requestPerSecond = 0;
                     foreach (var pinOutput in pinInput.Connections)
                     {
-                        pinOutput.Request = pinOutput.Connector.ValuePerSecond;
+                        requestPerSecond += pinOutput.Connector.ValuePerSecond;
                     }
+
+                    if (!pinInput.Connector.IsSet)
+                    {
+                        pinInput.Connector.ValuePerSecond = requestPerSecond;
+                    }
+                    pinInput.Connector.TimeToCraft = 1;
                 }
 
-                foreach (var pinInput in thisNode.Input)
-                {
-                    foreach (var pinOut in pinInput.Connections)
-                    {
-                        CalculateRequest(pinOut.Node);
-                    }
-                }
+                CalculateRequest(thisNode);
 
                 //End calculate
 
@@ -150,15 +155,15 @@ namespace DetravRecipeCalculator.ViewModels
                     foreach (var pin in node.Input)
                     {
 
-                        TotalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.CurrentValue);
-                        TotalResources.AddtToCellWithFindRow(pin, "Total", -pin.CurrentValue);
+                        TotalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.CurrentValue * TimeType.GetTimeInSeconds());
+                        TotalResources.AddtToCellWithFindRow(pin, "Total", -pin.CurrentValue * TimeType.GetTimeInSeconds());
                     }
 
                     foreach (var pin in node.Output)
                     {
 
-                        TotalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.CurrentValue);
-                        TotalResources.AddtToCellWithFindRow(pin, "Total", pin.CurrentValue);
+                        TotalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.CurrentValue * TimeType.GetTimeInSeconds());
+                        TotalResources.AddtToCellWithFindRow(pin, "Total", pin.CurrentValue * TimeType.GetTimeInSeconds());
                     }
                 }
 
@@ -199,10 +204,10 @@ namespace DetravRecipeCalculator.ViewModels
             }
 
 
-            OnPropertyChanged(nameof(TotalResources));
-            OnPropertyChanged(nameof(TotalInput));
-            OnPropertyChanged(nameof(TotalOutput));
-            OnPropertyChanged(nameof(TotalRecipes));
+            TotalResources.Container = new ResultDataTableContainer(TotalResources);// OnPropertyChanged(nameof(TotalResources));
+            TotalInput.Container = new ResultDataTableContainer(TotalInput);//OnPropertyChanged(nameof(TotalInput));
+            TotalOutput.Container = new ResultDataTableContainer(TotalOutput);//OnPropertyChanged(nameof(TotalOutput));
+            TotalRecipes.Container = new ResultDataTableContainer(TotalRecipes);//OnPropertyChanged(nameof(TotalRecipes));
         }
 
         public override NodeModel SaveState()
@@ -280,18 +285,27 @@ namespace DetravRecipeCalculator.ViewModels
 
         private void CalculateRequest(NodeHelper node)
         {
-            double requestPercentage = 0;
+            double requestPercentage;
 
-            foreach (var pinOut in node.Output)
+            if (node.Output.Count == 0)
             {
-                requestPercentage = Math.Max(requestPercentage, pinOut.Request / pinOut.Connector.ValuePerSecond);
+                requestPercentage = 1;
             }
-
-            node.Number = requestPercentage;
-
-            foreach (var pinOut in node.Output)
+            else
             {
-                pinOut.CurrentValue = requestPercentage * pinOut.Connector.ValuePerSecond;
+                requestPercentage = 0;
+
+                foreach (var pinOut in node.Output)
+                {
+                    requestPercentage = Math.Max(requestPercentage, pinOut.Request / pinOut.Connector.ValuePerSecond);
+                }
+
+                node.Number = requestPercentage;
+
+                foreach (var pinOut in node.Output)
+                {
+                    pinOut.CurrentValue = requestPercentage * pinOut.Connector.ValuePerSecond;
+                }
             }
 
             foreach (var pinIn in node.Input)
@@ -360,8 +374,11 @@ namespace DetravRecipeCalculator.ViewModels
             return false;
         }
 
-        private NodeHelper AddNodeToList(List<NodeHelper> nodes, NodeVM node)
+        private NodeHelper AddNodeToList(List<NodeHelper> nodes, NodeVM node, int generationLimit)
         {
+            if (generationLimit > MAX_GENERATION)
+                throw new NotSupportedException("Loops is not supporeted");
+
             var nodeHelper = nodes.FirstOrDefault(m => m.Node == node);
             if (nodeHelper == null)
             {
@@ -376,40 +393,50 @@ namespace DetravRecipeCalculator.ViewModels
 
                 foreach (var pin in node.Input)
                 {
+                    if (pin.IsAny)
+                        continue;
+
                     var pinHelper = new PinHelper(nodeHelper, pin);
-                    AddToList(nodes, pinHelper);
+                    AddToListConnections(nodes, pinHelper, pinHelper.Connector, generationLimit);
                     nodeHelper.Input.Add(pinHelper);
                 }
             }
             return nodeHelper;
         }
 
-        private void AddToList(List<NodeHelper> nodes, PinHelper pin)
+        private void AddToListConnections(List<NodeHelper> nodes, PinHelper pin, ConnectorVM connector, int generationLimit)
         {
+            if (generationLimit > MAX_GENERATION)
+                throw new NotSupportedException("Loops is not supporeted");
+
             foreach (var connection in Parent.Connections)
             {
-                if (connection.Input == pin.Connector)
+                if (connection.Input == connector)
                 {
-                    foreach (var node in Parent.Nodes)
-                    {
-                        if (node.Output.Any(m => m == connection.Output))
-                        {
-                            var nodeHelper = AddNodeToList(nodes, node);
+                    var node = connection.Output.Parent;
 
-                            var outputPinHelper = nodeHelper.Output.FirstOrDefault(m => m.Connector == connection.Output);
-                            if (outputPinHelper != null)
-                            {
-                                outputPinHelper.Connections.Add(pin);
-                                pin.Connections.Add(outputPinHelper);
-                            }
+
+                    if (node is IntermediateNode)
+                    {
+                        foreach (var intermediateInputConnector in node.Input)
+                        {
+                            AddToListConnections(nodes, pin, intermediateInputConnector, generationLimit + 1);
+                        }
+                    }
+                    else
+                    {
+                        var nodeHelper = AddNodeToList(nodes, node, generationLimit + 1);
+
+                        var outputPinHelper = nodeHelper.Output.FirstOrDefault(m => m.Connector == connection.Output);
+                        if (outputPinHelper != null)
+                        {
+                            outputPinHelper.Connections.Add(pin);
+                            pin.Connections.Add(outputPinHelper);
                         }
                     }
                 }
             }
-
         }
-
-
     }
 
     class NodeHelper
@@ -446,18 +473,31 @@ namespace DetravRecipeCalculator.ViewModels
         }
     }
 
+    public class ResultDataTableContainer
+    {
+        public ResultDataTableContainer(ResultDataTable table)
+        {
+            this.Table = table;
+        }
+
+        public ResultDataTable Table { get; }
+    }
+
+
     public partial class ResultDataTable : ViewModelBase
     {
         [ObservableProperty]
         private bool isVisible = true;
 
+        [ObservableProperty]
+        ResultDataTableContainer container;
 
         public string Title { get; }
 
         public ResultDataTable(string title, bool isVisible)
         {
             this.Title = title;
-
+            container = new ResultDataTableContainer(this);
             IsVisible = isVisible;
 
         }

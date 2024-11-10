@@ -14,25 +14,7 @@
     <nodify:Node
         Header="{Binding ResourceName}"
         Input="{Binding Input}"
-        Output="{Binding Output}">
-        <nodify:Node.InputConnectorTemplate>
-            <DataTemplate DataType="vm:ConnectorVM">
-                <nodify:NodeInput Anchor="{Binding Anchor, Mode=OneWayToSource}" IsConnected="{Binding IsConnected}">
-                    <nodify:NodeInput.BorderBrush>
-                        <SolidColorBrush Color="{Binding ConnectorCollor}" />
-                    </nodify:NodeInput.BorderBrush>
-                </nodify:NodeInput>
-            </DataTemplate>
-        </nodify:Node.InputConnectorTemplate>
-        <nodify:Node.OutputConnectorTemplate>
-            <DataTemplate DataType="vm:ConnectorVM">
-                <nodify:NodeOutput Anchor="{Binding Anchor, Mode=OneWayToSource}" IsConnected="{Binding IsConnected}">
-                    <nodify:NodeOutput.BorderBrush>
-                        <SolidColorBrush Color="{Binding ConnectorCollor}" />
-                    </nodify:NodeOutput.BorderBrush>
-                </nodify:NodeOutput>
-            </DataTemplate>
-        </nodify:Node.OutputConnectorTemplate>
-
-    </nodify:Node>
+        InputConnectorTemplate="{StaticResource ConnectorInputPreview}"
+        Output="{Binding Output}"
+        OutputConnectorTemplate="{StaticResource ConnectorOutputPreview}" />
 </UserControl>

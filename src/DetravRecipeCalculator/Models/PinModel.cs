@@ -10,5 +10,8 @@ namespace DetravRecipeCalculator.Models
     {
         public string? Id { get; set; }
         public string? Name { get; set; }
+        public double TimeToCraft { get; set; }
+        public double Value { get; set; }
+        public bool IsSet { get; set; }
     }
 }

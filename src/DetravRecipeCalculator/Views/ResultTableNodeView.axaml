@@ -14,33 +14,39 @@
     <nodify:Node
         Header="{Binding Title}"
         Input="{Binding Input}"
-        Output="{Binding Output}">
-        <nodify:Node.InputConnectorTemplate>
-            <DataTemplate DataType="vm:ConnectorVM">
-                <nodify:NodeInput Anchor="{Binding Anchor, Mode=OneWayToSource}" IsConnected="{Binding IsConnected}">
-                    <nodify:NodeInput.BorderBrush>
-                        <SolidColorBrush Color="{Binding ConnectorCollor}" />
-                    </nodify:NodeInput.BorderBrush>
-                </nodify:NodeInput>
-            </DataTemplate>
-        </nodify:Node.InputConnectorTemplate>
-        <nodify:Node.OutputConnectorTemplate>
-            <DataTemplate DataType="vm:ConnectorVM">
-                <nodify:NodeOutput Anchor="{Binding Anchor, Mode=OneWayToSource}" IsConnected="{Binding IsConnected}">
-                    <nodify:NodeOutput.BorderBrush>
-                        <SolidColorBrush Color="{Binding ConnectorCollor}" />
-                    </nodify:NodeOutput.BorderBrush>
-                </nodify:NodeOutput>
-            </DataTemplate>
-        </nodify:Node.OutputConnectorTemplate>
+        InputConnectorTemplate="{StaticResource ConnectorInputPreview}"
+        Output="{Binding Output}"
+        OutputConnectorTemplate="{StaticResource ConnectorOutputPreview}">
 
-        <Grid RowDefinitions="Auto,Auto,Auto">
-            <Grid ColumnDefinitions="Auto, Auto">
-                <views:ResultTableView Grid.Column="0" DataContext="{Binding TotalInput}" />
-                <views:ResultTableView Grid.Column="1" DataContext="{Binding TotalOutput}" />
+
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+            <StackPanel IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=false}">
+                <TextBlock
+                    Margin="3"
+                    Foreground="DarkRed"
+                    Text="{Binding Error.Message, FallbackValue={x:Null}}" />
+                <TextBlock
+                    Margin="3"
+                    Foreground="DarkRed"
+                    Text="{Binding Error.StackTrace, FallbackValue={x:Null}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <Grid Grid.Row="1" ColumnDefinitions="Auto, Auto, Auto">
+                <views:ResultTableView Grid.Column="0" DataContext="{Binding TotalInput.Container}" />
+                <views:ResultTableView Grid.Column="1" DataContext="{Binding TotalOutput.Container}" />
+                <Button
+                    Grid.Column="2"
+                    Width="32"
+                    Height="32"
+                    Margin="3"
+                    Padding="0"
+                    Classes="btn-icon"
+                    Click="Button_Edit_Click">
+                    <Image Source="avares://DetravRecipeCalculator/Assets/icons/icons8-edit-32.png" />
+                </Button>
             </Grid>
-            <views:ResultTableView Grid.Row="1" DataContext="{Binding TotalResources}" />
-            <views:ResultTableView Grid.Row="2" DataContext="{Binding TotalRecipes}" />
+            <views:ResultTableView Grid.Row="2" DataContext="{Binding TotalResources.Container}" />
+            <views:ResultTableView Grid.Row="3" DataContext="{Binding TotalRecipes.Container}" />
         </Grid>
 
     </nodify:Node>

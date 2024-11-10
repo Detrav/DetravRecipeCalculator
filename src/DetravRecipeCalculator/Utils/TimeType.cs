@@ -49,5 +49,22 @@
 
             return Xloc.Get("__Enum_TimeType_Auto_v");
         }
+
+        public static string GetLocalizedName(this TimeType timeType)
+        {
+            switch (timeType)
+            {
+                case TimeType.Tick: return Xloc.Get("__Enum_TimeType_Tick");
+                case TimeType.Second: return Xloc.Get("__Enum_TimeType_Second");
+                case TimeType.Minute: return Xloc.Get("__Enum_TimeType_Minute");
+                case TimeType.Hour: return Xloc.Get("__Enum_TimeType_Hour");
+                case TimeType.Day: return Xloc.Get("__Enum_TimeType_Day");
+                case TimeType.Week: return Xloc.Get("__Enum_TimeType_Week");
+                case TimeType.Month: return Xloc.Get("__Enum_TimeType_Month");
+                case TimeType.Year: return Xloc.Get("__Enum_TimeType_Year");
+            }
+
+            return Xloc.Get("__Enum_TimeType_Auto");
+        }
     }
 }

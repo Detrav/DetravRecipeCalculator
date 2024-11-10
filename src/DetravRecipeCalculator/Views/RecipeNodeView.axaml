@@ -12,71 +12,14 @@
     d:DesignWidth="800"
     x:DataType="vm:RecipeNodeVM"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <DataTemplate x:Key="ConnectorPreview" DataType="vm:ConnectorVM">
-                <StackPanel
-                    Orientation="Vertical"
-                    ToolTip.ShowDelay="100"
-                    ToolTip.Tip="{Binding DisplayValuePersecondTip}">
-                    <StackPanel Orientation="Horizontal">
-                        <Border
-                            Margin="0,0,3,0"
-                            VerticalAlignment="Center"
-                            CornerRadius="3"
-                            IsVisible="{Binding Icon, Converter={x:Static ObjectConverters.IsNotNull}}">
-                            <Border.Background>
-                                <SolidColorBrush Color="{Binding BackgroundColor}" />
-                            </Border.Background>
-                            <Image
-                                Width="16"
-                                Height="16"
-                                Source="{Binding Icon, Converter={x:Static utils:ByteToBitmapConverter.Instance}}" />
-                        </Border>
 
-                        <TextBlock xml:space="preserve"><Run Text="{Binding Name}" /><Run Text=": " /><Run Text="{Binding Value, StringFormat=0.##}" /></TextBlock>
-                    </StackPanel>
-                    <TextBlock xml:space="preserve" Text="{Binding DisplayValuePersecond}"></TextBlock>
-                    <Border
-                        Height="3"
-                        Background="Orange"
-                        IsVisible="{Binding HasCalculationWarning}" />
-                </StackPanel>
-            </DataTemplate>
-        </ResourceDictionary>
-    </UserControl.Resources>
     <nodify:Node
         Header="{Binding Title}"
         Input="{Binding Input}"
-        Output="{Binding Output}">
-        <nodify:Node.InputConnectorTemplate>
-            <DataTemplate DataType="vm:ConnectorVM">
-                <nodify:NodeInput
-                    Anchor="{Binding Anchor, Mode=OneWayToSource}"
-                    Header="{Binding}"
-                    HeaderTemplate="{StaticResource ResourceKey=ConnectorPreview}"
-                    IsConnected="{Binding IsConnected}">
+        InputConnectorTemplate="{StaticResource ConnectorInputPreview}"
+        Output="{Binding Output}"
+        OutputConnectorTemplate="{StaticResource ConnectorOutputPreview}">
 
-                    <nodify:NodeInput.BorderBrush>
-                        <SolidColorBrush Color="{Binding ConnectorCollor}" />
-                    </nodify:NodeInput.BorderBrush>
-                </nodify:NodeInput>
-            </DataTemplate>
-        </nodify:Node.InputConnectorTemplate>
-        <nodify:Node.OutputConnectorTemplate>
-            <DataTemplate DataType="vm:ConnectorVM">
-                <nodify:NodeOutput
-                    Anchor="{Binding Anchor, Mode=OneWayToSource}"
-                    Header="{Binding}"
-                    HeaderTemplate="{StaticResource ResourceKey=ConnectorPreview}"
-                    IsConnected="{Binding IsConnected}">
-
-                    <nodify:NodeOutput.BorderBrush>
-                        <SolidColorBrush Color="{Binding ConnectorCollor}" />
-                    </nodify:NodeOutput.BorderBrush>
-                </nodify:NodeOutput>
-            </DataTemplate>
-        </nodify:Node.OutputConnectorTemplate>
         <Grid ColumnDefinitions="auto,*" RowDefinitions="auto,*">
             <Border
                 Grid.RowSpan="2"

@@ -20,6 +20,8 @@ namespace DetravRecipeCalculator.ViewModels
 {
     public partial class ConnectorVM : ViewModelBase
     {
+        private readonly Dictionary<string, double> values = new Dictionary<string, double>();
+
         /// <summary>
         /// Point to connect
         /// </summary>
@@ -45,6 +47,24 @@ namespace DetravRecipeCalculator.ViewModels
         private Color connectorCollor = Colors.Black;
 
         /// <summary>
+        /// display value in format {valuePerSecond} [{valuePerSecondResult}] q/s
+        /// </summary>
+        [ObservableProperty]
+        private string? displayValuePerTime;
+
+        /// <summary>
+        /// Tooltop
+        /// </summary>
+        [ObservableProperty]
+        private string? displayValuePerTimeTip;
+
+        /// <summary>
+        /// Flag when on calculation requested resource more then available
+        /// </summary>
+        [ObservableProperty]
+        private bool hasCalculationWarning;
+
+        /// <summary>
         /// Current icon
         /// </summary>
         [ObservableProperty]
@@ -56,12 +76,14 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private string? id;
 
+        [ObservableProperty]
+        private bool isAny;
+
         /// <summary>
         /// Is connected or not
         /// </summary>
         [ObservableProperty]
         private bool isConnected;
-        public bool IsInput { get; }
 
         /// <summary>
         /// Display name
@@ -74,6 +96,10 @@ namespace DetravRecipeCalculator.ViewModels
         /// </summary>
         [ObservableProperty]
         private double timeToCraft;
+
+        // time time, seconds, ticks or other
+        [ObservableProperty]
+        private TimeType timeType;
 
         /// <summary>
         /// Current amount of craft
@@ -93,115 +119,17 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private double valuePerSecond;
 
-        // time time, seconds, ticks or other
-        [ObservableProperty]
-        private TimeType timeType;
-
         /// <summary>
-        /// display value in format {valuePerSecond} [{valuePerSecondResult}] q/s
+        /// Abount per specified time
         /// </summary>
         [ObservableProperty]
-        private string? displayValuePersecond;
+        private double valuePerTime;
 
         /// <summary>
-        /// Tooltop
+        /// Set or not by result table ... ?
         /// </summary>
         [ObservableProperty]
-        private string? displayValuePersecondTip;
-
-        /// <summary>
-        /// Flag when on calculation requested resource more then available
-        /// </summary>
-        [ObservableProperty]
-        private bool hasCalculationWarning;
-
-        [ObservableProperty]
-        private bool isAny;
-
-        private readonly Dictionary<string, double> values = new Dictionary<string, double>();
-
-        public void RestoreState(PinModel model)
-        {
-            Id = model.Id;
-            IsAny = true;
-            Name = model.Name;
-            AssignIcon();
-
-        }
-
-        private void AssignIcon()
-        {
-            var pipeline = Parent.Parent.Pipeline;
-
-            var resource = pipeline.Resources.FirstOrDefault(m => m.Name == Name);
-
-            if (resource != null)
-            {
-                Icon = resource.IconFiltered;
-                ConnectorCollor = resource.ConnectorColorValue;
-                BackgroundColor = resource.BackgroundColorValue;
-                IsAny = false;
-            }
-            else
-            {
-                ConnectorCollor = DetravColorHelper.GetRandomColor(Name);
-                IsAny = true;
-            }
-        }
-
-        public PinModel SaveState()
-        {
-            var model = new PinModel();
-            model.Id = Id = Guid.NewGuid().ToString();
-            model.Name = Name;
-            return model;
-        }
-
-        partial void OnConnectionsNumberChanged(int value)
-        {
-            IsConnected = value != 0;
-        }
-
-        partial void OnTimeToCraftChanged(double value)
-        {
-            UpdateValuePerSecond();
-        }
-
-        partial void OnValueChanged(double value)
-        {
-            UpdateValuePerSecond();
-        }
-
-        partial void OnValueExpressionChanged(string? value)
-        {
-            RefreshValue();
-        }
-
-        partial void OnTimeTypeChanged(TimeType value)
-        {
-            UpdateValuePerSecond();
-            UpdateDisplayValuePersecond();
-        }
-
-        private void RefreshValue()
-        {
-            var newValue = ExpressionUtils.GetValue(ValueExpression, values);
-            Value = newValue;
-        }
-
-        private void UpdateValuePerSecond()
-        {
-            var time = TimeToCraft;
-
-            if (Math.Abs(time) < 0.0000001)
-            {
-                time = 0.0000001;
-            }
-
-            ValuePerSecond = Value / time * TimeType.GetTimeInSeconds();
-        }
-
-        public NodeVM Parent { get; }
+        private bool isSet;
 
         public ConnectorVM(NodeVM node, bool isInput)
         {
@@ -209,7 +137,7 @@ namespace DetravRecipeCalculator.ViewModels
             TimeType = node.TimeType;
             Parent = node;
             IsAny = true;
-            UpdateDisplayValuePersecond();
+            UpdateDisplayValuePerTime();
         }
 
         public ConnectorVM(NodeVM node, string? name, bool isInput)
@@ -219,35 +147,12 @@ namespace DetravRecipeCalculator.ViewModels
             AssignIcon();
         }
 
-        private void UpdateDisplayValuePersecond()
-        {
-            StringBuilder sb = new StringBuilder();
-
-
-            sb.Append(GetFormated(ValuePerSecond));
-
-            sb.Append(' ');
-
-            sb.Append('/');
-            sb.Append(TimeType.GetLocalizedShortValue());
-
-
-            DisplayValuePersecond = sb.ToString();
-
-            sb.Clear();
-
-            sb.Append(ValuePerSecond).Append(' ');
-            sb.Append('/');
-            sb.Append(TimeType.GetLocalizedShortValue());
-
-
-            DisplayValuePersecondTip = sb.ToString();
-
-        }
+        public bool IsInput { get; }
+        public NodeVM Parent { get; }
+        
 
         public static string GetFormated(double v)
         {
-
             if (Math.Abs(v) >= 100)
             {
                 return string.Format("{0:0}", v);
@@ -270,11 +175,27 @@ namespace DetravRecipeCalculator.ViewModels
             }
         }
 
-        partial void OnValuePerSecondChanged(double value)
+        public void RestoreState(PinModel model)
         {
-            UpdateDisplayValuePersecond();
+            Id = model.Id;
+            IsAny = true;
+            Name = model.Name;
+            TimeToCraft = model.TimeToCraft;
+            Value = model.Value;
+            IsSet = model.IsSet;
+            AssignIcon();
         }
 
+        public PinModel SaveState()
+        {
+            var model = new PinModel();
+            model.Id = Id = Guid.NewGuid().ToString();
+            model.Name = Name;
+            model.Value = Value;
+            model.TimeToCraft = TimeToCraft;
+            model.IsSet = IsSet;
+            return model;
+        }
 
         public void SetParameter(string? name, double value)
         {
@@ -283,6 +204,105 @@ namespace DetravRecipeCalculator.ViewModels
             RefreshValue();
         }
 
+        private void AssignIcon()
+        {
+            var pipeline = Parent.Parent.Pipeline;
 
+            var resource = pipeline.Resources.FirstOrDefault(m => m.Name == Name);
+
+            if (resource != null)
+            {
+                Icon = resource.IconFiltered;
+                ConnectorCollor = resource.ConnectorColorValue;
+                BackgroundColor = resource.BackgroundColorValue;
+                IsAny = false;
+            }
+            else
+            {
+                ConnectorCollor = DetravColorHelper.GetRandomColor(Name);
+                IsAny = true;
+            }
+        }
+
+        partial void OnConnectionsNumberChanged(int value)
+        {
+            IsConnected = value != 0;
+        }
+
+        partial void OnTimeToCraftChanged(double value)
+        {
+            UpdateValuePerSecond();
+        }
+
+        partial void OnTimeTypeChanged(TimeType value)
+        {
+            UpdateValuePerTime();
+            UpdateDisplayValuePerTime();
+        }
+
+        partial void OnValueChanged(double value)
+        {
+            UpdateValuePerSecond();
+        }
+
+        partial void OnValueExpressionChanged(string? value)
+        {
+            RefreshValue();
+        }
+
+        partial void OnValuePerSecondChanged(double value)
+        {
+            UpdateValuePerTime();
+        }
+
+        partial void OnValuePerTimeChanged(double value)
+        {
+            UpdateDisplayValuePerTime();
+        }
+
+        private void RefreshValue()
+        {
+            var newValue = ExpressionUtils.GetValue(ValueExpression, values);
+            Value = newValue;
+        }
+
+        private void UpdateDisplayValuePerTime()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(GetFormated(ValuePerTime));
+
+            sb.Append(' ');
+
+            sb.Append('/');
+            sb.Append(TimeType.GetLocalizedShortValue());
+
+            DisplayValuePerTime = sb.ToString();
+
+            sb.Clear();
+
+            sb.AppendLine(String.Format(Xloc.Get("__ConnectorTip_Name"), Name));
+            sb.AppendLine(String.Format(Xloc.Get("__ConnectorTip_ValuePerSecond"), ValuePerSecond, TimeType.Second.GetLocalizedShortValue()));
+            sb.AppendLine(String.Format(Xloc.Get("__ConnectorTip_ValuePerTime"), ValuePerTime, TimeType.GetLocalizedShortValue()));
+
+            DisplayValuePerTimeTip = sb.ToString();
+        }
+
+        private void UpdateValuePerSecond()
+        {
+            var time = TimeToCraft;
+
+            if (Math.Abs(time) < 0.0000001)
+            {
+                time = 0.0000001;
+            }
+
+            ValuePerSecond = Value / time;
+        }
+
+        private void UpdateValuePerTime()
+        {
+            ValuePerTime = ValuePerSecond * TimeType.GetTimeInSeconds();
+        }
     }
 }

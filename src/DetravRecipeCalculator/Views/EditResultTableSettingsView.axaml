@@ -1,0 +1,62 @@
+<Window
+    x:Class="DetravRecipeCalculator.Views.EditResultTableSettingsView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:DetravRecipeCalculator.ViewModels"
+    Title="EditResultTableSettingsView"
+    Width="400"
+    Height="500">
+    <DockPanel>
+
+        <UniformGrid Columns="2" DockPanel.Dock="Bottom">
+            <Button
+                Margin="3"
+                HorizontalAlignment="Stretch"
+                Background="LightGreen"
+                Click="Button_Ok_Click">
+                <TextBlock x:Name="tbBtnOk" HorizontalAlignment="Center" />
+            </Button>
+            <Button
+                Margin="3"
+                HorizontalAlignment="Stretch"
+                Background="LightCoral"
+                Click="Button_Cancel_Click">
+                <TextBlock x:Name="tbBtnCancel" HorizontalAlignment="Center" />
+            </Button>
+        </UniformGrid>
+        <ScrollViewer>
+            <StackPanel>
+                <TextBlock
+                    x:Name="tbNotes"
+                    Margin="3"
+                    FontSize="24"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Name="tbCurrenTime"
+                    Margin="3"
+                    FontSize="24"
+                    TextWrapping="Wrap" />
+                <ItemsControl x:Name="icItems">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="vm:ResourceRequestEditorVM">
+                            <Grid ColumnDefinitions="100,*">
+                                <CheckBox
+                                    Grid.Column="0"
+                                    Margin="3"
+                                    Content="{Binding Name}"
+                                    IsChecked="{Binding IsSet}" />
+                                <TextBox
+                                    Grid.Column="1"
+                                    Margin="3"
+                                    IsEnabled="{Binding IsSet}"
+                                    Text="{Binding ValueInCurrentTime}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

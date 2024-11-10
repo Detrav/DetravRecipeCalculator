@@ -65,6 +65,7 @@ namespace DetravRecipeCalculator.ViewModels
                     Input.Add(new ConnectorVM(this, ResourceName, true));
                 if (Output.Count == 0)
                     Output.Add(new ConnectorVM(this, ResourceName, false));
+
             }
         }
 
@@ -88,3 +89,4 @@ namespace DetravRecipeCalculator.ViewModels
         }
     }
 }
+

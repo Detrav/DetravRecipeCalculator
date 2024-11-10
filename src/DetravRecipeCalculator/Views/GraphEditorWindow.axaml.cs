@@ -165,10 +165,12 @@ public partial class GraphEditorWindow : Window
             base.OnPointerReleased(e);
 
 
-        //if (Editor.IsMouseCaptureWithin)
-        //{
-        //    e.Pointer.Capture(Editor);
-        //}
+
+
+        if (Editor.IsMouseCaptureWithin)
+        {
+            FixPan();
+        }
 
 
         //if(Editor.IsMouseCaptureWithin)
@@ -515,8 +517,10 @@ public partial class GraphEditorWindow : Window
                         // i hate components
 
 
-                        Editor.GetType().GetProperty(nameof(NodifyEditor.IsMouseCaptureWithin))!.SetValue(Editor, false);
+                       FixPan();
                     }
+
+                    graph.UndoRedo.PushState("Add split");
 
                 }
 
@@ -524,6 +528,11 @@ public partial class GraphEditorWindow : Window
         }
 
         e.Handled = true;
+    }
+
+    private void FixPan()
+    {
+        Editor.GetType().GetProperty(nameof(NodifyEditor.IsMouseCaptureWithin))!.SetValue(Editor, false);
     }
 
 

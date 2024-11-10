@@ -157,3 +157,11 @@ __ResultTable_TitleResources=Resources Summary (Steps)
 
 __SelectTemplateWindow_Title=Select Template for Creating
 __SelectTemplateWindow_Empty=Empty
+
+__EditResultTableSettingsWindow_Title=Edit Requests
+__EditResultTableSettingsWindow_Warning=Note that all values are set in the current time, which is now:
+
+
+__ConnectorTip_Name=Name: {0}
+__ConnectorTip_ValuePerSecond=Value per second: {0} {1}
+__ConnectorTip_ValuePerTime=Value per time: {0} {1}

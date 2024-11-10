@@ -31,8 +31,10 @@ public partial class ResultTableView : UserControl
     {
 
 
-        if (DataContext is ResultDataTable table)
+        if (DataContext is ResultDataTableContainer container)
         {
+            var table = container.Table;
+
             if (source == null)
             {
                 source = new FlatTreeDataGridSource<ResultTableRow>(table.Rows);
@@ -40,7 +42,7 @@ public partial class ResultTableView : UserControl
             }
             else
             {
-                source.Items = table.Rows;
+                source.Items = table.Rows.ToArray();
             }
 
             foreach (var column in table.Columns)

@@ -11,7 +11,7 @@
     xmlns:vm="using:DetravRecipeCalculator.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    x:DataType="vm:ResultDataTable"
+    x:DataType="vm:ResultDataTableContainer"
     mc:Ignorable="d">
     <UserControl.DataTemplates>
         <DataTemplate x:DataType="vm:ResultTableCellDouble">
@@ -48,9 +48,9 @@
     <DockPanel IsVisible="{Binding, Converter={x:Static ObjectConverters.IsNotNull}}">
         <CheckBox
             Margin="3"
-            Content="{Binding Title}"
+            Content="{Binding Table.Title}"
             DockPanel.Dock="Top"
-            IsChecked="{Binding IsVisible}" />
+            IsChecked="{Binding Table.IsVisible}" />
         <TreeDataGrid
             x:Name="dbGrid"
             Margin="3"
@@ -59,6 +59,6 @@
             CanUserResizeColumns="True"
             CanUserSortColumns="True"
             Foreground="Black"
-            IsVisible="{Binding IsVisible}" />
+            IsVisible="{Binding Table.IsVisible}" />
     </DockPanel>
 </UserControl>

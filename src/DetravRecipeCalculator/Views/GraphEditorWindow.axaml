@@ -62,6 +62,7 @@
             <MenuItem x:Name="miAddNode" Header="{Binding Loc.MenuAddNode.Text}" />
             <MenuItem x:Name="miAddComment" Header="{Binding Loc.MenuAddComment.Text}" />
             <MenuItem x:Name="miAddResultTable" Header="{Binding Loc.MenuAddResultTable.Text}" />
+            <MenuItem x:Name="miAddSplit" Header="{Binding Loc.MenuAddSplit.Text}" />
             <Separator />
             <MenuItem Header="{Binding Loc.MenuEdit.Text}">
                 <MenuItem x:Name="miUndo" Header="{Binding Loc.MenuUndo.Text}" />
@@ -129,6 +130,7 @@
                         <nodify:Connection
                             Disconnect="LineConnection_Disconnect"
                             Source="{Binding Output.Anchor}"
+                            Split="LineConnection_Split"
                             Target="{Binding Input.Anchor}">
                             <nodify:Connection.Stroke>
                                 <SolidColorBrush Color="{Binding Output.ConnectorCollor}" />
@@ -171,6 +173,9 @@
                     </DataTemplate>
                     <DataTemplate DataType="vm:ResultTableNodeVM">
                         <views:ResultTableNodeView />
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:SplitConnectorNodeVM">
+                        <views:SplitConnectorNodeView />
                     </DataTemplate>
                 </nodify:NodifyEditor.DataTemplates>
                 <nodify:NodifyEditor.ItemContainerTheme>

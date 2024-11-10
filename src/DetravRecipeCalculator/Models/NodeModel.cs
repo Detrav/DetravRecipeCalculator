@@ -23,6 +23,7 @@ namespace DetravRecipeCalculator.Models
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public List<PinModel> Output { get; } = new List<PinModel>();
 
+        public string? ResourceName { get; set; }
         public string? RecipeId { get; set; }
 
         [JsonConverter(typeof(SizeJsonConverter))]

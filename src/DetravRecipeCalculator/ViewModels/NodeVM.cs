@@ -70,13 +70,13 @@ namespace DetravRecipeCalculator.ViewModels
 
             foreach (var item in Input)
             {
-                if (item.IsConnected && item.SaveState() is PinModel itemModel)
+                if (item.IsConnected && !item.IsAny && item.SaveState() is PinModel itemModel)
                     model.Input.Add(itemModel);
             }
 
             foreach (var item in Output)
             {
-                if (item.IsConnected && item.SaveState() is PinModel itemModel)
+                if (item.IsConnected && !item.IsAny && item.SaveState() is PinModel itemModel)
                     model.Output.Add(itemModel);
             }
 

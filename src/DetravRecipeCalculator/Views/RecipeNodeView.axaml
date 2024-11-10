@@ -41,10 +41,6 @@
                         Height="3"
                         Background="Orange"
                         IsVisible="{Binding HasCalculationWarning}" />
-                    <Border
-                        Height="3"
-                        Background="Red"
-                        IsVisible="{Binding IsUnknown}" />
                 </StackPanel>
             </DataTemplate>
         </ResourceDictionary>

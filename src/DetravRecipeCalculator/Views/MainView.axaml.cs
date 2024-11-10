@@ -231,6 +231,9 @@ public partial class MainView : UserControl
 
                                 foreach (var node in g.Nodes)
                                 {
+                                    if (node.ResourceName == oldName)
+                                        node.ResourceName = newName;
+
                                     foreach (var pin in node.Input)
                                         if (pin.Name == oldName)
                                             pin.Name = newName;

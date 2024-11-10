@@ -81,7 +81,7 @@ namespace DetravRecipeCalculator.ViewModels
                 var input = nodes.SelectMany(x => x.Input).FirstOrDefault(m => m.Id == connectionModel.InputId);
                 var output = nodes.SelectMany(x => x.Output).FirstOrDefault(m => m.Id == connectionModel.OutputId);
 
-                if (input != null && output != null)
+                if (input != null && output != null && !input.IsAny && !output.IsAny)
                 {
                     input.ConnectionsNumber++;
                     output.ConnectionsNumber++;
@@ -123,7 +123,7 @@ namespace DetravRecipeCalculator.ViewModels
         }
 
 
-        
+
         public void AddConnection(ConnectionVM connetion)
         {
 
@@ -294,6 +294,7 @@ namespace DetravRecipeCalculator.ViewModels
 
             public XLocItem MenuAddComment { get; } = new XLocItem("__GraphEditor_MenuAddComment");
             public XLocItem MenuAddResultTable { get; } = new XLocItem("__GraphEditor_MenuAddResultTable");
+            public XLocItem MenuAddSplit { get; } = new XLocItem("__GraphEditor_MenuAddSplit");
             public XLocItem MenuAddNode { get; } = new XLocItem("__GraphEditor_MenuAddNode");
             public XLocItem MenuCopy { get; } = new XLocItem("__GraphEditor_MenuCopy");
             public XLocItem MenuCut { get; } = new XLocItem("__GraphEditor_MenuCut");

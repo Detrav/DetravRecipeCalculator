@@ -43,6 +43,18 @@ public partial class GraphEditorWindow : Window
 
         DataContextChanged += GraphEditorWindow_DataContextChanged;
         miAddResultTable.Click += MiAddResultTable_Click;
+        miAddSplit.Click += MiAddSplit_Click;
+    }
+
+    private void MiAddSplit_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is GraphEditorVM vm)
+        {
+            var node = new SplitConnectorNodeVM(vm, null);
+            node.Location = lastClick;
+            vm.Nodes.Add(node);
+            vm.UndoRedo.PushState("Add split");
+        }
     }
 
     private void MiAddResultTable_Click(object? sender, RoutedEventArgs e)
@@ -143,8 +155,19 @@ public partial class GraphEditorWindow : Window
             e.Handled = contextRequestedEventArgs.Handled;
         }
 
+
         if (!e.Handled)
             base.OnPointerReleased(e);
+
+
+        //if (Editor.IsMouseCaptureWithin)
+        //{
+        //    e.Pointer.Capture(Editor);
+        //}
+
+
+        //if(Editor.IsMouseCaptureWithin)
+        //    Editor.IsMouseCaptureWithin = false;
     }
 
     private bool CanDelete()
@@ -454,6 +477,48 @@ public partial class GraphEditorWindow : Window
             }
         }
 
+    }
+
+    private void LineConnection_Split(object? sender, RoutedEventArgs e)
+    {
+        if (e is ConnectionEventArgs args)
+        {
+            var location = args.SplitLocation;
+
+            if (args.Connection is ConnectionVM cvm)
+            {
+                if (!cvm.Input.IsAny && !cvm.Output.IsAny)
+                {
+                    var graph = cvm.Input.Parent.Parent;
+
+                    var middleNode = new SplitConnectorNodeVM(graph, cvm.Input.Name);
+                    middleNode.Location = location + new Point(-20, -10);
+                    var connection1 = new ConnectionVM(cvm.Output, middleNode.Input.First());
+                    var connection2 = new ConnectionVM(middleNode.Output.First(), cvm.Input);
+
+                    graph.Nodes.Add(middleNode);
+
+                    graph.Disconnect(cvm);
+                    graph.AddConnection(connection1);
+                    graph.AddConnection(connection2);
+
+                    if(graph.SelectedNodes!=null)
+                    {
+                        graph.SelectedNodes.Clear();
+                        graph.SelectedNodes.Add(middleNode);
+
+                        // i hate components
+
+
+                        Editor.GetType().GetProperty(nameof(NodifyEditor.IsMouseCaptureWithin))!.SetValue(Editor, false);
+                    }
+
+                }
+
+            }
+        }
+
+        e.Handled = true;
     }
 
 

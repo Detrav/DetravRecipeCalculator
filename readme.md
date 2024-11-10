@@ -166,5 +166,17 @@ Version 0.6
 * Removed the "Number" variable; to limit load, an intermediate recipe should now be added.
 * Updated output table: now shows input and output for each resource, with an added "Total" column. Negative values indicate resource consumption or deficiency, while positive values indicate surplus.
 - Discontinued NativeAOT compilation; now using a standard .NET application. This increased file size from 20MB to 40MB per operating system.
+
+Version 0.7
+- Fixed error where result table requests did not remove old requests before adding a new one.
+- Fixed a bug with PNG export rendering.
+* Updated algorithm for the input/output total table.
++ Added feature to save table visibility settings to a file, allowing restoration upon reopening the graph editor.
+* Replaced line connections with Bezier curve connections.
+- Fixed a bug where an empty variable name caused parsing errors.
++ Added support for splitting variables by commas, in addition to spaces.
+* Pins with unknown types are now auto-converted to specified types; connecting unknown pins to each other is no longer allowed.
++ Added split pins, allowing multi-connection lines from a single pin.
+- Fixed a bug where viewport movement caused focus loss; a partial fix has been applied, though the issue may still occur in some cases.
 ```
 

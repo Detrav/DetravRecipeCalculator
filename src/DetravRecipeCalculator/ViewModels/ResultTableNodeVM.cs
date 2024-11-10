@@ -241,7 +241,6 @@ namespace DetravRecipeCalculator.ViewModels
             if (inputPin == null)
                 Input.Insert(0, inputPin = new ConnectorVM(this, true));
 
-            inputPin.IsUnknown = false;
             inputPin.ConnectorCollor = Colors.Gray;
             inputPin.IsAny = true;
             inputPin.Name = null;

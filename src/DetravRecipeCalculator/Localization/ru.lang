@@ -102,6 +102,7 @@ __GraphEditor_WindowTitle=Редактор графов
 __GraphEditor_MenuAddNode=Добавить узел
 __GraphEditor_MenuAddComment=Добавить комментарий
 __GraphEditor_MenuAddResultTable=Добавить таблицу результатов
+__GraphEditor_MenuAddSplit=Добавить разделитель
 __GraphEditor_MenuEdit=Редактировать
 __GraphEditor_MenuUndo=Отменить
 __GraphEditor_MenuRedo=Повторить

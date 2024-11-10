@@ -29,7 +29,7 @@ namespace DetravRecipeCalculator.ViewModels
         private void FinishConnect(ConnectorVM? target)
         {
             var source = Source;
-            if (target != null && source != null && source.IsInput == (!target.IsInput) && (source.Name == target.Name || source.IsAny == (!target.IsAny)))
+            if (target != null && source != null && source.IsInput == (!target.IsInput) && (!string.IsNullOrWhiteSpace(source.Name) && source.Name == target.Name || source.IsAny == (!target.IsAny)))
             {
                 if (source.IsInput) Connect(target, source);
                 else Connect(source, target);

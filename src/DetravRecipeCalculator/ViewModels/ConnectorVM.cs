@@ -64,12 +64,6 @@ namespace DetravRecipeCalculator.ViewModels
         public bool IsInput { get; }
 
         /// <summary>
-        /// Is unknonwn, means not in the recipe, mb deleted
-        /// </summary>
-        [ObservableProperty]
-        private bool isUnknown;
-
-        /// <summary>
         /// Display name
         /// </summary>
         [ObservableProperty]
@@ -129,7 +123,7 @@ namespace DetravRecipeCalculator.ViewModels
         public void RestoreState(PinModel model)
         {
             Id = model.Id;
-            IsAny = model.IsAny;
+            IsAny = true;
             Name = model.Name;
             AssignIcon();
 
@@ -146,12 +140,12 @@ namespace DetravRecipeCalculator.ViewModels
                 Icon = resource.IconFiltered;
                 ConnectorCollor = resource.ConnectorColorValue;
                 BackgroundColor = resource.BackgroundColorValue;
-                IsUnknown = false;
+                IsAny = false;
             }
             else
             {
                 ConnectorCollor = DetravColorHelper.GetRandomColor(Name);
-                IsUnknown = true;
+                IsAny = true;
             }
         }
 
@@ -159,7 +153,6 @@ namespace DetravRecipeCalculator.ViewModels
         {
             var model = new PinModel();
             model.Id = Id = Guid.NewGuid().ToString();
-            model.IsAny = IsAny;
             model.Name = Name;
             return model;
         }
@@ -215,6 +208,7 @@ namespace DetravRecipeCalculator.ViewModels
             this.IsInput = isInput;
             TimeType = node.TimeType;
             Parent = node;
+            IsAny = true;
             UpdateDisplayValuePersecond();
         }
 

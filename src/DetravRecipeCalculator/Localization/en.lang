@@ -105,6 +105,7 @@ __GraphEditor_WindowTitle=Graph Editor
 __GraphEditor_MenuAddNode=Add Node
 __GraphEditor_MenuAddComment=Add Comment
 __GraphEditor_MenuAddResultTable=Add Result Table
+__GraphEditor_MenuAddSplit=Add splitter
 __GraphEditor_MenuEdit=Edit
 __GraphEditor_MenuUndo=Undo
 __GraphEditor_MenuRedo=Redo

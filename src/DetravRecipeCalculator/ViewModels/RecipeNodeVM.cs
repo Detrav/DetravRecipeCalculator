@@ -191,13 +191,12 @@ namespace DetravRecipeCalculator.ViewModels
                 pins.Add(pin);
             }
 
-            foreach (var pin in oldList)
-            {
-                var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == pin.Name);
-                pin.TimeToCraft = TimeToCraft;
-                pin.IsUnknown = true;
-                pins.Add(pin);
-            }
+            //foreach (var pin in oldList)
+            //{
+            //    var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == pin.Name);
+            //    pin.TimeToCraft = TimeToCraft;
+            //    pins.Add(pin);
+            //}
         }
     }
 }

@@ -205,8 +205,9 @@ Version 0.8
 + Enabled double-click editing for recipes and resources.
 
 Version 0.9
-* updated logic of result steps table
-* input output on the summary table is replaced by a step, negative values are input, positive values are output
-* updated architecture to be able to use subgraphs
+* Updated logic for the result steps table.
+* Replaced input/output columns in the summary table with a unified "Step" column; negative values indicate input, positive values indicate output.
+* Enhanced architecture to support subgraphs.
+- Fixed multiple bugs.
 ```
 

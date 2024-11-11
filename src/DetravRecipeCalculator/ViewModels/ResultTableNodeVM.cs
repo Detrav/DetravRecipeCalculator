@@ -101,14 +101,14 @@ namespace DetravRecipeCalculator.ViewModels
                 foreach (var pin in nodeHelper.Node.Input)
                 {
 
-                    TotalResources.AddtToCellWithFindRow(pin, "Step" + (generationCount - nodeHelper.Generation), -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                    TotalResources.AddtToCellWithFindRow(pin, "Step" + (generationCount - nodeHelper.Generation + 1), -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                     TotalResources.AddtToCellWithFindRow(pin, "Total", -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                 }
 
                 foreach (var pin in nodeHelper.Node.Output)
                 {
 
-                    TotalResources.AddtToCellWithFindRow(pin, "Step" + (generationCount - nodeHelper.Generation), pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                    TotalResources.AddtToCellWithFindRow(pin, "Step" + (generationCount - nodeHelper.Generation + 1), pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                     TotalResources.AddtToCellWithFindRow(pin, "Total", pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                 }
             }
@@ -117,7 +117,7 @@ namespace DetravRecipeCalculator.ViewModels
             {
                 if (nodeHelper.Node == this)
                     continue;
-                
+
                 if (nodeHelper.Node is RecipeNodeVM recipeNode)
                 {
                     var row = new ResultTableRow();

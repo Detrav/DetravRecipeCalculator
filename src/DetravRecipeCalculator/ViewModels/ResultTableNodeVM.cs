@@ -126,8 +126,7 @@ namespace DetravRecipeCalculator.ViewModels
 
                 for (int i = 1; i < generationCount; i++)
                 {
-                    TotalResources.AddOrUpdateColumn("Input" + i, Xloc.Get("__ResultTable_Table_Input") + "#" + i + "/" + Parent.TimeType.GetLocalizedShortValue());
-                    TotalResources.AddOrUpdateColumn("Output" + i, Xloc.Get("__ResultTable_Table_Output") + "#" + i + "/" + Parent.TimeType.GetLocalizedShortValue());
+                    TotalResources.AddOrUpdateColumn("Step" + i, Xloc.Get("__ResultTable_Table_Step") + "#" + i);
                 }
 
                 TotalResources.AddOrUpdateColumn("Total", Xloc.Get("__ResultTable_Table_Total"));
@@ -169,14 +168,14 @@ namespace DetravRecipeCalculator.ViewModels
                     foreach (var pin in node.Input)
                     {
 
-                        TotalResources.AddtToCellWithFindRow(pin, "Input" + node.Generation, pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                        TotalResources.AddtToCellWithFindRow(pin, "Step" + node.Generation, -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                         TotalResources.AddtToCellWithFindRow(pin, "Total", -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                     }
 
                     foreach (var pin in node.Output)
                     {
 
-                        TotalResources.AddtToCellWithFindRow(pin, "Output" + node.Generation, pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                        TotalResources.AddtToCellWithFindRow(pin, "Step" + node.Generation, pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                         TotalResources.AddtToCellWithFindRow(pin, "Total", pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
                     }
                 }

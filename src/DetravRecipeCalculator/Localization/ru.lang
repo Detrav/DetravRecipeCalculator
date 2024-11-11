@@ -139,6 +139,7 @@ __ResultTable_Title=Таблица результатов
 __ResultTable_Table_Name=Имя
 __ResultTable_Table_Input=Вх
 __ResultTable_Table_Output=Вых
+__ResultTable_Table_Step=Шаг
 __ResultTable_Table_Total=Итого
 
 __ResultTable_TitleRecipes_Number=Количество

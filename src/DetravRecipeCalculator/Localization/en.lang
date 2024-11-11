@@ -142,6 +142,7 @@ __ResultTable_Title=Result Table
 __ResultTable_Table_Name=Name
 __ResultTable_Table_Input=In
 __ResultTable_Table_Output=Out
+__ResultTable_Table_Step=Step
 __ResultTable_Table_Total=Total
 
 __ResultTable_TitleRecipes_Number=Quantity

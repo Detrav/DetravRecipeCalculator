@@ -206,5 +206,6 @@ Version 0.8
 
 Version 0.9
 * updated logic of result steps table
+* input output on the summary table is replaced by a step, negative values are input, positive values are output
 ```
 

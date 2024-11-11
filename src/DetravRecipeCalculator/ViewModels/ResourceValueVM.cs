@@ -9,29 +9,25 @@ using System.Windows.Input;
 
 namespace DetravRecipeCalculator.ViewModels
 {
-    public partial class ResourceValueVM : ViewModelBase, IUndoRedoObject
+    public partial class ResourceValueVM : ViewModelBase
     {
         [ObservableProperty]
         private string? name;
-
-        [ObservableProperty]
-        private bool saved;
 
         [ObservableProperty]
         private string? value;
 
         public ResourceValueVMLocalization Loc { get; } = ResourceValueVMLocalization.Instance;
 
-        public void RestoreState(object state)
+        public void RestoreState(ResourceValueModel model)
         {
-            if (state is ResourceValueModel model)
-            {
-                Name = model.Name;
-                Value = model.Value;
-            }
+
+            Name = model.Name;
+            Value = model.Value;
+
         }
 
-        public object SaveState()
+        public ResourceValueModel SaveState()
         {
             var model = new ResourceValueModel();
             model.Name = Name;

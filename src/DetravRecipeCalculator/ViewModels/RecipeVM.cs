@@ -148,20 +148,9 @@ namespace DetravRecipeCalculator.ViewModels
             model.Variables = Variables;
 
             foreach (var item in Input)
-            {
-                if (item.SaveState() is ResourceValueModel resourceValueModel)
-                {
-                    model.Input.Add(resourceValueModel);
-                }
-            }
-
+                model.Input.Add(item.SaveState());
             foreach (var item in Output)
-            {
-                if (item.SaveState() is ResourceValueModel resourceValueModel)
-                {
-                    model.Output.Add(resourceValueModel);
-                }
-            }
+                model.Output.Add(item.SaveState());
 
             return model;
         }
@@ -216,7 +205,7 @@ namespace DetravRecipeCalculator.ViewModels
         }
 
 
-        
+
 
     }
 }

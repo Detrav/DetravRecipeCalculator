@@ -206,7 +206,7 @@ public partial class MainView : UserControl
                         var oldName = vm.Pipeline.SelectedResource.Name;
                         var newName = item.Name;
 
-                        if (oldName != newName)
+                        if (oldName != newName && oldName != null && newName != null)
                         {
                             if (vm.Pipeline.Resources.Any(m => m.Name == newName))
                             {
@@ -225,23 +225,7 @@ public partial class MainView : UserControl
                                         item2.Name = newName;
                             }
 
-                            if (vm.Pipeline.Graph != null)
-                            {
-                                var g = vm.Pipeline.Graph;
-
-                                foreach (var node in g.Nodes)
-                                {
-                                    if (node.ResourceName == oldName)
-                                        node.ResourceName = newName;
-
-                                    foreach (var pin in node.Input)
-                                        if (pin.Name == oldName)
-                                            pin.Name = newName;
-                                    foreach (var pin in node.Output)
-                                        if (pin.Name == oldName)
-                                            pin.Name = newName;
-                                }
-                            }
+                            RenameResource(vm.Pipeline.Graph, oldName, newName);
                         }
 
                         vm.Pipeline.SelectedResource.RestoreState(item.SaveState());
@@ -253,6 +237,40 @@ public partial class MainView : UserControl
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    private void RenameResource(GraphModel? graph, string oldName, string newName)
+    {
+        if (graph != null)
+        {
+            if (graph.Inputs.TryGetValue(oldName, out var inputValue))
+            {
+                graph.Inputs.Remove(oldName);
+                graph.Inputs[newName] = inputValue;
+            }
+
+            if (graph.Outputs.TryGetValue(oldName, out var outputValue))
+            {
+                graph.Outputs.Remove(oldName);
+                graph.Outputs[newName] = outputValue;
+            }
+
+            foreach (var node in graph.Nodes)
+            {
+
+                if (node.ResourceName == oldName)
+                    node.ResourceName = newName;
+
+                foreach (var pin in node.Input)
+                    if (pin.Name == oldName)
+                        pin.Name = newName;
+                foreach (var pin in node.Output)
+                    if (pin.Name == oldName)
+                        pin.Name = newName;
+
+                RenameResource(node.GraphModel, oldName, newName);
             }
         }
     }
@@ -494,7 +512,7 @@ Detrav Recipe Calculator
         }
 
         return false;
-    } 
+    }
 
     private void Grid_Recipe_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {

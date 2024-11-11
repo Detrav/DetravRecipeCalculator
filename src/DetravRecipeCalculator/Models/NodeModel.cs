@@ -22,8 +22,7 @@ namespace DetravRecipeCalculator.Models
 
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public List<PinModel> Output { get; } = new List<PinModel>();
-
-        public string? ResourceName { get; set; }
+        
         public string? RecipeId { get; set; }
 
         [JsonConverter(typeof(SizeJsonConverter))]
@@ -36,5 +35,7 @@ namespace DetravRecipeCalculator.Models
 
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public Dictionary<string, string?> Parameters { get; } = new Dictionary<string, string?>();
+        public GraphModel? GraphModel { get; set; }
+        public string? ResourceName { get; set; }
     }
 }

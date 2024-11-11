@@ -16,5 +16,9 @@ namespace DetravRecipeCalculator.Models
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public List<NodeModel> Nodes { get; } = new List<NodeModel>();
         public TimeType TimeType { get; set; }
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
+        public Dictionary<string, double> Inputs { get; } = new Dictionary<string, double>();
+        [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
+        public Dictionary<string, double> Outputs { get; } = new Dictionary<string, double>();
     }
 }

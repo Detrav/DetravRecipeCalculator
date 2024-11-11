@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
+using MsBox.Avalonia.Base;
 using Nodify;
 using System;
 using System.Collections.Generic;
@@ -66,6 +67,15 @@ namespace DetravRecipeCalculator.ViewModels
 
         public UndoRedoManager UndoRedo { get; }
 
+        /// <summary>
+        /// The all graph inputs for subgraph
+        /// </summary>
+        public Dictionary<string, double> Inputs { get; } = new Dictionary<string, double>();
+        /// <summary>
+        /// The all graph outputs for subgraph
+        /// </summary>
+        public Dictionary<string, double> Outputs { get; } = new Dictionary<string, double>();
+
         public static void RestoreState(GraphEditorVM parent, GraphModel model, List<NodeVM> nodes, List<ConnectionVM> connections)
         {
             foreach (var nodeModel in model.Nodes)
@@ -85,13 +95,12 @@ namespace DetravRecipeCalculator.ViewModels
                 var input = nodes.SelectMany(x => x.Input).FirstOrDefault(m => m.Id == connectionModel.InputId);
                 var output = nodes.SelectMany(x => x.Output).FirstOrDefault(m => m.Id == connectionModel.OutputId);
 
+
+
                 var connection = PendingConnectionVM.CanAddConnectionWithCheck(input, output, connections);
+
                 if (connection != null)
-                {
-                    connection.Input.Connection = connection.Output;
-                    connection.Output.Connections.Add(connection.Input);
-                    connections.Add(connection);
-                }
+                    AddConnection(nodes, connections, connection);
             }
 
             foreach (var node in nodes)
@@ -105,9 +114,6 @@ namespace DetravRecipeCalculator.ViewModels
 
         public static void SaveState(GraphModel model, IEnumerable<NodeVM> nodes, IEnumerable<ConnectionVM> connections)
         {
-
-
-
 
             foreach (var node in nodes)
             {
@@ -131,6 +137,17 @@ namespace DetravRecipeCalculator.ViewModels
 
         public void AddConnection(ConnectionVM connetion)
         {
+            AddConnection(Nodes, _connections, connetion);
+        }
+
+        public static void AddConnection(IList<NodeVM> nodes, IList<ConnectionVM> _connections, ConnectionVM connetion)
+        {
+            if (_connections.Contains(connetion))
+                return;
+            if (!nodes.Contains(connetion.Input.Parent))
+                return;
+            if (!nodes.Contains(connetion.Output.Parent))
+                return;
 
             connetion.Input.Connection = connetion.Output;
             connetion.Output.Connections.Add(connetion.Input);
@@ -224,13 +241,24 @@ namespace DetravRecipeCalculator.ViewModels
 
                 SelectedNodes = new ObservableCollection<NodeVM>(nodesList);
             }
-            
+
         }
 
         public void RestoreState(object state)
         {
             if (state is GraphModel model)
             {
+                Inputs.Clear();
+                foreach (var item in model.Inputs)
+                {
+                    Inputs[item.Key] = item.Value;
+                }
+                Outputs.Clear();
+                foreach (var item in model.Outputs)
+                {
+                    Outputs[item.Key] = item.Value;
+                }
+
                 Nodes.Clear();
                 _connections.Clear();
 
@@ -252,8 +280,14 @@ namespace DetravRecipeCalculator.ViewModels
         public object SaveState()
         {
             Build();
-
             GraphModel model = new GraphModel();
+
+
+            foreach (var item in Inputs)
+                model.Inputs[item.Key] = item.Value;
+            foreach (var item in Outputs)
+                model.Outputs[item.Key] = item.Value;
+
             model.TimeType = TimeType;
             SaveState(model, Nodes, Connections);
             return model;
@@ -261,20 +295,11 @@ namespace DetravRecipeCalculator.ViewModels
 
         private void Build()
         {
-            foreach(var node in Nodes)
-            {
-                node.UpdateExpressions();
-            }
+            var builder = new GraphBuilder(this, Nodes);
+
+            builder.Build();
 
             foreach (var node in Nodes)
-            {
-                if (node is ResultTableNodeVM resultTableNode)
-                {
-                    resultTableNode.Build();
-                }
-            }
-
-            foreach(var node in Nodes)
             {
                 node.UpdateToolTips();
             }

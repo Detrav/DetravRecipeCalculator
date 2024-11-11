@@ -1,112 +1,75 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DetravRecipeCalculator.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//using CommunityToolkit.Mvvm.ComponentModel;
+//using DetravRecipeCalculator.Models;
+//using System;
+//using System.Collections.Generic;
+//using System.Collections.ObjectModel;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 
-namespace DetravRecipeCalculator.ViewModels
-{
-    public abstract partial class IntermediateNode : NodeVM
-    {
-        [ObservableProperty]
-        private string? resourceName;
+//namespace DetravRecipeCalculator.ViewModels
+//{
+//    public abstract partial class IntermediateNode : NodeVM
+//    {
+//        [ObservableProperty]
+//        private IEnumerable<string>? resourceNames;
 
-        protected IntermediateNode(GraphEditorVM parent, string? resourceName) : base(parent)
-        {
-            ResourceName = resourceName;
-            RestorePins();
-        }
+//        protected IntermediateNode(GraphEditorVM parent, IEnumerable<string> resourceNames) : base(parent)
+//        {
+//            ResourceNames = resourceNames.ToList();
+//            FixPins();
+//        }
 
-        public override void RestoreState(NodeModel model)
-        {
-            ResourceName = model.ResourceName;
-            base.RestoreState(model);
-            RestorePins();
-        }
+//        public override void FixPins()
+//        {
+//            base.FixPins();
 
-        public override NodeModel SaveState()
-        {
-            var model = base.SaveState();
-            model.ResourceName = ResourceName;
-            return model;
-        }
+//            if (ResourceNames == null || !ResourceNames.Any())
+//            {
+//                // no serialization any, just clear and add one
+//                Input.Clear();
+//                Output.Clear();
 
-        private void RestorePins()
-        {
-            var resource = Parent.Pipeline.Resources.FirstOrDefault(m => m.Name == ResourceName);
+//                Input.Add(new ConnectorInVM(this));
+//                Output.Add(new ConnectorOutVM(this));
+//            }
+//            else
+//            {
+//                for (int i = 0; i < Input.Count; i++)
+//                {
+//                    string? name = Input[i].Name;
+//                    if (string.IsNullOrEmpty(name) || !ResourceNames.Contains(name))
+//                    {
+//                        Input.RemoveAt(i);
+//                        i--;
+//                    }
+//                }
 
-            if (resource == null)
-            {
-                Input.Clear();
-                Output.Clear();
+//                for (int i = 0; i < Output.Count; i++)
+//                {
+//                    string? name = Output[i].Name;
+//                    if (string.IsNullOrEmpty(name) || !ResourceNames.Contains(name))
+//                    {
+//                        Output.RemoveAt(i);
+//                        i--;
+//                    }
+//                }
+//            }
+//        }
 
-                Input.Add(new ConnectorInVM(this));
-                Output.Add(new ConnectorOutVM(this));
-            }
-            else
-            {
-                for (int i = 0; i < Input.Count; i++)
-                    if (Input[i].Name != ResourceName || Input[i].IsAny)
-                    {
-                        Input.RemoveAt(i);
-                        i--;
-                    }
+//        public override void RestoreState(NodeModel model)
+//        {
+//            ResourceNames = model.ResourceNames.ToList();
+//            base.RestoreState(model);
+//        }
 
-                for (int i = 0; i < Output.Count; i++)
-                    if (Output[i].Name != ResourceName || Output[i].IsAny)
-                    {
-                        Output.RemoveAt(i);
-                        i--;
-                    }
-
-                if (Input.Count == 0)
-                    Input.Add(new ConnectorInVM(this, ResourceName));
-                if (Output.Count == 0)
-                    Output.Add(new ConnectorOutVM(this, ResourceName));
-
-            }
-        }
-
-        public override ConnectorInVM GetReplacementFor(ConnectorInVM self, ConnectorOutVM other)
-        {
-            if (Input.Contains(self) && self.IsAny && !other.IsAny)
-            {
-                Setup(self, other);
-                return self;
-            }
-            return base.GetReplacementFor(self, other);
-        }
-
-        private void Setup(ConnectorVM self, ConnectorVM other)
-        {
-            ResourceName = other.Name;
-
-            var state = other.SaveState();
-
-            foreach (var pin in Input)
-                pin.RestoreState(state);
-            foreach (var pin in Output)
-                pin.RestoreState(state);
-        }
-
-        public override ConnectorOutVM GetReplacementFor(ConnectorOutVM self, ConnectorInVM other)
-        {
-            if (Output.Contains(self) && self.IsAny && !other.IsAny)
-            {
-                Setup(self, other);
-                return self;
-            }
-            return base.GetReplacementFor(self, other);
-        }
-
-        /// <summary>
-        /// calculate own logic
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public abstract double ProviderRequests();
-    }
-}
+//        public override NodeModel SaveState()
+//        {
+//            var model = base.SaveState();
+//            if (ResourceNames != null)
+//                model.ResourceNames.AddRange(ResourceNames);
+//            return model;
+//        }
+//    }
+//}
 

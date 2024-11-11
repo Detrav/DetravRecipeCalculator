@@ -6,6 +6,7 @@ using DetravRecipeCalculator.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using static DetravRecipeCalculator.ViewModels.GraphEditorVM;
 
@@ -20,9 +21,10 @@ namespace DetravRecipeCalculator.ViewModels
         private string? title;
 
         [ObservableProperty]
-        private int generation;
-        [ObservableProperty]
         private double number;
+
+        [ObservableProperty]
+        private Exception? error;
 
         [ObservableProperty]
         private string? quantityTitle;
@@ -34,7 +36,7 @@ namespace DetravRecipeCalculator.ViewModels
         [ObservableProperty]
         private double timeToCraft = 1;
 
-        
+
 
         public GraphEditorVMLoc Loc => GraphEditorVMLoc.Instance;
 
@@ -69,6 +71,7 @@ namespace DetravRecipeCalculator.ViewModels
                 item.RestoreState(itemModel);
                 Output.Add(item);
             }
+            FixPins();
         }
 
         public virtual NodeModel SaveState()
@@ -92,16 +95,16 @@ namespace DetravRecipeCalculator.ViewModels
             return model;
         }
 
-        public virtual ConnectorOutVM GetReplacementFor(ConnectorOutVM self, ConnectorInVM other)
+        public virtual bool GetReplacementForAny(ConnectorOutVM self, ConnectorInVM other, [NotNullWhen(true)] out ConnectorOutVM? newSelf)
         {
-            //self.RestoreState(other.SaveState());
-            return self;
+            newSelf = null;
+            return false;
         }
 
-        public virtual ConnectorInVM GetReplacementFor(ConnectorInVM self, ConnectorOutVM other)
+        public virtual bool GetReplacementForAny(ConnectorInVM self, ConnectorOutVM other, [NotNullWhen(true)] out ConnectorInVM? newSelf)
         {
-            //self.RestoreState(other.SaveState());
-            return self;
+            newSelf = null;
+            return false;
         }
 
         public virtual void UpdateToolTips()
@@ -110,11 +113,20 @@ namespace DetravRecipeCalculator.ViewModels
                 pin.UpdateTooltips();
             foreach (var pin in Output)
                 pin.UpdateTooltips();
+        }
 
+        /// <summary>
+        /// Fix the stat of pins, remove extra, add a new etc
+        /// </summary>
+        public virtual void FixPins()
+        {
 
         }
 
 
+        /// <summary>
+        /// When run build for resut node
+        /// </summary>
         public virtual void Build()
         {
 
@@ -172,6 +184,15 @@ namespace DetravRecipeCalculator.ViewModels
         public virtual void UpdateExpressions()
         {
 
+        }
+
+        public virtual void RequestResources()
+        {
+            foreach (var pin in Input)
+            {
+                if (pin.Connection != null)
+                    pin.Connection.Parent.RequestResources();
+            }
         }
     }
 }

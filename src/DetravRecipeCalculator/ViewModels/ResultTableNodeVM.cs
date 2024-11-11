@@ -2,16 +2,19 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DetravRecipeCalculator.Models;
 using DetravRecipeCalculator.Utils;
+using Nodify;
+using org.matheval.Implements;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace DetravRecipeCalculator.ViewModels
 {
     public partial class ResultTableNodeVM : NodeVM
     {
-
-
+        private int generationCount;
+        private readonly List<NodeHelper> _nodes = new List<NodeHelper>();
 
         public ResultTableNodeVM(GraphEditorVM parent) : base(parent)
         {
@@ -33,34 +36,39 @@ namespace DetravRecipeCalculator.ViewModels
             }
         }
 
-
         public ResultDataTable TotalInput { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleInput"), true);
         public ResultDataTable TotalOutput { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleOutput"), true);
         public ResultDataTable TotalResources { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleResources"), false);
         public ResultDataTable TotalRecipes { get; } = new ResultDataTable(Xloc.Get("__ResultTable_TitleRecipes"), false);
 
-        [ObservableProperty]
-        private Exception? error;
-
-        private const int MAX_GENERATION = 100;
-        private int generationCount;
-
-
-        public override ConnectorInVM GetReplacementFor(ConnectorInVM self, ConnectorOutVM other)
+        public override bool GetReplacementForAny(ConnectorInVM self, ConnectorOutVM other, [NotNullWhen(true)] out ConnectorInVM? newSelf)
         {
-            var pin = Input.FirstOrDefault(m => m.Name == other.Name);
-            if (pin != null)
-                return pin;
+            if (Input.Contains(self))
+            {
+                var pin = Input.FirstOrDefault(m => m.Name == other.Name);
+                if (pin != null)
+                {
+                    newSelf = pin;
+                    return true;
+                }
+                else
+                {
+                    pin = new ConnectorInVM(this, other.Name);
+                    Input.Add(pin);
+                    newSelf = pin;
+                    return true;
+                }
+            }
 
-            pin = new ConnectorInVM(this, other.Name);
-            Input.Add(pin);
-            return pin;
+            newSelf = null;
+            return false;
         }
-
 
         public override void Build()
         {
-
+            base.Build();
+            _nodes.Clear();
+            generationCount = 0;
             TotalInput.Clear();
             TotalOutput.Clear();
             TotalResources.Clear();
@@ -75,171 +83,120 @@ namespace DetravRecipeCalculator.ViewModels
             TotalOutput.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
             TotalOutput.AddOrUpdateColumn("Output", Xloc.Get("__ResultTable_Table_Output") + " /" + Parent.TimeType.GetLocalizedShortValue());
 
-
-            generationCount = 0;
-
-
-            Error = null;
+            generationCount = GetGeneration(this, 1);
 
 
-            try
+            // push steps table
+            TotalResources.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
+            for (int i = 1; i < generationCount; i++)
             {
-
-                List<NodeVM> nodes = new List<NodeVM>();
-                var thisNode = AddNodeToList(nodes, this);
-
-                LoopProtectBackward(this, Array.Empty<NodeVM>());
-
-                //reset nodes
-
-                foreach (var node in nodes)
-                {
-                    node.Number = 1;
-                    node.Generation = 0;
-
-
-                    foreach (var pin in node.Input)
-                    {
-                        pin.TempCurrentValue = 0;
-                        pin.TempRequest = 0;
-                    }
-
-                    foreach (var pin in node.Output)
-                    {
-                        pin.TempCurrentValue = 0;
-                        pin.TempRequest = 0;
-                    }
-                }
-
-
-                // first is total recipes, that table contains all parameters of machines and list of machines
-
-                ApplyGeneration(thisNode, 1);
-
-                foreach (var node in nodes)
-                {
-                    node.Generation = generationCount - node.Generation + 1;
-                }
-
-                // push steps table
-                TotalResources.AddOrUpdateColumn("Name", Xloc.Get("__ResultTable_Table_Name"));
-
-                for (int i = 1; i < generationCount; i++)
-                {
-                    TotalResources.AddOrUpdateColumn("Step" + i, Xloc.Get("__ResultTable_Table_Step") + "#" + i);
-                }
-
-                TotalResources.AddOrUpdateColumn("Total", Xloc.Get("__ResultTable_Table_Total"));
-                //Begin calculate
-
-                foreach (var pin in Input)
-                {
-                    if (!pin.IsSet)
-                    {
-
-                        if (pin.Connection == null)
-                        {
-                            pin.Value = 0;
-
-                        }
-                        else
-                        {
-                            if (pin.Connection.Parent is IntermediateNode intermediate)
-                            {
-                                pin.Value = intermediate.ProviderRequests();
-                            }
-                            else
-                            {
-                                pin.Value = pin.Connection.GetValuePerSecond();
-                            }
-                        }
-                    }
-                }
-
-                base.Build();
-
-                //End calculate
-
-                foreach (var node in nodes)
-                {
-                    if (node == thisNode || node is IntermediateNode)
-                        continue;
-
-                    foreach (var pin in node.Input)
-                    {
-
-                        TotalResources.AddtToCellWithFindRow(pin, "Step" + node.Generation, -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
-                        TotalResources.AddtToCellWithFindRow(pin, "Total", -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
-                    }
-
-                    foreach (var pin in node.Output)
-                    {
-
-                        TotalResources.AddtToCellWithFindRow(pin, "Step" + node.Generation, pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
-                        TotalResources.AddtToCellWithFindRow(pin, "Total", pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
-                    }
-                }
-
-                FillInputOutputTables(TotalInput, TotalOutput, TotalResources);
-
-                foreach (var node in nodes)
-                {
-                    if (node == thisNode || node is IntermediateNode)
-                        continue;
-
-                    if (node is RecipeNodeVM recipeNode)
-                    {
-                        var row = new ResultTableRow();
-
-                        var rowNameModel = new ResultTableCellName()
-                        {
-                            Icon = recipeNode.Icon,
-                            IconBackground = recipeNode.BackgroundColor,
-                            Name = recipeNode.Title
-                        };
-
-                        TotalRecipes.SetCell("Name", row, rowNameModel);
-
-                        TotalRecipes.AddToCell("Number", row, node.Number);
-
-                        foreach (var parameter in recipeNode.Variables)
-                        {
-                            if (parameter.Name != null)
-                                TotalRecipes.AddToCell(parameter.Name, row, parameter.Value);
-                        }
-                        TotalRecipes.Rows.Add(row);
-                    }
-                }
-
+                TotalResources.AddOrUpdateColumn("Step" + i, Xloc.Get("__ResultTable_Table_Step") + "#" + i);
             }
-            catch (Exception ex)
+            TotalResources.AddOrUpdateColumn("Total", Xloc.Get("__ResultTable_Table_Total"));
+            foreach (var nodeHelper in _nodes)
             {
-                Error = ex;
+                if (nodeHelper.Node == this)
+                    continue;
+
+                foreach (var pin in nodeHelper.Node.Input)
+                {
+
+                    TotalResources.AddtToCellWithFindRow(pin, "Step" + (generationCount - nodeHelper.Generation), -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                    TotalResources.AddtToCellWithFindRow(pin, "Total", -pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                }
+
+                foreach (var pin in nodeHelper.Node.Output)
+                {
+
+                    TotalResources.AddtToCellWithFindRow(pin, "Step" + (generationCount - nodeHelper.Generation), pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                    TotalResources.AddtToCellWithFindRow(pin, "Total", pin.TempCurrentValue * Parent.TimeType.GetTimeInSeconds());
+                }
             }
+            FillInputOutputTables(TotalInput, TotalOutput, TotalResources);
+            foreach (var nodeHelper in _nodes)
+            {
+                if (nodeHelper.Node == this)
+                    continue;
+                
+                if (nodeHelper.Node is RecipeNodeVM recipeNode)
+                {
+                    var row = new ResultTableRow();
+
+                    var rowNameModel = new ResultTableCellName()
+                    {
+                        Icon = recipeNode.Icon,
+                        IconBackground = recipeNode.BackgroundColor,
+                        Name = recipeNode.Title
+                    };
+
+                    TotalRecipes.SetCell("Name", row, rowNameModel);
+
+                    TotalRecipes.AddToCell("Number", row, recipeNode.Number);
+
+                    foreach (var parameter in recipeNode.Variables)
+                    {
+                        if (parameter.Name != null)
+                            TotalRecipes.AddToCell(parameter.Name, row, parameter.Value);
+                    }
+                    TotalRecipes.Rows.Add(row);
+                }
+            }
+
 
 
             TotalResources.Container = new ResultDataTableContainer(TotalResources);// OnPropertyChanged(nameof(TotalResources));
             TotalInput.Container = new ResultDataTableContainer(TotalInput);//OnPropertyChanged(nameof(TotalInput));
             TotalOutput.Container = new ResultDataTableContainer(TotalOutput);//OnPropertyChanged(nameof(TotalOutput));
             TotalRecipes.Container = new ResultDataTableContainer(TotalRecipes);//OnPropertyChanged(nameof(TotalRecipes));
+            _nodes.Clear();
         }
 
-        private void ApplyGeneration(NodeVM node, int generation)
+        private int GetGeneration(NodeVM node, int generation)
         {
-            if (generation > node.Generation)
-                node.Generation = generation;
+            var nodeHelper = _nodes.FirstOrDefault(m => m.Node == node);
 
+            if (nodeHelper == null)
+            {
+                nodeHelper = new NodeHelper(node);
+                nodeHelper.Generation = generation;
+                _nodes.Add(nodeHelper);
+            }
+            else
+            {
+                if (nodeHelper.Generation < generation)
+                {
+                    nodeHelper.Generation = generation;
+                }
+            }
+
+            int result = generation;
             foreach (var pin in node.Input)
             {
                 if (pin.Connection != null)
-                    ApplyGeneration(pin.Connection.Parent, generation + 1);
+                {
+                    result = Math.Max(result, GetGeneration(pin.Connection.Parent, generation + 1));
+                }
             }
+            return result;
+        }
 
-            if (generation > generationCount)
+        public override void RequestResources()
+        {
+            base.RequestResources();
+
+            foreach (var pin in Input)
             {
-                generationCount = generation;
+                if (!pin.IsSet)
+                {
+                    if (pin.Connection != null)
+                    {
+                        pin.Value = pin.Connection.Value / pin.Connection.Parent.TimeToCraft;
+                    }
+                }
             }
         }
+
+
 
         public override NodeModel SaveState()
         {
@@ -314,73 +271,15 @@ namespace DetravRecipeCalculator.ViewModels
             }
         }
 
-        //private void LoopProtectForward(NodeVM node, IEnumerable<NodeVM> loopProtect)
-        //{
-        //    if (loopProtect.Contains(node)) throw new NotSupportedException("Loops is not supported!");
-
-        //    loopProtect = loopProtect.Append(node);
-
-        //    foreach (var pin in node.Output)
-        //    {
-        //        foreach (var connection in pin.Connections)
-        //        {
-        //            LoopProtectForward(connection.Parent, loopProtect);
-        //        }
-        //    }
-        //}
-
-        private void LoopProtectBackward(NodeVM node, IEnumerable<NodeVM> loopProtect)
+        private class NodeHelper
         {
-            if (loopProtect.Contains(node)) throw new NotSupportedException("Loops is not supported!");
+            public NodeVM Node { get; }
+            public int Generation { get; set; }
 
-            loopProtect = loopProtect.Append(node);
-
-            foreach (var pin in node.Input)
+            public NodeHelper(NodeVM node)
             {
-                if (pin.Connection != null)
-                    LoopProtectBackward(pin.Connection.Parent, loopProtect);
+                Node = node;
             }
-        }
-
-
-        //private void SetNodeGeneration(NodeVM node, int generation, List<NodeVM> nodes)
-        //{
-
-        //    if (generation > node.Generation)
-        //    {
-        //        node.Generation = generation;
-
-        //        foreach (var item in node.Output)
-        //        {
-        //            foreach (var connection in item.Connections)
-        //            {
-        //                if (nodes.Contains(connection.Parent))
-        //                    SetNodeGeneration(connection.Parent, generation + 1, nodes);
-        //            }
-        //        }
-        //    }
-
-        //    if (generation > generationCount)
-        //    {
-        //        generationCount = generation;
-        //    }
-        //}
-
-        private NodeVM AddNodeToList(List<NodeVM> nodes, NodeVM node)
-        {
-            if (nodes.Contains(node))
-                return node;
-
-            nodes.Add(node);
-
-            foreach (var pin in node.Input)
-            {
-                if (pin.Connection != null)
-                    AddNodeToList(nodes, pin.Connection.Parent);
-            }
-
-
-            return node;
         }
     }
 
@@ -395,8 +294,6 @@ namespace DetravRecipeCalculator.ViewModels
 
         public ResultDataTable Table { get; }
     }
-
-
     public partial class ResultDataTable : ViewModelBase
     {
         [ObservableProperty]
@@ -482,7 +379,6 @@ namespace DetravRecipeCalculator.ViewModels
             OnPropertyChanged(nameof(Rows));
         }
     }
-
     public class ResultTableColumn
     {
         public string Name { get; }
@@ -499,7 +395,6 @@ namespace DetravRecipeCalculator.ViewModels
         }
 
     }
-
     public class ResultTableRow
     {
         public List<ResultTableCell?> Cells { get; } = new List<ResultTableCell?>();
@@ -548,7 +443,6 @@ namespace DetravRecipeCalculator.ViewModels
         }
 
     }
-
     public class ResultTableCellName : ResultTableCell
     {
         public Color IconBackground { get; set; }
@@ -557,14 +451,11 @@ namespace DetravRecipeCalculator.ViewModels
 
         public byte[]? Icon { get; set; }
     }
-
     public class ResultTableCellDouble : ResultTableCell
     {
         public double Value { get; set; }
         public string ValueString => ConnectorVM.GetFormated(Value);
     }
-
-
     public abstract class ResultTableCell
     {
 

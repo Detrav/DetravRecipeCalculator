@@ -53,8 +53,16 @@ namespace DetravRecipeCalculator.ViewModels
             if (input.Connection == null)
             {
 
-                if (output.IsAny) output = output.Parent.GetReplacementFor(output, input);
-                else if (input.IsAny) input = input.Parent.GetReplacementFor(input, output);
+                if (output.IsAny)
+                {
+                    if (!output.Parent.GetReplacementForAny(output, input, out output!))
+                        return null;
+                }
+                else if (input.IsAny)
+                {
+                    if (!input.Parent.GetReplacementForAny(input, output, out input!))
+                        return null;
+                }
 
                 if (!connections.Any(m => m.Output == output && m.Input == input))
                 {
@@ -86,12 +94,12 @@ namespace DetravRecipeCalculator.ViewModels
             if (node == null)
                 return;
 
-            if(connectorContext is ConnectorInVM input)
+            if (connectorContext is ConnectorInVM input)
             {
-                foreach(var pin in node.Output)
+                foreach (var pin in node.Output)
                 {
                     var connect = Connect(pin, input, _editor.Connections);
-                    if(connect!=null)
+                    if (connect != null)
                     {
                         _editor.AddConnection(connect);
                         return;
@@ -99,7 +107,7 @@ namespace DetravRecipeCalculator.ViewModels
 
                 }
             }
-            else if(connectorContext is ConnectorOutVM output)
+            else if (connectorContext is ConnectorOutVM output)
             {
                 foreach (var pin in node.Input)
                 {

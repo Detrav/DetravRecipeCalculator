@@ -219,6 +219,15 @@ public partial class GraphEditorWindow : Window
                 return comment;
             }, NodeViewModelFactory.GetPinDiscrimantors<CommentNodeVM>());
 
+            foCreateNode.RegisterNode(Xloc.Get("__CreateNode_SubGraph"), () =>
+            {
+                var comment = new SubGraphNodeVM(vm);
+                comment.Location = lastClick;
+                vm.Nodes.Add(comment);
+                vm.UndoRedo.PushState("Add subgraph");
+                return comment;
+            }, NodeViewModelFactory.GetPinDiscrimantors<SubGraphNodeVM>());
+
             foreach (var recipe in vm.Pipeline.Recipes)
             {
                 if (recipe.Id == null)
@@ -237,6 +246,8 @@ public partial class GraphEditorWindow : Window
                     return node;
                 }, NodeViewModelFactory.GetPinDiscrimantors<RecipeNodeVM>(therecipe));
             }
+
+            
         }
     }
 

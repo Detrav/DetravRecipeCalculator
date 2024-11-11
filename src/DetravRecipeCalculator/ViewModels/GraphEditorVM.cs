@@ -61,9 +61,25 @@ namespace DetravRecipeCalculator.ViewModels
 
         public ObservableCollection<NodeVM> Nodes { get; } = new ObservableCollection<NodeVM>();
 
+        public void AddNode(NodeVM node)
+        {
+
+            if (node is ResultTableNodeVM)
+            {
+                if (Nodes.Any(m => m is ResultTableNodeVM))
+                {
+                    return;
+                }
+            }
+
+
+            Nodes.Add(node);
+        }
+
         public PendingConnectionVM PendingConnection { get; }
 
         public PipelineVM Pipeline { get; }
+
 
         public UndoRedoManager UndoRedo { get; }
 
@@ -171,7 +187,7 @@ namespace DetravRecipeCalculator.ViewModels
 
             try
             {
-                var str = JsonSerializer.Serialize(model, Utils.SourceGenerationContext.Default.GraphModel);
+                var str = JsonSerializer.Serialize(model, Utils.SourceGenerationContext.MyDefaults.GraphModel);
 
                 return Encoding.UTF8.GetBytes(str);
             }
@@ -223,7 +239,7 @@ namespace DetravRecipeCalculator.ViewModels
 
         public void Paste(byte[] data, Point point)
         {
-            var model = JsonSerializer.Deserialize<GraphModel>(data, SourceGenerationContext.Default.GraphModel);
+            var model = JsonSerializer.Deserialize<GraphModel>(data, SourceGenerationContext.MyDefaults.GraphModel);
 
             if (model != null)
             {
@@ -234,7 +250,7 @@ namespace DetravRecipeCalculator.ViewModels
                 foreach (var item in nodesList)
                 {
                     item.Location += point;
-                    Nodes.Add(item);
+                    AddNode(item);
                 }
                 foreach (var item in connectionsList)
                     _connections.Add(item);
@@ -248,6 +264,8 @@ namespace DetravRecipeCalculator.ViewModels
         {
             if (state is GraphModel model)
             {
+
+
                 Inputs.Clear();
                 foreach (var item in model.Inputs)
                 {
@@ -269,7 +287,7 @@ namespace DetravRecipeCalculator.ViewModels
                 RestoreState(this, model, nodesList, connectionsList);
 
                 foreach (var item in nodesList)
-                    Nodes.Add(item);
+                    AddNode(item);
                 foreach (var item in connectionsList)
                     _connections.Add(item);
             }
@@ -293,7 +311,7 @@ namespace DetravRecipeCalculator.ViewModels
             return model;
         }
 
-        private void Build()
+        public void Build()
         {
             var builder = new GraphBuilder(this, Nodes);
 

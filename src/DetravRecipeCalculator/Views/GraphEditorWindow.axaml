@@ -162,9 +162,10 @@
                                 Background="Transparent"
                                 BorderBrush="Transparent"
                                 BorderThickness="0"
-                                FontSize="24"
+                                FontSize="38"
                                 GotFocus="TextBox_Comment_GotFocus"
                                 LostFocus="TextBox_Comment_LostFocus"
+                                Text="{Binding Comment}"
                                 Watermark="{Binding Loc.NodeCommentPlaceholder.Text}" />
                         </nodify:GroupingNode>
                     </DataTemplate>
@@ -176,6 +177,9 @@
                     </DataTemplate>
                     <DataTemplate DataType="vm:SplitConnectorNodeVM">
                         <views:SplitConnectorNodeView />
+                    </DataTemplate>
+                    <DataTemplate DataType="vm:SubGraphNodeVM">
+                        <views:SubGraphNodeView />
                     </DataTemplate>
                 </nodify:NodifyEditor.DataTemplates>
                 <nodify:NodifyEditor.ItemContainerTheme>

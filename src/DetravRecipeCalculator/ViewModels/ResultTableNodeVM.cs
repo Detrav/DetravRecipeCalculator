@@ -120,16 +120,20 @@ namespace DetravRecipeCalculator.ViewModels
 
                 if (nodeHelper.Node is RecipeNodeVM recipeNode)
                 {
-                    var row = new ResultTableRow();
+                    var row = TotalRecipes.Rows.FirstOrDefault(m => m.Id == nodeHelper.Node.Title);
 
-                    var rowNameModel = new ResultTableCellName()
+                    if (row == null)
                     {
-                        Icon = recipeNode.Icon,
-                        IconBackground = recipeNode.BackgroundColor,
-                        Name = recipeNode.Title
-                    };
+                        row = new ResultTableRow(nodeHelper.Node.Title);
 
-                    TotalRecipes.SetCell("Name", row, rowNameModel);
+                        var rowNameModel = new ResultTableCellName()
+                        {
+                            Icon = recipeNode.Icon,
+                            IconBackground = recipeNode.BackgroundColor,
+                            Name = recipeNode.Title
+                        };
+                        TotalRecipes.SetCell("Name", row, rowNameModel);
+                    }
 
                     TotalRecipes.AddToCell("Number", row, recipeNode.Number);
 
@@ -174,7 +178,12 @@ namespace DetravRecipeCalculator.ViewModels
             {
                 if (pin.Connection != null)
                 {
-                    result = Math.Max(result, GetGeneration(pin.Connection.Parent, generation + 1));
+                    var nextGeneration = generation;
+
+                    if (pin.Connection.Parent is not SplitConnectorNodeVM)
+                        nextGeneration++;
+
+                    result = Math.Max(result, GetGeneration(pin.Connection.Parent, nextGeneration));
                 }
             }
             return result;

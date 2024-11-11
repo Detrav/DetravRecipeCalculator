@@ -134,7 +134,7 @@ namespace DetravRecipeCalculator.ViewModels
 
             double requestPercentage;
 
-            if (Output.Count == 0)
+            if (Output.Sum(m => m.Connections.Count) == 0)
             {
                 // no need to calculate it is a request node
                 requestPercentage = 1;
@@ -148,12 +148,13 @@ namespace DetravRecipeCalculator.ViewModels
 
                     requestPercentage = Math.Max(requestPercentage, pinOut.TempRequest / pinOut.GetValuePerSecond());
                 }
-
-                foreach (var pinOut in Output)
-                {
-                    pinOut.TempCurrentValue = requestPercentage * pinOut.GetValuePerSecond();
-                }
             }
+
+            foreach (var pinOut in Output)
+            {
+                pinOut.TempCurrentValue = requestPercentage * pinOut.GetValuePerSecond();
+            }
+
             Number = requestPercentage;
 
             // scale input by percentage

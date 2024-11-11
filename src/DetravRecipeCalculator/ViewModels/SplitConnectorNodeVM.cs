@@ -140,7 +140,7 @@ namespace DetravRecipeCalculator.ViewModels
             {
                 if (pinIn.Connection == null)
                 {
-                    pinIn.Value = 0;
+                    pinIn.Value = 1;
                 }
                 else
                 {

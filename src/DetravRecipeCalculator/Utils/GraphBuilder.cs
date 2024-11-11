@@ -55,6 +55,7 @@ namespace DetravRecipeCalculator.Utils
 
             foreach (var node in latestNodes)
             {
+                
                 node.RequestResources();
             }
 
@@ -72,7 +73,7 @@ namespace DetravRecipeCalculator.Utils
                     if (item.Connection == null && !string.IsNullOrWhiteSpace(item.Name))
                     {
                         graph.Inputs.TryGetValue(item.Name, out var result);
-                        result += item.Value / item.Parent.TimeToCraft;
+                        result += item.TempCurrentValue;
                         graph.Inputs[item.Name] = result;
                     }
                 }
@@ -82,7 +83,7 @@ namespace DetravRecipeCalculator.Utils
                     if ((item.Connections.Count == 0 || item.Connections.All(m => m.Parent is ResultTableNodeVM)) && !string.IsNullOrWhiteSpace(item.Name))
                     {
                         graph.Outputs.TryGetValue(item.Name, out var result);
-                        result += item.Value / item.Parent.TimeToCraft;
+                        result += item.TempCurrentValue;
                         graph.Outputs[item.Name] = result;
                     }
                 }

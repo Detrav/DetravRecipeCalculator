@@ -173,3 +173,7 @@ __CreateNode_ResultTable=Common > Result Table
 __CreateNode_Splitter=Common > Splitter
 __CreateNode_Comment=Common > Comment
 __CreateNode_Recipe=Recipe >\s
+__CreateNode_SubGraph=Common > Subgraph
+
+__SubGraphNode_Edit=Edit
+__SubGraphNode_Title=Subgraph

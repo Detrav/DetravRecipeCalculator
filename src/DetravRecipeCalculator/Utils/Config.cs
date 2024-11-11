@@ -30,7 +30,7 @@ namespace DetravRecipeCalculator.Utils
         {
             if (!Design.IsDesignMode && File.Exists("config.json"))
             {
-                var result = JsonSerializer.Deserialize<Config>(File.ReadAllText("config.json"), SourceGenerationContext.Default.Config);
+                var result = JsonSerializer.Deserialize<Config>(File.ReadAllText("config.json"), SourceGenerationContext.MyDefaults.Config);
                 if (result != null)
                 {
                     return result;
@@ -59,7 +59,7 @@ namespace DetravRecipeCalculator.Utils
 
         public void Save()
         {
-            var text = JsonSerializer.Serialize(this, SourceGenerationContext.Default.Config);
+            var text = JsonSerializer.Serialize(this, SourceGenerationContext.MyDefaults.Config);
             CreateAppDataDirectoryIfNotExists();
             File.WriteAllText(Path.Combine(AppDataDirectory, "config.json"), text);
         }

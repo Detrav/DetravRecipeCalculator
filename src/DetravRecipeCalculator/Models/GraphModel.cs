@@ -1,4 +1,5 @@
-﻿using DetravRecipeCalculator.Utils;
+﻿using Avalonia;
+using DetravRecipeCalculator.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,8 @@ namespace DetravRecipeCalculator.Models
         public Dictionary<string, double> Inputs { get; } = new Dictionary<string, double>();
         [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
         public Dictionary<string, double> Outputs { get; } = new Dictionary<string, double>();
+        public double ViewportZoom { get; set; }
+        [JsonConverter(typeof(PointJsonConverter))]
+        public Point ViewportLocation { get; set; }
     }
 }

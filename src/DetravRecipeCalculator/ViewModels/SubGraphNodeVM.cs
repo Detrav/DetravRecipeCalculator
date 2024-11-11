@@ -1,4 +1,5 @@
 ﻿using DetravRecipeCalculator.Models;
+using DetravRecipeCalculator.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +16,7 @@ namespace DetravRecipeCalculator.ViewModels
         public SubGraphNodeVM(GraphEditorVM parent) : base(parent)
         {
             TimeToCraft = 1;
+            Title = Xloc.Get("__SubGraphNode_Title");
         }
 
 
@@ -29,6 +31,7 @@ namespace DetravRecipeCalculator.ViewModels
         public override NodeModel SaveState()
         {
             var model = base.SaveState();
+            model.Parameters["Title"] = Title;
             model.GraphModel = graphModel;
             return model;
         }
@@ -36,8 +39,11 @@ namespace DetravRecipeCalculator.ViewModels
         public override void RestoreState(NodeModel model)
         {
             graphModel = model.GraphModel;
-            base.RestoreState(model);
+
+            if (model.Parameters.TryGetValue("Title", out var title))
+                Title = title;
             TimeToCraft = 1;
+            base.RestoreState(model);
         }
 
         public override void Build()
@@ -53,7 +59,7 @@ namespace DetravRecipeCalculator.ViewModels
             if (graphModel != null)
             {
 
-                foreach (var item in graphModel.Inputs)
+                foreach (var item in graphModel.Outputs)
                 {
                     var pin = oldList.FirstOrDefault(m => m.Name == item.Key);
                     if (pin == null)
@@ -71,7 +77,7 @@ namespace DetravRecipeCalculator.ViewModels
 
             if (graphModel != null)
             {
-                foreach (var item in graphModel.Outputs)
+                foreach (var item in graphModel.Inputs)
                 {
                     var pin = oldList.FirstOrDefault(m => m.Name == item.Key);
                     if (pin == null)
@@ -83,17 +89,25 @@ namespace DetravRecipeCalculator.ViewModels
 
         }
 
+
+
         public GraphEditorVM LoadSubGraph()
         {
-            var vm = new GraphEditorVM();
+
+            var vm = new GraphEditorVM(Parent.Pipeline);
             if (graphModel != null)
+            {
                 vm.RestoreState(graphModel);
+
+            }
             return vm;
         }
 
         public void SaveSubGraph(GraphEditorVM graph)
         {
+
             graphModel = graph.SaveState() as GraphModel;
+            FixPins();
         }
 
     }

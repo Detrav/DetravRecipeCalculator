@@ -55,7 +55,28 @@ public partial class GraphEditorWindow : Window
     protected override void OnLoaded(RoutedEventArgs e)
     {
         Config.Instance.LoadState(this);
+
+        UpdatePostition();
+
         base.OnLoaded(e);
+    }
+
+    private async void UpdatePostition()
+    {
+        await Task.Delay(100);
+        if (DataContext is GraphEditorVM vm)
+        {
+            if (vm.Nodes.Count > 0)
+            {
+                var x = vm.Nodes.Sum(m => m.Location.X) / vm.Nodes.Count;
+                var y = vm.Nodes.Sum(m => m.Location.Y) / vm.Nodes.Count;
+
+                Editor.ViewportLocation = new Point(x - 500, y - 500);
+            }
+
+            //renderElement.Arrange(renderElement.Bounds);
+            //Dispatcher.UIThread.Post(InvalidateVisual, DispatcherPriority.Background);
+        }
     }
 
     private void Button_Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -65,6 +86,8 @@ public partial class GraphEditorWindow : Window
 
     private void Button_Ok_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+
+
         Close(true);
     }
 
@@ -129,6 +152,12 @@ public partial class GraphEditorWindow : Window
         base.OnKeyUp(e);
     }
 
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+
+    }
+
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         if (!e.Handled && e.InitialPressMouseButton == MouseButton.Right)
@@ -176,6 +205,8 @@ public partial class GraphEditorWindow : Window
         miPaste.IsEnabled = await CanPaste();
     }
 
+
+
     private void GraphEditorWindow_DataContextChanged(object? sender, EventArgs e)
     {
         foCreateNode.ClearNodes();
@@ -197,15 +228,15 @@ public partial class GraphEditorWindow : Window
             {
                 var node = new SplitConnectorNodeVM(vm, null);
                 node.Location = lastClick;
-                vm.Nodes.Add(node);
+                vm.AddNode(node);
                 vm.UndoRedo.PushState("Add split");
                 return node;
-            }, NodeViewModelFactory.GetPinDiscrimantors<SplitConnectorNodeVM>() );
+            }, NodeViewModelFactory.GetPinDiscrimantors<SplitConnectorNodeVM>());
             foCreateNode.RegisterNode(Xloc.Get("__CreateNode_ResultTable"), () =>
             {
                 var node = new ResultTableNodeVM(vm, true);
                 node.Location = lastClick;
-                vm.Nodes.Add(node);
+                vm.AddNode(node);
                 vm.UndoRedo.PushState("Add Result table");
                 return node;
             }, NodeViewModelFactory.GetPinDiscrimantors<ResultTableNodeVM>());
@@ -214,16 +245,17 @@ public partial class GraphEditorWindow : Window
             {
                 var comment = new CommentNodeVM(vm);
                 comment.Location = lastClick;
-                vm.Nodes.Add(comment);
+                vm.AddNode(comment);
                 vm.UndoRedo.PushState("Add comment");
                 return comment;
             }, NodeViewModelFactory.GetPinDiscrimantors<CommentNodeVM>());
 
             foCreateNode.RegisterNode(Xloc.Get("__CreateNode_SubGraph"), () =>
             {
+
                 var comment = new SubGraphNodeVM(vm);
                 comment.Location = lastClick;
-                vm.Nodes.Add(comment);
+                vm.AddNode(comment);
                 vm.UndoRedo.PushState("Add subgraph");
                 return comment;
             }, NodeViewModelFactory.GetPinDiscrimantors<SubGraphNodeVM>());
@@ -241,13 +273,13 @@ public partial class GraphEditorWindow : Window
                 {
                     var node = new RecipeNodeVM(vm, therecipe);
                     node.Location = lastClick;
-                    vm.Nodes.Add(node);
+                    vm.AddNode(node);
                     vm.UndoRedo.PushState("Add node " + therecipe.Name);
                     return node;
                 }, NodeViewModelFactory.GetPinDiscrimantors<RecipeNodeVM>(therecipe));
             }
 
-            
+
         }
     }
 
@@ -356,6 +388,7 @@ public partial class GraphEditorWindow : Window
         var newText = (sender as TextBox)?.Text;
         if (DataContext is GraphEditorVM vm && lastText != newText)
         {
+
             vm.UndoRedo.PushState("Change comment");
         }
     }
@@ -544,7 +577,7 @@ public partial class GraphEditorWindow : Window
                     var connection1 = new ConnectionVM(cvm.Output, middleNode.Input.First());
                     var connection2 = new ConnectionVM(middleNode.Output.First(), cvm.Input);
 
-                    graph.Nodes.Add(middleNode);
+                    graph.AddNode(middleNode);
 
                     graph.Disconnect(cvm);
                     graph.AddConnection(connection1);

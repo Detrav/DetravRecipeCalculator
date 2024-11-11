@@ -232,5 +232,7 @@ namespace DetravRecipeCalculator.ViewModels
 
             base.UpdateToolTips();
         }
+
+        
     }
 }
